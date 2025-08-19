@@ -1,0 +1,37 @@
+<div class="add-new-template">
+  <p-toast></p-toast>
+  <div class="left-panel">
+    <h2>Añadir Nueva Plantilla</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="templateName">Nombre</label>
+        <input pInputText id="templateName" [(ngModel)]="templateName" name="templateName" required>
+      </div>
+      <div class="form-group">
+        <label>Insertar Variables</label>
+        <div class="variable-buttons">
+          <p-button *ngFor="let variable of variables" 
+                    label="{{variable.label}}" 
+                    (onClick)="insertVariable(variable.value)"
+                    styleClass="p-button-sm p-button-outlined"></p-button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="templateContent">Contenido</label>
+        <textarea pInputTextarea id="templateContent" [(ngModel)]="templateContent" name="templateContent" rows="5" required></textarea>
+      </div>
+      <div class="button-container">
+        <p-button type="submit" label="Guardar"></p-button>
+        <p-button type="button" label="Cancelar" (onClick)="onCancel()" styleClass="p-button-secondary"></p-button>
+      </div>
+    </form>
+  </div>
+
+  <div class="right-panel">
+    <h3>Lista de estados</h3>
+    <div *ngFor="let item of checklistItems" class="p-field-checkbox">
+      <p-checkbox [name]="item.label" [value]="item.value" [(ngModel)]="item.checked" [binary]="true" styleClass="small-checkbox"></p-checkbox>
+      <label [for]="item.value" class="small-label">{{item.label}}</label>
+    </div>
+  </div>
+</div>

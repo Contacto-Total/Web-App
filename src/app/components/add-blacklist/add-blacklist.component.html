@@ -1,0 +1,31 @@
+<p-toast></p-toast>
+
+<form [formGroup]="formGroup" class="form">
+    <div class="form-group">
+        <p-dropdown 
+            formControlName="selectedProveedor" 
+            [options]="proveedores"
+            optionLabel="name"
+            placeholder="Proveedor" />
+
+        <input type="text" pInputText formControlName="documento" placeholder="Documento"/>
+
+        <div class="fecha-container">
+            <p-calendar 
+                formControlName="fecha_fin" 
+                [iconDisplay]="'input'" 
+                [showIcon]="true" 
+                dateFormat="yy-mm-dd"
+                placeholder="Fecha de fin">
+            </p-calendar>
+
+            <div *ngIf="formGroup.get('fecha_fin')?.hasError('fechaInvalida') && formGroup.get('fecha_fin')?.touched" class="fecha-error">
+                La fecha debe ser mayor o igual a la fecha actual.
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button pButton label="Guardar" [disabled]="!formGroup.valid" (click)="insertarBlacklist()"></button>
+    </div>
+</form>

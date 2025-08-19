@@ -1,0 +1,91 @@
+.add-spare-part-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+}
+
+h2 {
+  color: #232323ff;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.min-max-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+
+.p-field {
+  margin-bottom: 1rem;
+  width: 48%;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #232323ff;
+}
+
+::ng-deep .p-inputtext,
+::ng-deep .p-inputnumber-input {
+  width: 100%;
+}
+
+::ng-deep .p-inputnumber-button-up.p-button,
+::ng-deep .p-inputnumber-button-down.p-button{
+  background-color: #666666;
+  color: #ffffff;
+  border: none;
+  width: 100%;
+}
+
+::ng-deep .p-inputnumber-button-up.p-button:hover,
+::ng-deep .p-inputnumber-button-down.p-button:hover{
+  background-color: #232323ff;
+}
+
+::ng-deep .btn-container .p-button {
+    width: 100%;
+    background-color: #666666;
+    border: none;
+}
+
+::ng-deep .p-button:hover {
+  background-color: #232323ff;
+}
+
+::ng-deep .p-button:disabled {
+    color: #3a3a3a;
+  background-color: white;
+  border: 1px solid #3a3a3a;
+  opacity: 0.6;
+}
+
+.p-error {
+  color: #ff5252;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.error-container {
+    margin-bottom: .5rem;
+}
+
+::ng-deep .range-btns .p-button {
+    width: 13rem;
+}
+
+.range-btns {
+    display: flex;
+    justify-content: space-between;
+
+}

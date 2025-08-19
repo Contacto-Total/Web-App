@@ -1,0 +1,66 @@
+<header class="header">
+    <nav class="nav container">
+       <div class="nav__data">
+          <div class="nav__logo">
+             <img src="" alt="" class="nav__logo-img">
+          </div>
+          
+          <div class="nav__toggle" id="nav-toggle" #navToggle>
+             <i class="pi pi-bars nav__burger"></i>
+             <i class="pi pi-times nav__close"></i>
+          </div>
+       </div>
+
+       <div class="nav__menu" id="nav-menu" #navMenu>
+          <ul class="nav__list">
+            <li><a (click)="goToCampania()" class="nav__link">CAMPAÑA</a></li>
+
+            <li><a (click)="goToSMS()" class="nav__link">SMS</a></li>
+
+            <li><a (click)="goToRecordings()" class="nav__link">AUDIOS</a></li>
+
+            <li class="dropdown__item">
+               <div class="nav__link">
+                  REPORTES <i class="pi pi-angle-down dropdown__arrow"></i>
+               </div>
+
+               <ul class="dropdown__menu">
+                  <li>
+                     <a (click)="goToContactoReport()" class="dropdown__link">
+                        Reporte de Contacto
+                     </a>                          
+                  </li>
+
+                  <li>
+                     <a (click)="goToRankingReport()" class="dropdown__link">
+                        Reporte de Ranking
+                     </a>
+                  </li>
+
+                  <li>
+                     <a (click)="goToSpeechReport()" class="dropdown__link">
+                        Reporte de Speech
+                     </a>
+                  </li>
+
+                  <li>
+                     <a (click)="goToMonitoreoReport()" class="dropdown__link">
+                        Reporte de Monitoreo
+                     </a>
+                  </li>
+
+                  <li>
+                     <a (click)="goToPowerBIReport()" class="dropdown__link">
+                        Reporte de PowerBI
+                     </a>
+                  </li>
+               </ul>
+            </li>
+
+            <li><a (click)="goToBlacklist()" class="nav__link">BLACKLIST</a></li>
+
+            <li><a (click)="goToClose()" class="nav__link">CERRAR</a></li>
+          </ul>
+       </div>
+    </nav>
+</header>

@@ -1,0 +1,144 @@
+<div class="container">
+  <p-toast></p-toast>
+
+  <div class="tabs-container">
+    <p-tabView class="tabView" [(activeIndex)]="activeIndex">    
+      <p-tabPanel header="Contacto Directo">
+          <div class="range-history">
+              <h3>Contacto Directo</h3>
+              <div *ngFor="let contactoDirectoRange of contactoDirectoRanges; let i = index" class="range-item">
+                <span>Rango {{ i + 1 }}:</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="contactoDirectoRange.min"
+                  [min]="0" 
+                ></p-inputNumber>
+        
+                <span [style.display]="contactoDirectoRange.isChecked ? 'none' : 'inline-block'">-</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="contactoDirectoRange.max"
+                  [min]="0"
+                  [disabled]="contactoDirectoRange.isChecked"
+                  [style.display]="contactoDirectoRange.isChecked ? 'none' : 'inline-block'"
+                ></p-inputNumber>
+        
+                <p-checkbox 
+                  label="Rango máximo"
+                  [(ngModel)]="contactoDirectoRange.isChecked" 
+                  (onChange)="toggleCheck(i)" 
+                  [binary]="true"
+                  [disabled]="isAnyChecked() && !contactoDirectoRange.isChecked">
+                </p-checkbox>
+        
+                <p-button icon="pi pi-trash" (onClick)="deleteRange(i)" styleClass="p-button-danger p-button-sm"></p-button>
+              </div>
+          </div>
+      </p-tabPanel>
+  
+      <p-tabPanel header="Contacto Indirecto">
+          <div class="range-history">
+              <h3>Contacto Indirecto</h3>
+              <div *ngFor="let contactoIndirectoRange of contactoIndirectoRanges; let i = index" class="range-item">
+                <span>Rango {{ i + 1 }}:</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="contactoIndirectoRange.min"
+                  [min]="0" 
+                ></p-inputNumber>
+        
+                <span [style.display]="contactoIndirectoRange.isChecked ? 'none' : 'inline-block'">-</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="contactoIndirectoRange.max"
+                  [min]="0"
+                  [disabled]="contactoIndirectoRange.isChecked"
+                  [style.display]="contactoIndirectoRange.isChecked ? 'none' : 'inline-block'"
+                ></p-inputNumber>
+        
+                <p-checkbox 
+                  label="Rango máximo"
+                  [(ngModel)]="contactoIndirectoRange.isChecked" 
+                  (onChange)="toggleCheck(i)" 
+                  [binary]="true"
+                  [disabled]="isAnyChecked() && !contactoIndirectoRange.isChecked">
+                </p-checkbox>
+        
+                <p-button icon="pi pi-trash" (onClick)="deleteRange(i)" styleClass="p-button-danger p-button-sm"></p-button>
+              </div>
+          </div>
+      </p-tabPanel>
+  
+      <p-tabPanel header="Promesas Rotas">
+          <div class="range-history">
+              <h3>Promesas Rotas</h3>
+              <div *ngFor="let promesasRotasRange of promesasRotasRanges; let i = index" class="range-item">
+                <span>Rango {{ i + 1 }}:</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="promesasRotasRange.min"
+                  [min]="0" 
+                ></p-inputNumber>
+        
+                <span [style.display]="promesasRotasRange.isChecked ? 'none' : 'inline-block'">-</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="promesasRotasRange.max"
+                  [min]="0"
+                  [disabled]="promesasRotasRange.isChecked"
+                  [style.display]="promesasRotasRange.isChecked ? 'none' : 'inline-block'"
+                ></p-inputNumber>
+        
+                <p-checkbox 
+                  label="Rango máximo"
+                  [(ngModel)]="promesasRotasRange.isChecked" 
+                  (onChange)="toggleCheck(i)" 
+                  [binary]="true"
+                  [disabled]="isAnyChecked() && !promesasRotasRange.isChecked">
+                </p-checkbox>
+        
+                <p-button icon="pi pi-trash" (onClick)="deleteRange(i)" styleClass="p-button-danger p-button-sm"></p-button>
+              </div>
+          </div>
+      </p-tabPanel>
+  
+      <p-tabPanel header="No Contactado">
+          <div class="range-history">
+              <h3>No Contactado</h3>
+              <div *ngFor="let noContactadoRange of noContactadoRanges; let i = index" class="range-item">
+                <span>Rango {{ i + 1 }}:</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="noContactadoRange.min"
+                  [min]="0" 
+                ></p-inputNumber>
+        
+                <span [style.display]="noContactadoRange.isChecked ? 'none' : 'inline-block'">-</span>
+        
+                <p-inputNumber 
+                  [(ngModel)]="noContactadoRange.max"
+                  [min]="0"
+                  [disabled]="noContactadoRange.isChecked"
+                  [style.display]="noContactadoRange.isChecked ? 'none' : 'inline-block'"
+                ></p-inputNumber>
+        
+                <p-checkbox 
+                  label="Rango máximo"
+                  [(ngModel)]="noContactadoRange.isChecked" 
+                  (onChange)="toggleCheck(i)" 
+                  [binary]="true"
+                  [disabled]="isAnyChecked() && !noContactadoRange.isChecked">
+                </p-checkbox>
+        
+                <p-button icon="pi pi-trash" (onClick)="deleteRange(i)" styleClass="p-button-danger p-button-sm"></p-button>
+              </div>
+          </div>
+      </p-tabPanel>
+    </p-tabView>
+
+    <div class="btns-container">
+      <p-button label="Añadir rango" (onClick)="addRange()"></p-button>
+      <p-button label="Generar campaña" (onClick)="printRanges()"></p-button>
+    </div>
+  </div>
+</div>

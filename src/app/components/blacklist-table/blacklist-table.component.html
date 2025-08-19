@@ -1,0 +1,28 @@
+<p-table 
+    [value]="blacklistRows" 
+    [paginator]="true"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [rowsPerPageOptions]="[5, 10, 20]"
+>
+    <ng-template pTemplate="header">
+        <tr>
+            <th>Empresa</th>
+            <th>Documento</th>
+            <th>Email</th>
+            <th>Telefono</th>
+            <th>Fecha de Inicio</th>
+            <th>Fecha de Fin</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-blacklistRow>
+        <tr>
+            <td>{{ blacklistRow.empresa }}</td>
+            <td>{{ blacklistRow.documento }}</td>
+            <td>{{ blacklistRow.email }}</td>
+            <td>{{ blacklistRow.telefono }}</td>
+            <td>{{ blacklistRow.fechaInicio }}</td>
+            <td>{{ blacklistRow.fechaFin }}</td>
+        </tr>
+    </ng-template>
+</p-table>

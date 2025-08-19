@@ -1,0 +1,75 @@
+.template-selector {
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 15px 20px 10px;
+}
+
+.left-panel {
+    flex: 2.2;
+    margin-right: 30px;
+}
+
+.right-panel {
+    flex: 0.8;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    margin-top: 1rem;
+}
+
+h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.template-list {
+    margin-bottom: 20px;
+}
+
+.template-content {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+::ng-deep .p-field-checkbox {
+    display: flex;
+    margin-bottom: 5px;
+}
+
+::ng-deep .p-checkbox .p-checkbox-box .p-icon {
+    width: 11px;
+    height: 11px;
+}
+
+::ng-deep .small-checkbox .p-checkbox-box {
+    width: 1rem;
+    height: 1rem;
+}
+
+.small-label {
+    font-size: 0.8rem;
+}
+
+.template-btns {
+    display: flex;
+    justify-content: end;
+    gap: .5rem;
+}
+
+::ng-deep .template-btns .p-button {
+    font-size: .8rem;
+}

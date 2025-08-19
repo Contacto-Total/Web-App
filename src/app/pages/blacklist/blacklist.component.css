@@ -1,0 +1,13 @@
+body {
+  margin-top: 7rem;
+  margin-bottom: 2rem;
+}
+
+.section {
+  max-width: 1350px;
+  margin: 0 auto;
+}
+
+.table-container {
+  margin-top: 2.4rem;
+}

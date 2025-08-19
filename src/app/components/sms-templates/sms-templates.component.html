@@ -1,0 +1,39 @@
+<div class="template-selector">
+  <p-toast></p-toast>
+  <div class="left-panel">
+    <h2>Selector de Plantilla</h2>
+    
+    <div class="template-list">
+      <h3>Elige una plantilla:</h3>
+      <p-listbox [options]="plantillas" [(ngModel)]="selectedTemplate" optionLabel="name"
+                 (onChange)="onTemplateSelect($event)">
+        <ng-template let-template pTemplate="item">
+          <div>{{template.name}}</div>
+        </ng-template>
+      </p-listbox>
+    </div>
+
+    <div *ngIf="selectedTemplate" class="template-content">
+      <h3>Contenido:</h3>
+      <p>{{ selectedTemplate.template }}</p>
+
+      <div class="template-btns">
+        <p-button label="Editar" [raised]="true" severity="secondary" (onClick)="updateTemplate(selectedTemplate)" class="first-btn"></p-button>
+        <p-button label="Eliminar" [raised]="true" severity="danger" (onClick)="deleteTemplate(selectedTemplate.id)"></p-button>
+      </div>
+    </div>
+
+    <div class="button-container">
+      <p-button label="Crear nueva plantilla" (onClick)="createNewTemplate()"></p-button>
+      <p-button label="Generar mensajes" (onClick)="generateMessages()"></p-button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <h3>Lista de estados</h3>
+    <div *ngFor="let item of checklistItems" class="p-field-checkbox">
+      <p-checkbox [name]="item.value" [value]="item.value" [(ngModel)]="item.checked" [binary]="true" styleClass="small-checkbox"></p-checkbox>
+      <label [for]="item.value" class="small-label">{{item.label}}</label>
+    </div>
+  </div>
+</div>

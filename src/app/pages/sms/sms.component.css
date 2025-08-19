@@ -1,0 +1,9 @@
+body {
+  margin-top: 5rem;
+  margin: 5rem 0 0;
+}
+
+.section {
+  max-width: 1350px;
+  margin: 0 auto;
+}

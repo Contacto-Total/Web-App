@@ -1,0 +1,76 @@
+<div class="add-spare-part-container">
+  <h2>Add New Ranges</h2>
+  <form [formGroup]="sparePartForm" (ngSubmit)="onSubmit()">
+    <div class="p-fluid" formArrayName="ranges">
+      <div *ngFor="let range of ranges.controls; let i = index" [formGroupName]="i">
+        <div class="min-max-container">
+          <div class="p-field">
+            <label for="min_value_{{i}}">Min Value</label>
+            <p-inputNumber 
+              id="min_value_{{i}}" 
+              formControlName="min_value" 
+              mode="decimal" 
+              [useGrouping]="false" 
+              [showButtons]="true" 
+              [min]="0" 
+              [step]="1"
+              [disabled]="isFieldDisabled(i)"></p-inputNumber>
+            <small class="p-error" *ngIf="range.get('min_value')?.invalid && range.get('min_value')?.touched">
+              Min value is required and must be 0 or greater.
+            </small>
+          </div>
+              
+          <div class="p-field">
+            <label for="max_value_{{i}}">Max Value</label>
+            <p-inputNumber 
+              id="max_value_{{i}}" 
+              formControlName="max_value" 
+              mode="decimal" 
+              [useGrouping]="false" 
+              [showButtons]="true" 
+              [min]="0" 
+              [step]="1"
+              [disabled]="isFieldDisabled(i)"></p-inputNumber>
+            <small class="p-error" *ngIf="range.get('max_value')?.invalid && range.get('max_value')?.touched">
+              Max value is required and must be 0 or greater.
+            </small>
+          </div>
+        </div>
+
+        <div class="error-container">
+          <small class="p-error" *ngIf="range.errors?.['minMaxError'] && (range.get('min_value')?.touched || range.get('max_value')?.touched)">
+            Max value must be greater than Min value.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="higherToVisible" class="p-field">
+      <label for="higher_value">Higher To Value</label>
+      <p-inputNumber 
+        id="higher_value" 
+        formControlName="higher_value" 
+        mode="decimal" 
+        [useGrouping]="false" 
+        [showButtons]="true"
+        [disabled]="isFieldDisabled(-1)"></p-inputNumber>
+    </div>
+
+    <div class="btn-container">
+      <div class="range-btns ola">
+        <p-button 
+          type="button" 
+          label="Add Range" 
+          (click)="addRange()"
+          [disabled]="sparePartForm.invalid"></p-button>
+        <p-button 
+          type="button" 
+          label="Add Higher To" 
+          (click)="toggleHigherTo()"
+          [disabled]="sparePartForm.invalid"></p-button>
+      </div>
+
+      <p-button type="submit" label="Complete" [disabled]="sparePartForm.invalid"></p-button>
+    </div>
+  </form>
+</div>
