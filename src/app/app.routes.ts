@@ -1,28 +1,29 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './pages/home/home.component';
-import { SmsComponent } from './pages/sms/sms.component';
-import { AddTemplateComponent } from './pages/add-template/add-template.component';
-import { EditTemplateComponent } from './pages/edit-template/edit-template.component';
-import { plantillaGuardGuard } from './guard/plantilla-guard.guard';
-import { RecordingsComponent } from './pages/recordings/recordings.component';
-import { ContactoReportComponent } from './pages/contacto-report/contacto-report.component';
-import { MonitoreoReportComponent } from './pages/monitoreo-report/monitoreo-report.component';
-import { RankingReportComponent } from './pages/ranking-report/ranking-report.component';
-import { SpeechReportComponent } from './pages/speech-report/speech-report.component';
-import { PowerbiReportComponent } from './pages/powerbi-report/powerbi-report.component';
-import { BlacklistComponent } from './pages/blacklist/blacklist.component';
+
+import { CampaignPageComponent } from './campaign/pages/campaign-page/campaign-page.component';
+import { SmsPageComponent } from './sms/pages/sms-page/sms-page.component';
+import { CreateSmsTemplatePageComponent } from './sms/pages/create-sms-template-page/create-sms-template-page.component';
+import { UpdateSmsTemplatePageComponent } from './sms/pages/update-sms-template-page/update-sms-template-page.component';
+import { updateTemplateGuard } from './sms/guard/update-template-guard/update-template.guard';
+import { RecordingsPageComponent } from './recordings/pages/recordings-page/recordings-page.component';
+import { ContactReportPageComponent } from './reports/pages/contact-report-page/contact-report-page.component';
+import { MonitoringReportPageComponent } from './reports/pages/monitoring-report-page/monitoring-report-page.component';
+import { RankingReportPageComponent } from './reports/pages/ranking-report-page/ranking-report-page.component';
+import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
+import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
+import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
 
 export const routes: Routes = [
-    {'path': '', redirectTo: '/home', pathMatch: 'full'},
-    {'path': 'home', component: HomeComponent},
-    {'path': 'sms', component: SmsComponent},
-    {'path': 'add/template', component: AddTemplateComponent},
-    {'path': 'edit/template', component: EditTemplateComponent, canActivate: [plantillaGuardGuard]},
-    {'path': 'recordings', component: RecordingsComponent},
-    {'path': 'contacto/report', component: ContactoReportComponent},
-    {'path': 'monitoreo/report', component: MonitoreoReportComponent},
-    {'path': 'ranking/report', component: RankingReportComponent},
-    {'path': 'speech/report', component: SpeechReportComponent},
-    {'path': 'powerbi/report', component: PowerbiReportComponent},
-    {'path': 'blacklist', component: BlacklistComponent}
+    {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
+    {'path': 'campaña', component: CampaignPageComponent},
+    {'path': 'sms', component: SmsPageComponent},
+    {'path': 'add/template', component: CreateSmsTemplatePageComponent},
+    {'path': 'edit/template', component: UpdateSmsTemplatePageComponent, canActivate: [updateTemplateGuard]},
+    {'path': 'recordings', component: RecordingsPageComponent},
+    {'path': 'contacto/report', component: ContactReportPageComponent},
+    {'path': 'monitoreo/report', component: MonitoringReportPageComponent},
+    {'path': 'ranking/report', component: RankingReportPageComponent},
+    {'path': 'speech/report', component: SpeechReportPageComponent},
+    {'path': 'powerbi/report', component: PowerBiReportPageComponent},
+    {'path': 'blacklist', component: BlacklistPageComponent}
 ];

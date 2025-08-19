@@ -1,0 +1,13 @@
+<body>
+    <app-toolbar></app-toolbar>
+
+    <div class="section">
+        <div>
+            <app-add-to-blacklist-form (blacklistAdded)="loadBlacklistRows()"></app-add-to-blacklist-form>
+        </div>
+
+        <div class="table-container">
+            <app-blacklist-table [blacklistRows] = "blacklistRows"></app-blacklist-table>
+        </div>
+    </div>
+</body>
