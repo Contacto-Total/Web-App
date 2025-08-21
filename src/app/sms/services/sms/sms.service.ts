@@ -57,29 +57,11 @@ export class SmsService {
       .post(this.baseUrl + "/create", plantilla, this.httpOptions)
       .pipe(retry(2), catchError(this.handleError));
   }
-/*
+
   generateMessages(generateMessagesRequest: GenerateMessagesRequest) {
     return this.http
       .post(this.baseUrl + "/generate/messages", generateMessagesRequest, { ...this.fileHttpOptions, responseType: 'blob' })
       .pipe(retry(2), catchError(this.handleError));
-  }
- */
-
-  generateMessages(generateMessagesRequest: GenerateMessagesRequest): Observable<Blob> {
-    return this.http.post<Blob>(
-      `${this.baseUrl}/generate/messages`,
-      generateMessagesRequest,
-      {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',               // obligatorio para Spring
-          'Accept': 'application/octet-stream'               // indicas que esperas un archivo
-        }),
-        responseType: 'blob' as 'json'                       // mejora de tipado y compatibilidad con Angular
-      }
-    ).pipe(
-      retry(2),
-      catchError(this.handleError)
-    );
   }
 
 

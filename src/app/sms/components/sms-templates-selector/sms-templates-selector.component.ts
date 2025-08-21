@@ -91,7 +91,7 @@ export class SmsTemplatesSelectorComponent implements OnInit{
       .map(item => item.value);
   }
 
-/*
+
   generateMessages(): void {
     const selectedChecklistsValues: string[] = this.getSelectedChecklistsValues();
 
@@ -141,30 +141,7 @@ export class SmsTemplatesSelectorComponent implements OnInit{
       this.messageService.add({severity: 'error', summary: 'Error', detail: 'No has seleccionado ninguna plantilla.'});
     }
   }
-*/
 
-  isGenerating: boolean = false;
-
-  generateMessages(): void {
-    console.log('Llamada a generateMessages()', new Date().toISOString());
-    if (this.isGenerating) {
-      console.warn('La generación ya está en proceso… Ignorando duplicado');
-      return;
-    }
-
-    this.isGenerating = true;
-
-    const request: GenerateMessagesRequest = {
-      name: this.selectedTemplate!.name,
-      tipis: this.getSelectedChecklistsValues()
-    };
-    console.log('Payload enviado:', request);
-
-    this.smsService.generateMessages(request).subscribe({
-      next: (blob) => { /* manejo del blob */ this.isGenerating = false; },
-      error: (err) => { /* manejo de error */ this.isGenerating = false; }
-    });
-  }
 
 
   updateTemplate(plantilla: TemplateResponse): void {
