@@ -1,5 +1,5 @@
 export const environment = {
     production: false,
-    baseUrl: 'http:/http://localhost:8080/'
-    //baseUrl: 'http://localhost:8080/api/'
+    //baseUrl: 'https://chow-driving-gar.ngrok-free.app/api/'
+    baseUrl: 'http://localhost:8080/api/'
 };
