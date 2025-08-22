@@ -26,10 +26,10 @@ export class ToolbarComponent implements OnInit {
     const toggle = this.navToggle.nativeElement;
     const nav = this.navMenu.nativeElement;
     const navItems = Array.from(nav.querySelectorAll('a')) as HTMLElement[];
-  
+
     this.renderer.listen(toggle, 'click', () => {
       this.menuVisible = !this.menuVisible;
-  
+
       if (this.menuVisible) {
         this.renderer.addClass(nav, 'show-menu');
         this.renderer.addClass(toggle, 'show-icon');
@@ -38,7 +38,7 @@ export class ToolbarComponent implements OnInit {
         this.renderer.removeClass(toggle, 'show-icon');
       }
     });
-  
+
     navItems.forEach((item: HTMLElement) => {
       this.renderer.listen(item, 'click', () => {
         this.renderer.removeClass(nav, 'show-menu');
@@ -46,7 +46,7 @@ export class ToolbarComponent implements OnInit {
         this.menuVisible = false;
       });
     });
-  }  
+  }
 
   goToCampania(): void {
     this.router.navigate(['/']).then();
@@ -54,6 +54,10 @@ export class ToolbarComponent implements OnInit {
 
   goToSMS(): void {
     this.router.navigate(['/sms']).then();
+  }
+
+  goToTemplateSMS(): void {
+    this.router.navigate(['/templateSMS']).then();
   }
 
   goToRecordings(): void {
