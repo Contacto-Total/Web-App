@@ -1,0 +1,84 @@
+<body>
+<app-toolbar></app-toolbar>
+
+<!-- Contenedor principal -->
+<div class="section">
+
+  <h1 class="title">Gestión de SMS</h1>
+  <p class="subtitle">Selecciona un tipo de SMS para configurar o enviar</p>
+
+  <!-- Grid de cards -->
+  <div class="cards-container">
+
+    <!-- Card SMS Cobro -->
+    <mat-card class="sms-card enabled">
+      <mat-card-header>
+        <mat-icon class="icon">attach_money</mat-icon>
+        <mat-card-title>SMS Cobro</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Envía recordatorios de pago con validación de fechas y saldos.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="btn-primary" routerLink="/payment-reminder-SMS">Ir al flujo</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Card SMS Seguimiento -->
+    <mat-card class="sms-card enabled">
+      <mat-card-header>
+        <mat-icon class="icon">mail</mat-icon>
+        <mat-card-title>SMS Seguimiento</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Envío inmediato según estado LTD o LTDE.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button class="btn-primary" routerLink="/follow-up-SMS">Ir al flujo</button>
+      </mat-card-actions>
+    </mat-card>
+
+    <!-- Cards deshabilitadas -->
+    <mat-card class="sms-card disabled">
+      <mat-card-header>
+        <mat-icon class="icon">campaign</mat-icon>
+        <mat-card-title>Próximamente</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Este flujo estará disponible pronto.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="sms-card disabled">
+      <mat-card-header>
+        <mat-icon class="icon">event</mat-icon>
+        <mat-card-title>Próximamente</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Este flujo estará disponible pronto.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="sms-card disabled">
+      <mat-card-header>
+        <mat-icon class="icon">notifications</mat-icon>
+        <mat-card-title>Próximamente</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Este flujo estará disponible pronto.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="sms-card disabled">
+      <mat-card-header>
+        <mat-icon class="icon">message</mat-icon>
+        <mat-card-title>Próximamente</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Este flujo estará disponible pronto.</p>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>
+</body>

@@ -4,7 +4,7 @@
           <div class="nav__logo">
              <img src="" alt="" class="nav__logo-img">
           </div>
-          
+
           <div class="nav__toggle" id="nav-toggle" #navToggle>
              <i class="pi pi-bars nav__burger"></i>
              <i class="pi pi-times nav__close"></i>
@@ -17,6 +17,8 @@
 
             <li><a (click)="goToSMS()" class="nav__link">SMS</a></li>
 
+            <li><a (click)="goToTemplateSMS()" class="nav__link">Plantillas SMS</a></li>
+
             <li><a (click)="goToRecordings()" class="nav__link">AUDIOS</a></li>
 
             <li class="dropdown__item">
@@ -28,7 +30,7 @@
                   <li>
                      <a (click)="goToContactoReport()" class="dropdown__link">
                         Reporte de Contacto
-                     </a>                          
+                     </a>
                   </li>
 
                   <li>

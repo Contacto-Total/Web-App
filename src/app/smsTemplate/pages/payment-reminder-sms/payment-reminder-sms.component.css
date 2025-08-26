@@ -1,0 +1,119 @@
+.section {
+  padding: 4rem;
+  background-color: #f4f6f8;
+  min-height: 100vh;
+}
+
+.title {
+  margin-top: 60px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+/* Contenedor de tabs */
+.mat-tab-group {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Stepper vertical */
+.mat-vertical-stepper {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.15);
+}
+
+/* Cards dentro de stepper (si las usas) */
+.sms-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease-in-out;
+}
+
+.sms-card.enabled:hover {
+  transform: translateY(-5px);
+  cursor: pointer;
+}
+
+.sms-message {
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* Botón primario */
+.btn-primary.mat-mdc-raised-button {
+  background-color: #1976d2;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 500;
+  transition: all .2s ease;
+  margin: 17px auto 0 auto;
+  width: 250px;
+  display: block;
+  box-shadow: 0 4px 10px rgba(0,0,0,.2);
+}
+
+.btn-primary.mat-mdc-raised-button:hover {
+  background-color: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.2);
+}
+
+.btn-primary.mat-mdc-raised-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+.btn-primary.mat-mdc-raised-button:disabled {
+  opacity: .6;
+  box-shadow: none;
+}
+
+/* Botón secundario */
+.btn-secondary.mat-mdc-raised-button {
+  background-color: #4caf50;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 500;
+  transition: all .2s ease;
+  margin: 17px auto 0 auto;
+  width: 250px;
+  display: block;
+  box-shadow: 0 4px 10px rgba(0,0,0,.2);
+}
+
+.btn-secondary.mat-mdc-raised-button:hover {
+  background-color: #388e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,.2);
+}
+
+.btn-secondary.mat-mdc-raised-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+
+.btn-secondary.mat-mdc-raised-button:disabled {
+  opacity: .6;
+  box-shadow: none;
+}
+
+/* Formularios dentro de stepper */
+.mat-form-field {
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
