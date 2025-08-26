@@ -5,6 +5,7 @@ import { catchError, retry, throwError } from 'rxjs';
 import { HistoricalRecordingsByPhoneRequest } from '@/recordings/model/request/historical-recordings-by-phone.request';
 import { HistoricalRecordingsByDocumentRequest } from '@/recordings/model/request/historical-recordings-by-document.request';
 import { HistoricalRecordingsByDateRangeRequest } from '@/recordings/model/request/historical-recordings-by-date-range.request';
+import { HistoricalRecordingsByTractRequest } from '@/recordings/model/request/historical-recordings-by-tract';
 
 
 @Injectable({
@@ -34,6 +35,12 @@ export class HistoricalRecordingsService {
       );
     }
     return throwError(() => ({ status: error.status, message: error.error.message }))
+  }
+
+  getGestionHistoricaAudiosByTramo(tractRequest: HistoricalRecordingsByTractRequest) {
+    return this.http
+      .post(this.baseUrl + '/tramo', tractRequest, this.httpOptions)
+      .pipe(retry(2), catchError(this.handleError));
   }
 
   getGestionHistoricaAudiosByDateRange(dateRangeRequest: HistoricalRecordingsByDateRangeRequest) {
