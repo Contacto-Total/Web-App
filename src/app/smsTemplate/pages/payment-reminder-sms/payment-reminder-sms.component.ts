@@ -14,6 +14,7 @@ import { FormArray, Validators } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import {MatRadioButton, MatRadioGroup} from "@angular/material/radio";
+import {SmsTemplateServiceService} from "@/smsTemplate/services/sms-template-service.service";
 
 @Component({
   selector: 'app-payment-reminder-sms',
@@ -55,7 +56,7 @@ export class PaymentReminderSmsComponent implements OnInit {
   hoy = new Date();
   opcionForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private smsTemplateServiceService: SmsTemplateServiceService) {}
 
   ngOnInit() {
     this.fechasForm = this.fb.group({
@@ -79,6 +80,42 @@ export class PaymentReminderSmsComponent implements OnInit {
     this.fechasForm.valueChanges.subscribe(() => {
       const totalFechas = this.fechasArray.length;
       this.tipoMensaje = totalFechas === 1 ? 'A' : (totalFechas > 1 ? 'B' : null);
+    });
+  }
+
+  generateTramo5() {
+    const selectedOption = this.opcionForm.get('opcion')?.value;
+    const onlyLtde = selectedOption === 'solo_ltde';
+
+    this.smsTemplateServiceService.generateTramo5(onlyLtde).subscribe({
+      next: (response) => {
+        const blob = response.body;
+
+        if (!blob) {
+          console.error('No se recibió ningún archivo');
+          return;
+        }
+
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'archivo.csv';
+
+        if (contentDisposition) {
+          const match = contentDisposition.match(/filename="?([^"]+)"?/);
+          if (match && match[1]) {
+            filename = match[1];
+          }
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error('Error descargando archivo CSV', err);
+      }
     });
   }
 
@@ -107,22 +144,18 @@ export class PaymentReminderSmsComponent implements OnInit {
 
     if (fechas.length === 1) {
       const rawFecha = fechas[0];
-
-      // Asegurar que es un Date válido
       const fecha = rawFecha instanceof Date ? rawFecha : new Date(rawFecha);
+
       if (isNaN(fecha.getTime())) {
         return { fechaInvalida: true };
       }
 
+      // Normalizar a UTC (solo año/mes/día)
       const hoy = new Date();
+      const fechaUTC = Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate());
+      const hoyUTC = Date.UTC(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
 
-      // Normalizar ambas fechas a medianoche
-      fecha.setHours(0,0,0,0);
-      hoy.setHours(0,0,0,0);
-
-      const diffDias = Math.round(
-        (fecha.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      const diffDias = Math.floor((fechaUTC - hoyUTC) / (1000 * 60 * 60 * 24));
 
       return Math.abs(diffDias) <= 2 ? null : { fechaInvalida: true };
     }
@@ -133,6 +166,7 @@ export class PaymentReminderSmsComponent implements OnInit {
 
     return { sinFechas: true };
   }
+
 
 
   editarMensaje() {

@@ -135,7 +135,14 @@
         <mat-step>
           <ng-template matStepLabel>Generar SMS</ng-template>
           <p>Revise y genere los mensajes SMS</p>
-          <button mat-raised-button class="btn-secondary" (click)="generarMensaje()">Generar mensaje</button>
+          <button
+            mat-raised-button
+            class="btn-secondary"
+            (click)="generateTramo5()"
+            [disabled]="!opcionForm.valid"
+          >
+            Generar mensaje
+          </button>
         </mat-step>
 
       </mat-vertical-stepper>
