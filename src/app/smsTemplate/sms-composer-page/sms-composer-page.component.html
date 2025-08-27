@@ -1,0 +1,20 @@
+<div class="page">
+  <!-- Filtros -->
+  <app-sms-filters #filters
+                   (apply)="onApply(filters.value)"
+                   (resetClick)="onReset()">
+  </app-sms-filters>
+
+  <!-- Variables (chips) -->
+  <app-sms-variables></app-sms-variables>
+
+  <!-- Preview -->
+  <app-sms-preview-table></app-sms-preview-table>
+
+  <!-- Botón Descargar -->
+  <button mat-fab color="primary"
+          class="fab-download"
+          (click)="download()">
+    <mat-icon>download</mat-icon>
+  </button>
+</div>

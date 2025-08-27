@@ -12,17 +12,13 @@ import { RankingReportPageComponent } from './reports/pages/ranking-report-page/
 import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
 import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
-import {SmsTemplateComponent} from "@/smsTemplate/components/sms-template/sms-template.component";
-import {PaymentReminderSmsComponent} from "@/smsTemplate/pages/payment-reminder-sms/payment-reminder-sms.component";
-import {FollowUpSmsComponent} from "@/smsTemplate/pages/follow-up-sms/follow-up-sms.component";
+import {SmsComposerPageComponent} from "@/smsTemplate/sms-composer-page/sms-composer-page.component";
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
-    {'path': 'templateSMS', component: SmsTemplateComponent},
-    {'path': 'follow-up-SMS', component: FollowUpSmsComponent},
-    {'path': 'payment-reminder-SMS', component: PaymentReminderSmsComponent},
+    {'path': 'templateSMS', component: SmsComposerPageComponent},
     {'path': 'add/template', component: CreateSmsTemplatePageComponent},
     {'path': 'edit/template', component: UpdateSmsTemplatePageComponent, canActivate: [updateTemplateGuard]},
     {'path': 'recordings', component: RecordingsPageComponent},

@@ -1,0 +1,28 @@
+<form [formGroup]="form" class="form" (ngSubmit)="$event.preventDefault()">
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Tramo</mat-label>
+    <mat-select formControlName="tramo" multiple>
+      <mat-option [value]="3">Tramo 3</mat-option>
+      <mat-option [value]="5">Tramo 5</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Producto</mat-label>
+    <mat-select formControlName="producto">
+      <mat-option value="AMBOS">Ambos</mat-option>
+      <mat-option value="LTD">LTD</mat-option>
+      <mat-option value="LTDE">LTDE</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full">
+    <mat-label>Límite (preview)</mat-label>
+    <input matInput type="number" formControlName="limite" min="1" />
+  </mat-form-field>
+
+  <div class="actions">
+    <button type="button" mat-stroked-button (click)="aplicar()">Aplicar</button>
+    <button type="button" mat-button (click)="reset()">Reset</button>
+  </div>
+</form>

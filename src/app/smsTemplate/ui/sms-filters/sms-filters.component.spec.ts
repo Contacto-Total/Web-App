@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FollowUpSmsComponent } from './follow-up-sms.component';
+import { SmsFiltersComponent } from './sms-filters.component';
 
-describe('FollowUpSmsComponent', () => {
-  let component: FollowUpSmsComponent;
-  let fixture: ComponentFixture<FollowUpSmsComponent>;
+describe('SmsFiltersComponent', () => {
+  let component: SmsFiltersComponent;
+  let fixture: ComponentFixture<SmsFiltersComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FollowUpSmsComponent]
+      imports: [SmsFiltersComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(FollowUpSmsComponent);
+
+    fixture = TestBed.createComponent(SmsFiltersComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

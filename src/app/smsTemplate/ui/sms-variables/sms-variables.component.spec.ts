@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SmsTemplateComponent } from './sms-template.component';
+import { SmsVariablesComponent } from './sms-variables.component';
 
-describe('SmsTemplateComponent', () => {
-  let component: SmsTemplateComponent;
-  let fixture: ComponentFixture<SmsTemplateComponent>;
+describe('SmsVariablesComponent', () => {
+  let component: SmsVariablesComponent;
+  let fixture: ComponentFixture<SmsVariablesComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SmsTemplateComponent]
+      imports: [SmsVariablesComponent]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(SmsTemplateComponent);
+
+    fixture = TestBed.createComponent(SmsVariablesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
