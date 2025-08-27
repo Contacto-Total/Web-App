@@ -1,0 +1,10 @@
+<button
+  mat-flat-button
+  [color]="color"
+  class="w-full"
+  [type]="type"
+  [disabled]="disabled"
+  (click)="onClick?.()"
+>
+  <ng-content></ng-content>
+</button>

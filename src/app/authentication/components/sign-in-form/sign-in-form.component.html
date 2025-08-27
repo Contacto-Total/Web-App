@@ -1,0 +1,31 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="auth-form">
+  <app-authentication-input
+    label="Correo electrónico"
+    type="email"
+    [control]="emailControl"
+    errorMessage="Correo inválido"
+  />
+
+  <app-authentication-input
+    label="Contraseña"
+    type="password"
+    [control]="passwordControl"
+    errorMessage="Contraseña inválida"
+  />
+
+  <app-authentication-button
+    [disabled]="isLoading"
+  >
+    {{ isLoading ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+  </app-authentication-button>
+
+  <app-authentication-error-message [message]="generalError" />
+
+  <app-authentication-button
+    color="accent"
+    type="button"
+    [onClick]="goToSignUp.bind(this)"
+  >
+    Regístrate
+  </app-authentication-button>
+</form>

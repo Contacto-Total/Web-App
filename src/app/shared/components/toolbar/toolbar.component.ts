@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import { AuthenticationStore } from '@/authentication/services/authentication.store';
+import { AfterViewInit, Component, ElementRef, inject, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 
 import Swal from 'sweetalert2';
@@ -14,6 +15,7 @@ export class ToolbarComponent implements OnInit {
   @ViewChild('navToggle', { static: true }) navToggle!: ElementRef;
   @ViewChild('navMenu', { static: true }) navMenu!: ElementRef;
 
+  private authStore = inject(AuthenticationStore);
   menuVisible = false;
 
   constructor(private renderer: Renderer2, private router: Router) {}
@@ -26,6 +28,8 @@ export class ToolbarComponent implements OnInit {
     const toggle = this.navToggle.nativeElement;
     const nav = this.navMenu.nativeElement;
     const navItems = Array.from(nav.querySelectorAll('a')) as HTMLElement[];
+
+    console.log(this.authStore.snapshot)
 
     this.renderer.listen(toggle, 'click', () => {
       this.menuVisible = !this.menuVisible;
@@ -98,7 +102,7 @@ export class ToolbarComponent implements OnInit {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-        //this.authenticationService.signOut();
+        this.authStore.signOut();
       }
     })
   }
