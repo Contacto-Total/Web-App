@@ -85,7 +85,7 @@
                 Tramo
                 <p-columnFilter field="cartera" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Any">
+                        <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Todos">
                             <ng-template let-option pTemplate="item">
                                 <p class="filter-resultado-field">
                                     {{ option.label }}
@@ -111,7 +111,7 @@
                 Resultado
                 <p-columnFilter field="resultado" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Any">
+                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Todos">
                             <ng-template let-option pTemplate="item">
                                 <p class="filter-resultado-field">
                                     {{ option.label }}

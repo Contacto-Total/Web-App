@@ -4,6 +4,7 @@ export interface Range {
 }
 
 export interface CampaignReportRequest {
+  campaignName: string;
   directContactRanges: Range[];
   indirectContactRanges: Range[];
   brokenPromisesRanges: Range[];
