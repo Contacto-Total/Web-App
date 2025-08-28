@@ -1,40 +1,25 @@
-import { Component } from '@angular/core';
-import { CommonModule, AsyncPipe } from "@angular/common";
-import { MatChipsModule } from "@angular/material/chips";
-import { MatCardModule } from "@angular/material/card";
-import { MatButtonModule } from "@angular/material/button";
-import { SmsComposerStore } from "@/smsTemplate/shared/sms-composer.store";
-import { TemplatesService } from '../../shared/templates.service';
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { TemplateDef } from '../../shared/sms-models';
+import { extractVarsFromTemplate } from '../../shared/date-rules';
 
 @Component({
   selector: 'app-sms-templates',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, MatCardModule, MatChipsModule, MatButtonModule],
+  imports: [CommonModule, MatCardModule, MatChipsModule],
   templateUrl: './sms-templates.component.html',
   styleUrls: ['./sms-templates.component.css']
 })
 export class SmsTemplatesComponent {
+  @Input() templates: TemplateDef[] = [];
+  @Input() selected: TemplateDef | null = null;
+  @Output() pick = new EventEmitter<TemplateDef>();
 
-  // Cada vez que cambien las variables seleccionadas, pedimos las plantillas compatibles
-  templates$ = this.store.selectedVariables$.pipe(
-    // si VariableKey = string, este map sobra; si NO, lo mantenemos para castear
-    map(vars => vars as unknown as string[]),
-    // evita llamadas repetidas con el mismo contenido
-    distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-    switchMap(vars => this.templatesSvc.getCompatibleTemplates(vars))
-  );
+  varsOf(t: TemplateDef) { return extractVarsFromTemplate(t.template); }
 
-  private selectedName: string|null = null;
+  isSelected(t: TemplateDef) { return this.selected?.id === t.id; }
 
-  constructor(private templatesSvc: TemplatesService, private store: SmsComposerStore) {}
-
-  isSelected(idOrName: any) {
-    return this.selectedName === idOrName;
-  }
-
-  toggle(name: string) {
-    this.selectedName = this.selectedName === name ? null : name;
-    this.store.setTemplateName(this.selectedName);
-  }
+  choose(t: TemplateDef) { this.pick.emit(t); }
 }

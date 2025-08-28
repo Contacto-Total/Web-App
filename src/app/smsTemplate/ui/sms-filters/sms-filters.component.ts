@@ -1,52 +1,45 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule }     from '@angular/material/select';
-import { MatInputModule }      from '@angular/material/input';
-import { MatButtonModule }     from '@angular/material/button';
-import { MatOptionModule }     from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import {FormsModule} from "@angular/forms";
 
 @Component({
   selector: 'app-sms-filters',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatFormFieldModule, MatSelectModule,
-    MatInputModule, MatButtonModule, MatOptionModule
-  ],
+  imports: [CommonModule, MatFormFieldModule, MatSelectModule, MatCheckboxModule, MatInputModule, FormsModule],
   templateUrl: './sms-filters.component.html',
   styleUrls: ['./sms-filters.component.css']
 })
-export class SmsFiltersComponent {
-  form: FormGroup;
+export class SmsFiltersComponent implements OnChanges {
+  @Input() forceTramo3 = false;
 
-  @Output() apply = new EventEmitter<void>();
-  @Output() resetClick = new EventEmitter<void>();
+  tramo = signal<number | null>(null);
+  exclPromesas = signal<boolean>(true);
+  exclCompromisos = signal<boolean>(true);
+  exclBlacklist = signal<boolean>(true);
 
-  constructor(private fb: FormBuilder) {
-    this.form = this.fb.group({
-      tramo: [[]],                    // multiple
-      producto: ['AMBOS'],
-      limite: [1]
+  @Output() filtersChanged = new EventEmitter<{
+    tramo: number | null;
+    promesas: boolean;
+    compromisos: boolean;
+    blacklist: boolean;
+  }>();
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.forceTramo3) {
+      this.tramo.set(3);
+    }
+  }
+
+  emit() {
+    this.filtersChanged.emit({
+      tramo: this.forceTramo3 ? 3 : this.tramo(),
+      promesas: this.exclPromesas(),
+      compromisos: this.exclCompromisos(),
+      blacklist: this.exclBlacklist()
     });
-  }
-
-  aplicar() { this.apply.emit(); }
-
-  reset() {
-    this.form.reset({ tramo: [], producto: 'AMBOS', limite: 1 });
-    this.resetClick.emit();
-  }
-
-  // helper para el padre
-  get value() {
-    const v = this.form.value;
-    return {
-      tramos: v.tramo as number[] || [],
-      producto: v.producto as 'AMBOS'|'LTD'|'LTDE',
-      limite: Number(v.limite) || 1
-    };
   }
 }

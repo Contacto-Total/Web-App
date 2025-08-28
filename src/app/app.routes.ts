@@ -12,7 +12,7 @@ import { RankingReportPageComponent } from './reports/pages/ranking-report-page/
 import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
 import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
-import {SmsComposerPageComponent} from "@/smsTemplate/sms-composer-page/sms-composer-page.component";
+import {SmsComposerPageComponent} from "@/smsTemplate/sms-compose-page/sms-compose-page.component";
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},

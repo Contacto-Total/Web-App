@@ -1,0 +1,6 @@
+.spacer { flex: 1; }
+.container { display: grid; grid-template-columns: 320px 1fr; gap: 16px; padding: 12px; }
+.left { display: grid; gap: 12px; align-content: start; }
+.right { display: grid; gap: 12px; }
+app-sms-templates .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 12px; }
+.tpl.selected { outline: 2px solid #3f51b5; }

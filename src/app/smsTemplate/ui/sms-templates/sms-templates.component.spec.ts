@@ -11,7 +11,7 @@ describe('SmsTemplatesComponent', () => {
       imports: [SmsTemplatesComponent]
     })
     .compileComponents();
-
+    
     fixture = TestBed.createComponent(SmsTemplatesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

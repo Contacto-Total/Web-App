@@ -1,34 +1,27 @@
-<div class="header">
-  <h3>Plantillas compatibles</h3>
-  <div class="spacer"></div>
-</div>
-
 <div class="grid">
-  <mat-card class="tpl" *ngFor="let t of (templates$ | async)"
-            [class.selected]="isSelected(t.id)"
-            (click)="toggle(t.id)">
+  <mat-card class="tpl"
+            *ngFor="let t of templates"
+            [class.selected]="isSelected(t)"
+            (click)="choose(t)">
     <mat-card-header>
-      <mat-card-title>{{t.name}}</mat-card-title>
-      <mat-card-subtitle *ngIf="t.count !== undefined">{{t.count}} coincidencias</mat-card-subtitle>
+      <mat-card-title>{{ t.name }}</mat-card-title>
     </mat-card-header>
 
     <mat-card-content>
+      <div class="txt">{{ t.template }}</div>
       <div class="vars">
-        <span>Requiere:</span>
+        <!-- opcional: mostrar variables detectadas -->
         <mat-chip-set>
-          <mat-chip *ngFor="let rv of t.requiredVars">{{rv}}</mat-chip>
-        </mat-chip-set>
-      </div>
-      <div class="txt">{{t.text}}</div>
-      <div class="conds" *ngIf="t.conditions?.length">
-        <mat-chip-set>
-          <mat-chip *ngFor="let c of t.conditions">{{c}}</mat-chip>
+          <mat-chip *ngFor="let v of varsOf(t)">{{ v }}</mat-chip>
         </mat-chip-set>
       </div>
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-stroked-button color="primary">{{ isSelected(t.id) ? 'Quitar' : 'Usar' }}</button>
+      <button mat-stroked-button color="primary"
+              (click)="choose(t); $event.stopPropagation()">
+        {{ isSelected(t) ? 'Seleccionado' : 'Usar' }}
+      </button>
     </mat-card-actions>
   </mat-card>
 </div>

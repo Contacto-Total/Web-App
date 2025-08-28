@@ -1,0 +1,30 @@
+<app-toolbar></app-toolbar>
+
+<div class="container" style="margin-top: 8rem">
+  <div class="left">
+    <app-sms-variables (changed)="onVarsChanged($event)"></app-sms-variables>
+    <app-sms-filters
+      [forceTramo3]="forceTramo3()"
+      (filtersChanged)="onFilters($event)">
+    </app-sms-filters>
+  </div>
+
+  <div class="right">
+    <app-sms-templates
+      [templates]="(store.suggestedTemplates$ | async) ?? []"
+      [selected]="selectedTpl()"
+      (pick)="pickTemplate($event)">
+    </app-sms-templates>
+
+
+    <app-sms-preview
+      [data]="(store.preview$ | async) ?? null"
+      [orderedVars]="varsOrder()">
+    </app-sms-preview>
+  </div>
+  <div>
+    <button mat-stroked-button color="accent"
+            [disabled]="!(puedeExportar$ | async)"
+            (click)="store.export()">Exportar</button>
+  </div>
+</div>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SmsFiltersComponent } from './sms-filters.component';
+import { SmsPreviewComponent } from './sms-preview.component';
 
-describe('SmsFiltersComponent', () => {
-  let component: SmsFiltersComponent;
-  let fixture: ComponentFixture<SmsFiltersComponent>;
+describe('SmsPreviewComponent', () => {
+  let component: SmsPreviewComponent;
+  let fixture: ComponentFixture<SmsPreviewComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SmsFiltersComponent]
+      imports: [SmsPreviewComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(SmsFiltersComponent);
+    fixture = TestBed.createComponent(SmsPreviewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
