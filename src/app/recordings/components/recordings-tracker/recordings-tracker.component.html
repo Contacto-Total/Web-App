@@ -15,15 +15,6 @@
                     name="selectedTipoBusqueda"
                      />
             </div>
-
-            <div *ngIf="selectedTipoBusqueda.value === 'tramo'" class="search-per-tramo">
-                <p-dropdown 
-                    [options]="tramos" 
-                    [(ngModel)]="selectedTramo"
-                    optionLabel="label"
-                    name="selectedTramo" />
-                <p-button label="Buscar" type="submit" (click)="searchByTramo()"/>
-            </div>
     
             <div *ngIf="selectedTipoBusqueda.value === 'fechas'" class="search-per-dates">
                 <p-calendar 
@@ -94,7 +85,7 @@
                 Tramo
                 <p-columnFilter field="cartera" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Any">
+                        <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Any">
                             <ng-template let-option pTemplate="item">
                                 <p class="filter-resultado-field">
                                     {{ option.label }}
