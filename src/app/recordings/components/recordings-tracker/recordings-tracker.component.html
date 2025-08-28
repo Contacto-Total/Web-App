@@ -3,15 +3,26 @@
 </div>
 
 <form #dateForm="ngForm" class="form-search">
-    <div class="action-section">
-        <div class="search-section">
-            <div>
+    <div class="action-section w-full">
+        <div class="search-filters w-full">
+            <div class="type-search w-full">
                 <p-dropdown 
+                    class="w-full"
                     [options]="tipoBusqueda" 
                     [(ngModel)]="selectedTipoBusqueda"
                     optionLabel="label"
                     (onChange)="changeTypeSearch()" 
-                    name="selectedTipoBusqueda" />
+                    name="selectedTipoBusqueda"
+                     />
+            </div>
+
+            <div *ngIf="selectedTipoBusqueda.value === 'tramo'" class="search-per-tramo">
+                <p-dropdown 
+                    [options]="tramos" 
+                    [(ngModel)]="selectedTramo"
+                    optionLabel="label"
+                    name="selectedTramo" />
+                <p-button label="Buscar" type="submit" (click)="searchByTramo()"/>
             </div>
     
             <div *ngIf="selectedTipoBusqueda.value === 'fechas'" class="search-per-dates">
@@ -47,7 +58,7 @@
             </div>
         </div>
     
-        <div>
+        <div class="massive-actions">
             <button pButton label="Todos" icon="pi pi-volume-down" class="first-action-btn" (click)="massiveDownloadAudios()"></button>
             <button pButton label="Todos" icon="pi pi-file-excel" class="p-button-success" (click)="massiveDownloadReports()"></button>
         </div>
@@ -61,6 +72,7 @@
 <p-toast></p-toast>
 
 <p-table
+    class="styled-table"
     #dt
     [value]="gestiones"
     [paginator]="true"
@@ -127,7 +139,7 @@
                 </button>
             </td>
             <td>
-                <button 
+                <button *ngIf="gestion.resultado === 'PROMESA DE PAGO' || gestion.resultado === 'CONTACTO CON TITULAR O ENCARGADO'"
                     type="button" 
                     pButton 
                     pRipple 

@@ -1,0 +1,152 @@
+<app-toolbar></app-toolbar>
+
+<div class="section">
+  <h1 class="title">SMS de Cobro</h1>
+  <p class="subtitle">Seleccione el tramo y configure los mensajes</p>
+
+  <mat-tab-group>
+    <!-- TAB TRAMO 3 -->
+    <mat-tab label="Tramo 3">
+      <mat-vertical-stepper #stepper3 linear>
+
+        <!-- STEP 1: Selección de fechas -->
+        <mat-step [stepControl]="fechasForm">
+          <form [formGroup]="fechasForm">
+            <ng-template matStepLabel>Seleccione las fechas</ng-template>
+
+            <div formArrayName="fechas">
+              <div *ngFor="let fechaCtrl of fechasArray.controls; let i = index" [formGroupName]="i"
+                   style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+
+                <mat-form-field appearance="fill">
+                  <mat-label>Seleccione la fecha</mat-label>
+                  <input matInput [matDatepicker]="picker" formControlName="fecha">
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+                <button mat-icon-button color="warn" type="button" (click)="removeFecha(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+
+              <!-- Solo un datepicker global -->
+              <mat-datepicker #picker></mat-datepicker>
+            </div>
+
+
+
+            <button mat-raised-button color="primary" type="button" (click)="addFecha()" style="margin-bottom:20px;">
+              Agregar fecha
+            </button>
+
+            <mat-error *ngIf="fechasForm.invalid && fechasForm.touched">
+              Seleccione al menos una fecha válida (si es una sola debe estar dentro de ±2 días de hoy).
+            </mat-error>
+
+            <div>
+              <button mat-raised-button color="primary" matStepperNext [disabled]="fechasForm.invalid">
+                Continuar
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- STEP 2: Configuración de mensaje -->
+        <mat-step>
+          <ng-template matStepLabel>Mensaje SMS</ng-template>
+
+          <div *ngIf="tipoMensaje === 'A'">
+            <p class="sms-message">
+              Samuel, cancela cuota más antigua de Financiera OH de S/(SALDO MORA) hasta el hoy {{ hoy | date:'dd/MM' }}
+              (deuda total: S/110) evita el cobro del total llama al 915257495
+            </p>
+            <button mat-raised-button class="btn-primary" (click)="editarMensaje()">Editar</button>
+          </div>
+
+          <div *ngIf="tipoMensaje === 'B'">
+            <p class="sms-message">
+              Samuel, cancela cuota más antigua de Financiera OH de S/(BAJA30) hasta hoy {{ hoy | date:'dd/MM' }}
+              (deuda total: S/7360) evita el cobro del total llama al 915257495
+            </p>
+            <button mat-raised-button class="btn-primary" (click)="editarMensaje()">Editar</button>
+          </div>
+
+          <div>
+            <button mat-raised-button color="primary" matStepperNext>Continuar</button>
+          </div>
+        </mat-step>
+
+        <!-- STEP 3: Generar SMS -->
+        <mat-step>
+          <ng-template matStepLabel>Generar SMS</ng-template>
+          <p>Revise y genere los mensajes SMS</p>
+          <button mat-raised-button class="btn-secondary" (click)="generarMensaje()">Generar mensaje</button>
+        </mat-step>
+
+      </mat-vertical-stepper>
+    </mat-tab>
+
+    <!-- TAB TRAMO 5 -->
+    <mat-tab label="Tramo 5">
+      <mat-vertical-stepper #stepper5 linear>
+
+        <!-- STEP 1: Selección de opción -->
+        <mat-step [stepControl]="opcionForm">
+          <form [formGroup]="opcionForm">
+            <ng-template matStepLabel>Seleccione la opción</ng-template>
+
+            <mat-radio-group formControlName="opcion">
+              <mat-radio-button value="ltd_ltde">LTD o LTDE</mat-radio-button>
+              <br />
+              <mat-radio-button value="solo_ltde">Solo LTDE</mat-radio-button>
+            </mat-radio-group>
+
+            <mat-error *ngIf="opcionForm.invalid && opcionForm.touched">
+              Debe seleccionar una opción.
+            </mat-error>
+
+            <div style="margin-top: 20px;">
+              <button mat-raised-button color="primary" matStepperNext [disabled]="opcionForm.invalid">
+                Continuar
+              </button>
+            </div>
+          </form>
+        </mat-step>
+
+        <!-- STEP 2: Mensaje SMS -->
+        <mat-step>
+          <ng-template matStepLabel>Mensaje SMS</ng-template>
+
+          <div>
+            <p class="sms-message">
+              Samuel, tienes la oportunidad de liquidar tu deuda de Financiera Oh con S/100
+              Comunícate al 915168552 hasta el {{ hoy | date:'dd \'de\' MMMM' }}
+            </p>
+            <button mat-raised-button class="btn-primary" (click)="editarMensaje()">Editar</button>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <button mat-raised-button color="primary" matStepperNext>Continuar</button>
+          </div>
+        </mat-step>
+
+        <!-- STEP 3: Generar SMS -->
+        <mat-step>
+          <ng-template matStepLabel>Generar SMS</ng-template>
+          <p>Revise y genere los mensajes SMS</p>
+          <button
+            mat-raised-button
+            class="btn-secondary"
+            (click)="generateTramo5()"
+            [disabled]="!opcionForm.valid"
+          >
+            Generar mensaje
+          </button>
+        </mat-step>
+
+      </mat-vertical-stepper>
+    </mat-tab>
+
+  </mat-tab-group>
+</div>
