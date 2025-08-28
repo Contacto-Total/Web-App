@@ -49,24 +49,16 @@ export class RecordingsTrackerComponent implements OnInit {
 
   resultados!: any[];
 
-
+  tramos!: any[];
 
   tipoBusqueda = [
-    { label: 'Tramo', value: 'tramo'},
     { label: 'Fechas', value: 'fechas' },
     { label: 'Documento', value: 'documento' },
     { label: 'Telefono', value: 'telefono' }
   ];
 
-  tramos = [
-    { label: 'Todos', value: 'TODOS' },
-    { label: 'Tramo 3', value: 'FO_TRAMO 3' },
-    { label: 'Tramo 5', value: 'FO_TRAMO 5' }
-  ];
-
   selectedTipoBusqueda: any;
 
-  selectedTramo: any = { label: 'Todos', value: 'TODOS' };
 
   isLoading: boolean = false;
 
@@ -78,6 +70,11 @@ export class RecordingsTrackerComponent implements OnInit {
       monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     });
+
+    this.tramos = [
+      { label: 'Tramo 3', value: 'Tramo 3' },
+      { label: 'Tramo 5', value: 'Tramo 5' }
+    ];
 
     this.resultados = [
       { label: 'FUERA DE SERVICIO - NO EXISTE', value: 'FUERA DE SERVICIO - NO EXISTE' },
@@ -130,32 +127,6 @@ export class RecordingsTrackerComponent implements OnInit {
     } else {
       this.errorMessage = "Por favor, selecciona ambas fechas.";
     }
-  }
-
-  searchByTramo() {
-    if (!this.selectedTramo) {
-      return this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Por favor, selecciona un tramo.' });
-    }
-
-    this.isLoading = true;
-
-    const tramoRequest: HistoricalRecordingsByTractRequest = {
-      tramo: this.selectedTramo.value
-    };
-
-    this.gestionHistoricaAudiosService.getGestionHistoricaAudiosByTramo(tramoRequest).subscribe(
-      (data: any) => {
-        this.gestiones = data;
-        this.initialValue = [...data];
-        this.dt.filteredValue = [...data];
-        this.isLoading = false;
-      },
-      (error: any) => {
-        console.log(error);
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo cargar los datos.' });
-        this.isLoading = false;
-      }
-    );
   }
 
   searchByDates() {
