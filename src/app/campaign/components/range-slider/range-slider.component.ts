@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { CampaignReportRequest } from '@/campaign/model/request/campaign-report.request';
 import { CampaignService } from '@/campaign/services/campaign-service/campaign.service';
+import { DropdownModule } from 'primeng/dropdown';
 
 interface Range {
   min: number;
@@ -23,7 +24,7 @@ interface Range {
 @Component({
   selector: 'app-range-slider', 
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, InputNumberModule, ToastModule, CheckboxModule, TabViewModule],
+  imports: [CommonModule, FormsModule, ButtonModule, InputNumberModule, ToastModule, CheckboxModule, TabViewModule, DropdownModule],
   templateUrl: './range-slider.component.html',
   styleUrl: './range-slider.component.css',
   providers: [MessageService]
@@ -32,6 +33,11 @@ export class RangeSliderComponent implements OnInit{
   @ViewChild('slider', { static: true }) sliderElement!: ElementRef;
 
   step = 100;
+  campaignName: string = '';
+  tramoOptions = [
+    { label: 'Tramo 3', value: 'Tramo 3' },
+    { label: 'Tramo 5', value: 'Tramo 5' }
+  ];
   contactoDirectoRanges: Range[] = [];
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
@@ -60,6 +66,9 @@ export class RangeSliderComponent implements OnInit{
       { min: 3000, max: 4000, isChecked: false },
       { min: 4000, max: 8000, isChecked: false }
     ];
+
+    this.campaignName = 'Tramo 3'; // Default campaign name
+
   
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
@@ -169,6 +178,7 @@ export class RangeSliderComponent implements OnInit{
     }));
 
     const campañaYReporteRequest: CampaignReportRequest = {
+      campaignName: this.campaignName,
       directContactRanges: contactoDirectoRangesToConsult,
       indirectContactRanges: contactoIndirectoRangesToConsult,
       brokenPromisesRanges: promesasRotasRangesToConsult,
@@ -179,7 +189,7 @@ export class RangeSliderComponent implements OnInit{
 
     Swal.fire({
       title: 'Procesando...',
-      html: 'Insertando rangos y consultando...',
+      html: 'Insertando rangos, consultando y generando reporte...',
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
