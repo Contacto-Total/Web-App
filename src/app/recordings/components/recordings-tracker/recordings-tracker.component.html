@@ -139,7 +139,7 @@
                 </button>
             </td>
             <td>
-                <button 
+                <button *ngIf="gestion.resultado === 'PROMESA DE PAGO' || gestion.resultado === 'CONTACTO CON TITULAR O ENCARGADO'"
                     type="button" 
                     pButton 
                     pRipple 

@@ -133,11 +133,7 @@
     flex-direction: column;
     gap: 10px;
   }
-  .p-dropdown-label, p-dropdown-label {
-    width: 100% !important
-  }
-
-  .p-dropdown-label, .p-dropdown {
-    width: 100% !important
+  :host ::ng-deep .p-dropdown {
+    width: 100% !important;
   }
 }
