@@ -1,261 +1,171 @@
-<div class="main-container">
-  <div *ngIf="isLoading" class="overlay">
+<div *ngIf="isLoading" class="overlay">
     <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
-  </div>
-  
-  <!-- Header de búsqueda -->
-  <div class="search-header">
-    <h2 class="page-title">Gestión de Búsquedas</h2>
-  </div>
-  
-  <!-- Layout principal con grid -->
-  <div class="main-layout">
-    <!-- Formulario de búsqueda -->
-    <form #dateForm="ngForm" class="search-form-card">
-      <div class="form-content">
-        <!-- Sección de filtros -->
-        <div class="filters-section">
-          <div class="filter-group">
-            <div class="campaign-type">
-              <label class="filter-label">Tramo</label>
+</div>
+
+<form #dateForm="ngForm" class="form-search">
+    <div class="action-section w-full">
+        <div class="search-filters w-full">
+            <div class="tramo-filter w-full">
               <p-dropdown 
-                class="type-dropdown"
-                [options]="tramos" 
+                class="w-full"
+                [options]="tramos"
                 [(ngModel)]="selectedTramo"
                 optionLabel="label"
-                (onChange)="changeTypeSearch()" 
+                optionValue="value"
                 name="selectedTramo"
-                placeholder="Seleccionar tramo" />
+                placeholder="Tramo">
+              </p-dropdown>
             </div>
-            <div class="search-type">
-              <label class="filter-label">Tipo de búsqueda</label>
-              <p-dropdown 
-                class="type-dropdown"
-                [options]="tipoBusqueda" 
-                [(ngModel)]="selectedTipoBusqueda"
-                optionLabel="label"
-                (onChange)="changeTypeSearch()" 
-                name="selectedTipoBusqueda"
-                placeholder="Seleccionar tipo de búsqueda" />
+
+            <div class="type-search w-full">
+                <p-dropdown 
+                    class="w-full"
+                    [options]="tipoBusqueda" 
+                    [(ngModel)]="selectedTipoBusqueda"
+                    optionLabel="label"
+                    (onChange)="changeTypeSearch()" 
+                    name="selectedTipoBusqueda"
+                     />
             </div>
-            
-          </div>
-          
-          <!-- Búsqueda por fechas -->
-          <div *ngIf="selectedTipoBusqueda.value === 'fechas'" class="date-search-section">
-            <div class="date-inputs">
-              <div class="date-group">
-                <label class="date-label">Fecha inicio</label>
-                <p-calendar 
-                  [(ngModel)]="startDate" 
-                  [iconDisplay]="'input'" 
-                  [showIcon]="true" 
-                  inputId="startDate"
-                  dateFormat="yy-mm-dd" 
-                  name="startDate"
-                  placeholder="Seleccionar fecha"
-                  (onSelect)="validateDates()" 
-                  styleClass="date-input" />
-              </div>
-              
-              <div class="date-group">
-                <label class="date-label">Fecha fin</label>
-                <p-calendar 
-                  [(ngModel)]="endDate" 
-                  [iconDisplay]="'input'" 
-                  [showIcon]="true" 
-                  inputId="endDate"
-                  dateFormat="yy-mm-dd" 
-                  name="endDate"
-                  placeholder="Seleccionar fecha"
-                  (onSelect)="validateDates()" 
-                  styleClass="date-input" />
-              </div>
-            </div>
-            
-            <p-button 
-              label="Buscar por Fechas" 
-              icon="pi pi-calendar"
-              type="submit" 
-              (click)="searchByDates()"
-              styleClass="search-btn" />
-          </div>
-          
-          <!-- Búsqueda por documento -->
-          <div *ngIf="selectedTipoBusqueda.value === 'documento'" class="document-search-section">
-            <div class="input-with-button">
-              <div class="input-group">
-                <label class="input-label">Número de documento</label>
-                <input 
-                  type="text" 
-                  pInputText 
-                  [(ngModel)]="documento" 
-                  name="documento" 
-                  placeholder="Ingrese número de documento"
-                  class="search-input" />
-              </div>
-              <p-button 
-                label="Buscar" 
-                icon="pi pi-search"
-                type="submit" 
-                (click)="searchByDocumento()"
-                styleClass="search-btn" />
-            </div>
-          </div>
-          
-          <!-- Búsqueda por teléfono -->
-          <div *ngIf="selectedTipoBusqueda.value === 'telefono'" class="phone-search-section">
-            <div class="input-with-button">
-              <div class="input-group">
-                <label class="input-label">Número de teléfono</label>
-                <input 
-                  type="text" 
-                  pInputText 
-                  [(ngModel)]="telefono" 
-                  name="telefono" 
-                  placeholder="Ingrese número de teléfono"
-                  class="search-input" />
-              </div>
-              <p-button 
-                label="Buscar" 
-                icon="pi pi-phone"
-                type="submit" 
-                (click)="searchByTelefono()"
-                styleClass="search-btn" />
-            </div>
-          </div>
-        </div>
-        
-        <!-- Mensaje de error -->
-        <div *ngIf="errorMessage" class="error-alert">
-          <i class="pi pi-exclamation-triangle"></i>
-          <span>{{ errorMessage }}</span>
-        </div>
-      </div>
-    </form>
     
-    <!-- Acciones masivas en sidebar -->
-    <div class="massive-actions-card">
-      <div class="massive-actions-section">
-        <div class="actions-header">
-          <h4>Acciones Masivas</h4>
-          <p class="actions-subtitle">Descargar todos los registros</p>
+            <div *ngIf="selectedTipoBusqueda.value === 'fechas'" class="search-per-dates">
+                <p-calendar 
+                    [(ngModel)]="startDate" 
+                    [iconDisplay]="'input'" 
+                    [showIcon]="true" 
+                    inputId="icondisplay"
+                    dateFormat="yy-mm-dd" 
+                    name="startDate"
+                    (onSelect)="validateDates()" />
+          
+                <p-calendar 
+                    [(ngModel)]="endDate" 
+                    [iconDisplay]="'input'" 
+                    [showIcon]="true" 
+                    inputId="icondisplay"
+                    dateFormat="yy-mm-dd" 
+                    name="endDate"
+                    (onSelect)="validateDates()" />
+                
+                <p-button label="Buscar" type="submit" (click)="searchByDates()"/>
+            </div>
+
+            <div *ngIf="selectedTipoBusqueda.value === 'documento'" class="search-per-documento">
+                <input type="text" pInputText [(ngModel)]="documento" name="documento" placeholder="Documento"/>
+                <p-button label="Buscar" type="submit" (click)="searchByDocumento()" />
+            </div>
+        
+            <div *ngIf="selectedTipoBusqueda.value === 'telefono'" class="search-per-telefono">
+                <input type="text" pInputText [(ngModel)]="telefono" name="telefono" placeholder="Telefono"/>
+                <p-button label="Buscar" type="submit" (click)="searchByTelefono()" />
+            </div>
         </div>
-        <div class="action-buttons-group">
-          <p-button 
-            label="Audios" 
-            icon="pi pi-volume-down" 
-            (click)="massiveDownloadAudios()"
-            styleClass="p-button-outlined action-btn" />
-          <p-button 
-            label="Reportes" 
-            icon="pi pi-file-excel" 
-            (click)="massiveDownloadReports()"
-            styleClass="p-button-success action-btn" />
+    
+        <div class="massive-actions">
+            <button pButton label="Todos" icon="pi pi-volume-down" class="first-action-btn" (click)="massiveDownloadAudios()"></button>
+            <button pButton label="Todos" icon="pi pi-file-excel" class="p-button-success" (click)="massiveDownloadReports()"></button>
         </div>
-      </div>
     </div>
-  </div>
   
-  <!-- Toast y Tabla -->
-  <p-toast></p-toast>
-  
-  <div class="table-container">
-    <p-table
-      class="enhanced-table"
-      #dt
-      [value]="gestiones"
-      [paginator]="true"
-      [rows]="5"
-      [tableStyle]="{ 'min-width': '50rem' }"
-      [showCurrentPageReport]="true"
-      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
-      [rowsPerPageOptions]="[5, 10, 20]"
-      (sortFunction)="customSort($event)"
-      [customSort]="true">
-      
-      <ng-template pTemplate="header">
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+</form>
+
+<p-toast></p-toast>
+
+<p-table
+    class="styled-table"
+    #dt
+    [value]="gestiones"
+    [paginator]="true"
+    [rows]="5"
+    [tableStyle]="{ 'min-width': '50rem' }"
+    [showCurrentPageReport]="true"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [rowsPerPageOptions]="[5, 10, 20]"
+    (sortFunction)="customSort($event)"
+    [customSort]="true"
+>
+    <ng-template pTemplate="header">
         <tr>
-          <th style="width:auto">
-            DNI
-            <p-columnFilter type="text" field="documento" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
-          </th>
-          <th style="width:auto">
-            Tramo
-            <p-columnFilter field="cartera" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Todos">
-                  <ng-template let-option pTemplate="item">
-                    <p class="filter-item">{{ option.label }}</p>
-                  </ng-template>
-                </p-dropdown>
-              </ng-template>
-            </p-columnFilter>
-          </th>
-          <th style="width:auto">
-            Teléfono
-            <p-columnFilter type="text" field="telefono" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
-          </th>
-          <th style="width:auto" pSortableColumn="fechagestion">
-            Fecha
-            <p-sortIcon field="fechagestion" />
-          </th>
-          <th style="width:auto" pSortableColumn="horagestion">
-            Hora
-            <p-sortIcon field="horagestion" />
-          </th>
-          <th style="width:auto">
-            Resultado
-            <p-columnFilter field="resultado" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Todos">
-                  <ng-template let-option pTemplate="item">
-                    <p class="filter-item">{{ option.label }}</p>
-                  </ng-template>
-                </p-dropdown>
-              </ng-template>
-            </p-columnFilter>
-          </th>
-          <th style="width:auto">Solución</th>
-          <th style="width: 5rem">Audio</th>
-          <th style="width: 5rem">Reporte</th>
+            <th style="width:auto">
+                DNI
+                <p-columnFilter type="text" field="documento" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
+            </th>
+            <th style="width:auto">
+                Tramo
+                <p-columnFilter field="cartera" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Todos">
+                            <ng-template let-option pTemplate="item">
+                                <p class="filter-resultado-field">
+                                    {{ option.label }}
+                                </p>
+                            </ng-template>
+                        </p-dropdown>
+                    </ng-template>
+                </p-columnFilter>
+            </th>
+            <th style="width:auto">
+                Telefono
+                <p-columnFilter type="text" field="telefono" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
+            </th>
+            <th style="width:auto" pSortableColumn="fechagestion">
+                Fecha
+                <p-sortIcon field="fechagestion" />
+            </th>
+            <th style="width:auto" pSortableColumn="horagestion">
+                Hora
+                <p-sortIcon field="horagestion" />
+            </th>
+            <th style="width:auto">
+                Resultado
+                <p-columnFilter field="resultado" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Todos">
+                            <ng-template let-option pTemplate="item">
+                                <p class="filter-resultado-field">
+                                    {{ option.label }}
+                                </p>
+                            </ng-template>
+                        </p-dropdown>
+                    </ng-template>
+                </p-columnFilter>
+            </th>
+            <th style="width:auto">Solucion</th>
+            <th style="width: 5rem"></th>
+            <th style="width: 5rem"></th>
         </tr>
-      </ng-template>
-      
-      <ng-template pTemplate="body" let-gestion>
+    </ng-template>
+    <ng-template pTemplate="body" let-gestion>
         <tr>
-          <td>{{ gestion.documento }}</td>
-          <td>
-            <span class="tramo-badge">{{ gestion.cartera }}</span>
-          </td>
-          <td>{{ gestion.telefono }}</td>
-          <td>{{ gestion.fechagestion }}</td>
-          <td>{{ gestion.horagestion }}</td>
-          <td>
-            <span class="resultado-badge" [class]="getResultadoClass(gestion.resultado)">
-              {{ gestion.resultado }}
-            </span>
-          </td>
-          <td>{{ gestion.solucion }}</td>
-          <td>
-            <p-button 
-              icon="pi pi-volume-down" 
-              (click)="downloadAudio(gestion)"
-              styleClass="p-button-rounded p-button-outlined table-action-btn"
-              pTooltip="Descargar Audio">
-            </p-button>
-          </td>
-          <td>
-            <p-button 
-              *ngIf="gestion.resultado === 'PROMESA DE PAGO' || gestion.resultado === 'CONTACTO CON TITULAR O ENCARGADO'"
-              icon="pi pi-file-excel" 
-              (click)="downloadReport(gestion)"
-              styleClass="p-button-rounded p-button-success table-action-btn"
-              pTooltip="Descargar Reporte">
-            </p-button>
-          </td>
+            <td>{{ gestion.documento }}</td>
+            <td>{{ gestion.cartera }}</td>
+            <td>{{ gestion.telefono }}</td>
+            <td>{{ gestion.fechagestion }}</td>
+            <td>{{ gestion.horagestion }}</td>
+            <td>{{ gestion.resultado }}</td>
+            <td>{{ gestion.solucion }}</td>
+            <td>
+                <button 
+                    type="button" 
+                    pButton 
+                    pRipple 
+                    icon="pi pi-volume-down" 
+                    (click)="downloadAudio(gestion)">
+                </button>
+            </td>
+            <td>
+                <button *ngIf="gestion.resultado === 'PROMESA DE PAGO' || gestion.resultado === 'CONTACTO CON TITULAR O ENCARGADO'"
+                    type="button" 
+                    pButton 
+                    pRipple 
+                    icon="pi pi-file-excel" 
+                    class="p-button-success"
+                    (click)="downloadReport(gestion)">
+                </button>
+            </td>
         </tr>
-      </ng-template>
-    </p-table>
-  </div>
-</div>
+    </ng-template>
+</p-table>

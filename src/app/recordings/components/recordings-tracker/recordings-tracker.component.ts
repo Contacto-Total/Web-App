@@ -49,11 +49,7 @@ export class RecordingsTrackerComponent implements OnInit {
 
   resultados!: any[];
 
-  tramos = [
-      { label: 'Todos', value: 'Todos' },
-      { label: 'Tramo 3', value: 'Tramo 3' },
-      { label: 'Tramo 5', value: 'Tramo 5' }
-    ];
+  tramos!: any[];
 
   tipoBusqueda = [
     { label: 'Fechas', value: 'fechas' },
@@ -61,9 +57,10 @@ export class RecordingsTrackerComponent implements OnInit {
     { label: 'Telefono', value: 'telefono' }
   ];
 
-  selectedTramo: any;
-
   selectedTipoBusqueda: any;
+
+
+  selectedTramo: string = 'TODOS'; 
 
 
   isLoading: boolean = false;
@@ -76,6 +73,12 @@ export class RecordingsTrackerComponent implements OnInit {
       monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     });
+
+    this.tramos = [
+      { label: 'Todos', value: 'todos' },
+      { label: 'Tramo 3', value: 'FO_TRAMO 3' },
+      { label: 'Tramo 5', value: 'FO_TRAMO 5' }
+    ];
 
     this.resultados = [
       { label: 'FUERA DE SERVICIO - NO EXISTE', value: 'FUERA DE SERVICIO - NO EXISTE' },
@@ -142,6 +145,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const dateRangeRequest = {
+      tramo: this.selectedTramo,
       startDate: this.startDate.toISOString().split('T')[0],
       endDate: this.endDate.toISOString().split('T')[0]
     };
@@ -169,6 +173,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const documentoRequest: HistoricalRecordingsByDocumentRequest = {
+      tramo: this.selectedTramo,
       documento: this.documento
     };
 
@@ -195,6 +200,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const telefonoRequest: HistoricalRecordingsByPhoneRequest = {
+      tramo: this.selectedTramo,
       telefono: this.telefono
     };
 
@@ -225,17 +231,6 @@ export class RecordingsTrackerComponent implements OnInit {
       this.gestiones = [...this.initialValue];
       this.dt.reset();
     }
-  }
-
-  getResultadoClass(resultado: string): string {
-    if (resultado.includes('PROMESA DE PAGO') || resultado.includes('TITULAR')) {
-      return 'resultado-success';
-    } else if (resultado.includes('COMPROMISO')) {
-      return 'resultado-warning';
-    } else if (resultado.includes('CONTACTO')) {
-      return 'resultado-info';
-    }
-    return 'resultado-default';
   }
 
   sortTableData(event: SortEvent) {
