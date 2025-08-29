@@ -5,6 +5,18 @@
 <form #dateForm="ngForm" class="form-search">
     <div class="action-section w-full">
         <div class="search-filters w-full">
+            <div class="tramo-filter w-full">
+              <p-dropdown 
+                class="w-full"
+                [options]="tramos"
+                [(ngModel)]="selectedTramo"
+                optionLabel="label"
+                optionValue="value"
+                name="selectedTramo"
+                placeholder="Tramo">
+              </p-dropdown>
+            </div>
+
             <div class="type-search w-full">
                 <p-dropdown 
                     class="w-full"

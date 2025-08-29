@@ -60,6 +60,9 @@ export class RecordingsTrackerComponent implements OnInit {
   selectedTipoBusqueda: any;
 
 
+  selectedTramo: string = 'TODOS'; 
+
+
   isLoading: boolean = false;
 
   constructor(private gestionHistoricaAudiosService: HistoricalRecordingsService, private ftpService: RecordingDownloadService, private audioEvaluacionService: RecordingEvaluationReportService, private primengConfig: PrimeNGConfig, private messageService: MessageService) {}
@@ -72,8 +75,9 @@ export class RecordingsTrackerComponent implements OnInit {
     });
 
     this.tramos = [
-      { label: 'Tramo 3', value: 'Tramo 3' },
-      { label: 'Tramo 5', value: 'Tramo 5' }
+      { label: 'Todos', value: 'todos' },
+      { label: 'Tramo 3', value: 'FO_TRAMO 3' },
+      { label: 'Tramo 5', value: 'FO_TRAMO 5' }
     ];
 
     this.resultados = [
@@ -141,6 +145,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const dateRangeRequest = {
+      tramo: this.selectedTramo,
       startDate: this.startDate.toISOString().split('T')[0],
       endDate: this.endDate.toISOString().split('T')[0]
     };
@@ -168,6 +173,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const documentoRequest: HistoricalRecordingsByDocumentRequest = {
+      tramo: this.selectedTramo,
       documento: this.documento
     };
 
@@ -194,6 +200,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const telefonoRequest: HistoricalRecordingsByPhoneRequest = {
+      tramo: this.selectedTramo,
       telefono: this.telefono
     };
 

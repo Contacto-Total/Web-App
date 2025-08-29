@@ -44,6 +44,44 @@
                  class="range-card">
               <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
+
+                <div class="range-inputs">
+                  <div class="ranges">
+                      <div class="input-group">
+                      <label>Desde</label>
+                      <p-inputNumber 
+                        [(ngModel)]="contactoDirectoRange.min"
+                        [min]="0"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  
+                  
+                    <div class="input-group" 
+                        *ngIf="!contactoDirectoRange.isChecked">
+                      <label>Hasta</label>
+                      <p-inputNumber 
+                        [(ngModel)]="contactoDirectoRange.max"
+                        [min]="0"
+                        [disabled]="contactoDirectoRange.isChecked"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  </div>
+                  
+
+                  <div class="checkbox-section">
+                    <p-checkbox 
+                      label="Rango máximo (sin límite superior)"
+                      [(ngModel)]="contactoDirectoRange.isChecked" 
+                      (onChange)="toggleCheck(i)" 
+                      [binary]="true"
+                      [disabled]="isAnyChecked() && !contactoDirectoRange.isChecked">
+                    </p-checkbox>
+                  </div>
+
+                </div>
+
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -51,42 +89,9 @@
                 </p-button>
               </div>
               
-              <div class="range-inputs">
-                <div class="input-group">
-                  <label>Desde</label>
-                  <p-inputNumber 
-                    [(ngModel)]="contactoDirectoRange.min"
-                    [min]="0"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-                
-                <div class="range-separator" 
-                     [style.visibility]="contactoDirectoRange.isChecked ? 'hidden' : 'visible'">
-                  <span>hasta</span>
-                </div>
-                
-                <div class="input-group" 
-                     [style.visibility]="contactoDirectoRange.isChecked ? 'hidden' : 'visible'">
-                  <label>Hasta</label>
-                  <p-inputNumber 
-                    [(ngModel)]="contactoDirectoRange.max"
-                    [min]="0"
-                    [disabled]="contactoDirectoRange.isChecked"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-              </div>
               
-              <div class="checkbox-section">
-                <p-checkbox 
-                  label="Rango máximo (sin límite superior)"
-                  [(ngModel)]="contactoDirectoRange.isChecked" 
-                  (onChange)="toggleCheck(i)" 
-                  [binary]="true"
-                  [disabled]="isAnyChecked() && !contactoDirectoRange.isChecked">
-                </p-checkbox>
-              </div>
+              
+              
             </div>
             
             <!-- Estado vacío -->
@@ -109,57 +114,52 @@
           <div class="ranges-grid">
             <div *ngFor="let contactoIndirectoRange of contactoIndirectoRanges; let i = index" 
                  class="range-card">
-              <div class="range-header">
+                <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
+
+                <div class="range-inputs">
+                  <div class="ranges">
+                      <div class="input-group">
+                      <label>Desde</label>
+                      <p-inputNumber 
+                        [(ngModel)]="contactoIndirectoRange.min"
+                        [min]="0"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  
+                  
+                    <div class="input-group" 
+                        *ngIf="!contactoIndirectoRange.isChecked">
+                      <label>Hasta</label>
+                      <p-inputNumber 
+                        [(ngModel)]="contactoIndirectoRange.max"
+                        [min]="0"
+                        [disabled]="contactoIndirectoRange.isChecked"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  </div>
+                  
+
+                  <div class="checkbox-section">
+                    <p-checkbox 
+                      label="Rango máximo (sin límite superior)"
+                      [(ngModel)]="contactoIndirectoRange.isChecked" 
+                      (onChange)="toggleCheck(i)" 
+                      [binary]="true"
+                      [disabled]="isAnyChecked() && !contactoIndirectoRange.isChecked">
+                    </p-checkbox>
+                  </div>
+
+                </div>
+
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
                   styleClass="p-button-danger p-button-text p-button-sm delete-btn">
                 </p-button>
               </div>
-              
-              <div class="range-inputs">
-                <div class="input-group">
-                  <label>Desde</label>
-                  <p-inputNumber 
-                    [(ngModel)]="contactoIndirectoRange.min"
-                    [min]="0"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-                
-                <div class="range-separator" 
-                     [style.visibility]="contactoIndirectoRange.isChecked ? 'hidden' : 'visible'">
-                  <span>hasta</span>
-                </div>
-                
-                <div class="input-group" 
-                     [style.visibility]="contactoIndirectoRange.isChecked ? 'hidden' : 'visible'">
-                  <label>Hasta</label>
-                  <p-inputNumber 
-                    [(ngModel)]="contactoIndirectoRange.max"
-                    [min]="0"
-                    [disabled]="contactoIndirectoRange.isChecked"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-              </div>
-              
-              <div class="checkbox-section">
-                <p-checkbox 
-                  label="Rango máximo (sin límite superior)"
-                  [(ngModel)]="contactoIndirectoRange.isChecked" 
-                  (onChange)="toggleCheck(i)" 
-                  [binary]="true"
-                  [disabled]="isAnyChecked() && !contactoIndirectoRange.isChecked">
-                </p-checkbox>
-              </div>
-            </div>
-            
-            <div *ngIf="contactoIndirectoRanges.length === 0" class="empty-state">
-              <i class="pi pi-inbox"></i>
-              <p>No hay rangos configurados</p>
-              <p class="empty-subtitle">Haz clic en "Añadir Rango" para comenzar</p>
             </div>
           </div>
         </div>
@@ -175,58 +175,54 @@
           <div class="ranges-grid">
             <div *ngFor="let promesasRotasRange of promesasRotasRanges; let i = index" 
                  class="range-card">
-              <div class="range-header">
+                 <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
+
+                <div class="range-inputs">
+                  <div class="ranges">
+                      <div class="input-group">
+                      <label>Desde</label>
+                      <p-inputNumber 
+                        [(ngModel)]="promesasRotasRange.min"
+                        [min]="0"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  
+                    
+                  
+                    <div class="input-group" 
+                        *ngIf="!promesasRotasRange.isChecked">
+                      <label>Hasta</label>
+                      <p-inputNumber 
+                        [(ngModel)]="promesasRotasRange.max"
+                        [min]="0"
+                        [disabled]="promesasRotasRange.isChecked"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  </div>
+                  
+
+                  <div class="checkbox-section">
+                    <p-checkbox 
+                      label="Rango máximo (sin límite superior)"
+                      [(ngModel)]="promesasRotasRange.isChecked" 
+                      (onChange)="toggleCheck(i)" 
+                      [binary]="true"
+                      [disabled]="isAnyChecked() && !promesasRotasRange.isChecked">
+                    </p-checkbox>
+                  </div>
+
+                </div>
+
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
                   styleClass="p-button-danger p-button-text p-button-sm delete-btn">
                 </p-button>
               </div>
-              
-              <div class="range-inputs">
-                <div class="input-group">
-                  <label>Desde</label>
-                  <p-inputNumber 
-                    [(ngModel)]="promesasRotasRange.min"
-                    [min]="0"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-                
-                <div class="range-separator" 
-                     [style.visibility]="promesasRotasRange.isChecked ? 'hidden' : 'visible'">
-                  <span>hasta</span>
-                </div>
-                
-                <div class="input-group" 
-                     [style.visibility]="promesasRotasRange.isChecked ? 'hidden' : 'visible'">
-                  <label>Hasta</label>
-                  <p-inputNumber 
-                    [(ngModel)]="promesasRotasRange.max"
-                    [min]="0"
-                    [disabled]="promesasRotasRange.isChecked"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
               </div>
-              
-              <div class="checkbox-section">
-                <p-checkbox 
-                  label="Rango máximo (sin límite superior)"
-                  [(ngModel)]="promesasRotasRange.isChecked" 
-                  (onChange)="toggleCheck(i)" 
-                  [binary]="true"
-                  [disabled]="isAnyChecked() && !promesasRotasRange.isChecked">
-                </p-checkbox>
-              </div>
-            </div>
-            
-            <div *ngIf="promesasRotasRanges.length === 0" class="empty-state">
-              <i class="pi pi-inbox"></i>
-              <p>No hay rangos configurados</p>
-              <p class="empty-subtitle">Haz clic en "Añadir Rango" para comenzar</p>
-            </div>
           </div>
         </div>
       </p-tabPanel>
@@ -241,52 +237,55 @@
           <div class="ranges-grid">
             <div *ngFor="let noContactadoRange of noContactadoRanges; let i = index" 
                  class="range-card">
-              <div class="range-header">
+                 <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
+
+                <div class="range-inputs">
+                  <div class="ranges">
+                      <div class="input-group">
+                      <label>Desde</label>
+                      <p-inputNumber 
+                        [(ngModel)]="noContactadoRange.min"
+                        [min]="0"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  
+
+                  
+                    <div class="input-group" 
+                        *ngIf="!noContactadoRange.isChecked">
+                      <label>Hasta</label>
+                      <p-inputNumber 
+                        [(ngModel)]="noContactadoRange.max"
+                        [min]="0"
+                        [disabled]="noContactadoRange.isChecked"
+                        styleClass="compact-input">
+                      </p-inputNumber>
+                    </div>
+                  </div>
+                  
+
+                  <div class="checkbox-section">
+                    <p-checkbox 
+                      label="Rango máximo (sin límite superior)"
+                      [(ngModel)]="noContactadoRange.isChecked" 
+                      (onChange)="toggleCheck(i)" 
+                      [binary]="true"
+                      [disabled]="isAnyChecked() && !noContactadoRange.isChecked">
+                    </p-checkbox>
+                  </div>
+
+                </div>
+
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
                   styleClass="p-button-danger p-button-text p-button-sm delete-btn">
                 </p-button>
               </div>
-              
-              <div class="range-inputs">
-                <div class="input-group">
-                  <label>Desde</label>
-                  <p-inputNumber 
-                    [(ngModel)]="noContactadoRange.min"
-                    [min]="0"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-                
-                <div class="range-separator" 
-                     [style.visibility]="noContactadoRange.isChecked ? 'hidden' : 'visible'">
-                  <span>hasta</span>
-                </div>
-                
-                <div class="input-group" 
-                     [style.visibility]="noContactadoRange.isChecked ? 'hidden' : 'visible'">
-                  <label>Hasta</label>
-                  <p-inputNumber 
-                    [(ngModel)]="noContactadoRange.max"
-                    [min]="0"
-                    [disabled]="noContactadoRange.isChecked"
-                    styleClass="compact-input">
-                  </p-inputNumber>
-                </div>
-              </div>
-              
-              <div class="checkbox-section">
-                <p-checkbox 
-                  label="Rango máximo (sin límite superior)"
-                  [(ngModel)]="noContactadoRange.isChecked" 
-                  (onChange)="toggleCheck(i)" 
-                  [binary]="true"
-                  [disabled]="isAnyChecked() && !noContactadoRange.isChecked">
-                </p-checkbox>
-              </div>
             </div>
+              
             
             <div *ngIf="noContactadoRanges.length === 0" class="empty-state">
               <i class="pi pi-inbox"></i>
