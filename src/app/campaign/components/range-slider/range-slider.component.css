@@ -71,10 +71,9 @@
 
 /* Grid de rangos */
 .ranges-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
-  margin-top: 1.5rem;
 }
 
 /* Cards de rango rediseñadas */
@@ -116,7 +115,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
 }
 
 .range-label {
@@ -141,16 +141,27 @@
 /* Inputs de rango */
 .range-inputs {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  flex-direction: column;
   gap: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
   flex-wrap: wrap;
+}
+
+.ranges {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  width: 100%;
+
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
   min-width: 100px;
+  flex: 1;
 }
 
 .input-group label {
@@ -169,11 +180,6 @@
   padding: 0 0.5rem;
 }
 
-/* Sección del checkbox */
-.checkbox-section {
-  border-top: 1px solid #f1f5f9;
-  padding-top: 1rem;
-}
 
 /* Estado vacío */
 .empty-state {
@@ -203,39 +209,6 @@
   color: #9ca3af !important;
   font-size: 0.9rem !important;
   font-weight: 400 !important;
-}
-
-/* Selector de Tramo en Header */
-:host ::ng-deep .tramo-selector {
-  min-width: 200px;
-}
-
-:host ::ng-deep .tramo-selector .p-dropdown {
-  border: 2px solid #d1d5db;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  background: white;
-}
-
-:host ::ng-deep .tramo-selector .p-dropdown:hover {
-  border-color: #3b82f6;
-}
-
-:host ::ng-deep .tramo-selector .p-dropdown:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-:host ::ng-deep .tramo-selector .p-dropdown-label {
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #4b5563;
-}
-
-:host ::ng-deep .tramo-selector .p-dropdown-trigger {
-  width: 2.5rem;
-  color: #6b7280;
 }
 
 /* Personalización de PrimeNG */
@@ -292,6 +265,14 @@
   transition: all 0.2s ease;
 }
 
+:host ::ng-deep .p-inputnumber-input {
+  width: 100%;
+}
+
+:host ::ng-deep .p-inputwrapper {
+  width: 100%;
+}
+
 :host ::ng-deep .p-checkbox.p-checkbox-checked .p-checkbox-box {
   background: #3b82f6;
   border-color: #3b82f6;
@@ -301,38 +282,8 @@
   font-weight: bold;
 }
 
-:host ::ng-deep .tramo-dropdown {
+:host ::ng-deep .compact-input .p-inputtext {
   width: 100%;
-}
-
-:host ::ng-deep .tramo-dropdown .p-dropdown {
-  width: 100%;
-  border: 2px solid #d1d5db;
-  border-radius: 10px;
-  transition: all 0.2s ease;
-}
-
-:host ::ng-deep .tramo-dropdown .p-dropdown:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-:host ::ng-deep .tramo-dropdown .p-dropdown-label {
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 500;
-}
-
-:host ::ng-deep .tramo-dropdown .p-dropdown-trigger {
-  width: 3rem;
-}
-
-:host ::ng-deep .p-button.generate-btn:disabled {
-  background: #e5e7eb !important;
-  color: #9ca3af !important;
-  cursor: not-allowed;
-  transform: none !important;
-  box-shadow: none !important;
 }
 
 :host ::ng-deep .p-button {
@@ -383,11 +334,6 @@
   
   .action-buttons {
     justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  :host ::ng-deep .tramo-selector {
-    min-width: 180px;
   }
   
   .ranges-grid {
@@ -434,10 +380,9 @@
     gap: 0.75rem;
   }
   
-  .action-buttons .p-button,
-  :host ::ng-deep .tramo-selector {
+  .action-buttons .p-button {
     width: 100%;
-    min-width: auto;
+    justify-content: center;
   }
   
   :host ::ng-deep .custom-tabview .p-tabview-nav li .p-tabview-nav-link {

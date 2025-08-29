@@ -49,13 +49,19 @@ export class RecordingsTrackerComponent implements OnInit {
 
   resultados!: any[];
 
-  tramos!: any[];
+  tramos = [
+      { label: 'Todos', value: 'Todos' },
+      { label: 'Tramo 3', value: 'Tramo 3' },
+      { label: 'Tramo 5', value: 'Tramo 5' }
+    ];
 
   tipoBusqueda = [
     { label: 'Fechas', value: 'fechas' },
     { label: 'Documento', value: 'documento' },
     { label: 'Telefono', value: 'telefono' }
   ];
+
+  selectedTramo: any;
 
   selectedTipoBusqueda: any;
 
@@ -70,11 +76,6 @@ export class RecordingsTrackerComponent implements OnInit {
       monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     });
-
-    this.tramos = [
-      { label: 'Tramo 3', value: 'Tramo 3' },
-      { label: 'Tramo 5', value: 'Tramo 5' }
-    ];
 
     this.resultados = [
       { label: 'FUERA DE SERVICIO - NO EXISTE', value: 'FUERA DE SERVICIO - NO EXISTE' },
@@ -224,6 +225,17 @@ export class RecordingsTrackerComponent implements OnInit {
       this.gestiones = [...this.initialValue];
       this.dt.reset();
     }
+  }
+
+  getResultadoClass(resultado: string): string {
+    if (resultado.includes('PROMESA DE PAGO') || resultado.includes('TITULAR')) {
+      return 'resultado-success';
+    } else if (resultado.includes('COMPROMISO')) {
+      return 'resultado-warning';
+    } else if (resultado.includes('CONTACTO')) {
+      return 'resultado-info';
+    }
+    return 'resultado-default';
   }
 
   sortTableData(event: SortEvent) {
