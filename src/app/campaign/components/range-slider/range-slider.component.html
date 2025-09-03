@@ -12,8 +12,29 @@
         optionLabel="label" 
         optionValue="value"
         placeholder="Seleccionar tramo"
+        (onChange)="onTramoChange()"
         styleClass="tramo-selector">
       </p-dropdown>
+      
+      <!-- MultiSelect para fechas de vencimiento -->
+      <p-multiSelect 
+        [(ngModel)]="dueDatesSelected"
+        [options]="dueDatesOptions"
+        optionLabel="label"
+        optionValue="value"
+        [placeholder]="getSelectedDatesLabel()"
+        [disabled]="isDatesDisabled()"
+        [showToggleAll]="true"
+        [showClear]="true"
+        [displaySelectedLabel]="false"
+        [filter]="false"
+        styleClass="dates-selector">
+        <ng-template let-option pTemplate="item">
+          <div class="date-item">
+            <span>{{ option.label }}</span>
+          </div>
+        </ng-template>
+      </p-multiSelect>
       
       <p-button 
         label="Añadir Rango" 
@@ -28,7 +49,6 @@
       </p-button>
     </div>
   </div>
-
   <!-- Tabs mejorados -->
   <div class="tabs-wrapper">
     <p-tabView class="custom-tabview" [(activeIndex)]="activeIndex">    
@@ -44,7 +64,6 @@
                  class="range-card">
               <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
-
                 <div class="range-inputs">
                   <div class="ranges">
                       <div class="input-group">
@@ -69,7 +88,6 @@
                     </div>
                   </div>
                   
-
                   <div class="checkbox-section">
                     <p-checkbox 
                       label="Rango máximo (sin límite superior)"
@@ -79,9 +97,7 @@
                       [disabled]="isAnyChecked() && !contactoDirectoRange.isChecked">
                     </p-checkbox>
                   </div>
-
                 </div>
-
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -116,7 +132,6 @@
                  class="range-card">
                 <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
-
                 <div class="range-inputs">
                   <div class="ranges">
                       <div class="input-group">
@@ -141,7 +156,6 @@
                     </div>
                   </div>
                   
-
                   <div class="checkbox-section">
                     <p-checkbox 
                       label="Rango máximo (sin límite superior)"
@@ -151,9 +165,7 @@
                       [disabled]="isAnyChecked() && !contactoIndirectoRange.isChecked">
                     </p-checkbox>
                   </div>
-
                 </div>
-
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -177,7 +189,6 @@
                  class="range-card">
                  <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
-
                 <div class="range-inputs">
                   <div class="ranges">
                       <div class="input-group">
@@ -203,7 +214,6 @@
                     </div>
                   </div>
                   
-
                   <div class="checkbox-section">
                     <p-checkbox 
                       label="Rango máximo (sin límite superior)"
@@ -213,9 +223,7 @@
                       [disabled]="isAnyChecked() && !promesasRotasRange.isChecked">
                     </p-checkbox>
                   </div>
-
                 </div>
-
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -239,7 +247,6 @@
                  class="range-card">
                  <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
-
                 <div class="range-inputs">
                   <div class="ranges">
                       <div class="input-group">
@@ -251,7 +258,6 @@
                       </p-inputNumber>
                     </div>
                   
-
                   
                     <div class="input-group" 
                         *ngIf="!noContactadoRange.isChecked">
@@ -265,7 +271,6 @@
                     </div>
                   </div>
                   
-
                   <div class="checkbox-section">
                     <p-checkbox 
                       label="Rango máximo (sin límite superior)"
@@ -275,9 +280,7 @@
                       [disabled]="isAnyChecked() && !noContactadoRange.isChecked">
                     </p-checkbox>
                   </div>
-
                 </div>
-
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
