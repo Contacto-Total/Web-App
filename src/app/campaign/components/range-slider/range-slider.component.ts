@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { CampaignReportRequest } from '@/campaign/model/request/campaign-report.request';
 import { CampaignService } from '@/campaign/services/campaign-service/campaign.service';
+import e from 'express';
 
 interface Range {
   min: number;
@@ -46,9 +47,11 @@ export class RangeSliderComponent implements OnInit{
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
+
+  contenido: boolean = true;
   
   totalRange = 10000;
-  activeIndex: number = 0;
+  activeIndex: number = 3;
   
   constructor(private router: Router, private messageService: MessageService, private campañaService: CampaignService) {}
   
@@ -64,22 +67,23 @@ export class RangeSliderComponent implements OnInit{
     });
 
     const initialRangesCd = [
-      { min: 1000, max: 8000, isChecked: false }
+      { min: 0, max: 8000, isChecked: true }
     ];
     const initialRangesCi = [
-      { min: 1000, max: 8000, isChecked: false }
+      { min: 0, max: 8000, isChecked: true }
     ];
     const initialRangesPr = [
-      { min: 1000, max: 8000, isChecked: false }
+      { min: 0, max: 8000, isChecked: true }
     ];
     const initialRangesNc = [
-      { min: 1000, max: 2000, isChecked: false },
-      { min: 2000, max: 3000, isChecked: false },
-      { min: 3000, max: 4000, isChecked: false },
-      { min: 4000, max: 8000, isChecked: false }
+      { min: 1000, max: 2000, isChecked: true },
+      { min: 2000, max: 3000, isChecked: true },
+      { min: 3000, max: 4000, isChecked: true },
+      { min: 4000, max: 5000, isChecked: true }
     ];
 
     this.campaignName = 'Tramo 3'; // Default campaign name
+    this.contenido = true;
   
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
@@ -164,7 +168,16 @@ export class RangeSliderComponent implements OnInit{
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
       this.dueDatesSelected = [];
+      this.contenido = false;
     }
+    else {
+      this.contenido = true;
+    }
+    console.log(this.contenido)
+  }
+
+  onContenidoChange() {
+    console.log(this.contenido)
   }
 
   isDatesDisabled(): boolean {
@@ -210,7 +223,8 @@ export class RangeSliderComponent implements OnInit{
       directContactRanges: contactoDirectoRangesToConsult,
       indirectContactRanges: contactoIndirectoRangesToConsult,
       brokenPromisesRanges: promesasRotasRangesToConsult,
-      notContactedRanges: noContactadoRangesToConsult
+      notContactedRanges: noContactadoRangesToConsult,
+      content: this.contenido
     };
     
     console.log(campañaYReporteRequest);

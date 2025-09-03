@@ -156,6 +156,15 @@
 
 }
 
+.selectors {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-wrap: wrap;
+  width: 50%;
+  padding-right: 2rem;
+}
+
 .input-group {
   display: flex;
   flex-direction: column;
