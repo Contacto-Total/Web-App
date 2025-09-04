@@ -52,6 +52,18 @@ export class RangeSliderComponent implements OnInit{
   
   totalRange = 10000;
   activeIndex: number = 3;
+
+  rangeErrors: {
+    contactoDirecto: string[],
+    contactoIndirecto: string[],
+    promesasRotas: string[],
+    noContactado: string[]
+  } = {
+    contactoDirecto: [],
+    contactoIndirecto: [],
+    promesasRotas: [],
+    noContactado: []
+  };
   
   constructor(private router: Router, private messageService: MessageService, private campañaService: CampaignService) {}
   
@@ -107,10 +119,34 @@ export class RangeSliderComponent implements OnInit{
   }
   
   addRange() {
-    const range: Range = { min: 0, max: 0, isChecked: false };
     const ranges = this.getActiveRanges();
-    ranges.push(range);
+
+    if (ranges.length > 0) {
+      const lastRange = ranges[ranges.length - 1];
+
+      // Si el último rango es infinito, lo convertimos a uno normal
+      if (lastRange.isChecked) {
+        lastRange.isChecked = false;
+        lastRange.max = lastRange.min + 1000;
+      }
+
+      const newRange: Range = {
+        min: lastRange.max,
+        max: lastRange.max + 1000,
+        isChecked: true
+      };
+
+      ranges.push(newRange);
+    } else {
+      const newRange: Range = { min: 0, max: 1000, isChecked: false };
+      ranges.push(newRange);
+    }
+
+    // Ordenar los rangos por min, para evitar desorden
+    ranges.sort((a, b) => a.min - b.min);
   }
+
+
   
   toggleCheck(index: number) {
     const ranges = this.getActiveRanges();
@@ -134,36 +170,115 @@ export class RangeSliderComponent implements OnInit{
   
   validateRanges(): boolean {
     this.messageService.clear();
-  
+    let isValid = true;
+
     const sections = [
       { name: 'Contacto Directo', ranges: this.contactoDirectoRanges },
       { name: 'Contacto Indirecto', ranges: this.contactoIndirectoRanges },
       { name: 'Promesas Rotas', ranges: this.promesasRotasRanges },
       { name: 'No Contactado', ranges: this.noContactadoRanges },
     ];
-  
+
     for (const section of sections) {
       const { name, ranges } = section;
-  
-      ranges.sort((a, b) => a.min - b.min);
-  
-      for (let i = 0; i < ranges.length - 1; i++) {
-        const rangeA = ranges[i];
-        const rangeB = ranges[i + 1];
-  
-        if (rangeA.max > rangeB.min) {
+
+      // Ya no ordenamos: evaluamos tal como están
+      for (let i = 0; i < ranges.length; i++) {
+        const current = ranges[i];
+
+        // Validar que min < max, si no es rango infinito
+        if (!current.isChecked && current.min >= current.max) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: `Verificar los rangos de la sección ${name}, no se deben superponer.`,
+            summary: 'Error en ' + name,
+            detail: `El rango ${i + 1} debe tener un mínimo menor que el máximo.`,
           });
-          return false;
+          isValid = false;
+        }
+
+        // Validar superposición con anterior
+        if (i > 0) {
+          const prev = ranges[i - 1];
+
+          if (prev.isChecked) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error en ' + name,
+              detail: `El rango ${i} tiene un límite superior infinito. No puedes agregar más rangos después.`,
+            });
+            isValid = false;
+          }
+
+          if (!prev.isChecked && prev.max > current.min) {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error en ' + name,
+              detail: `Los rangos ${i} y ${i + 1} se superponen o están desordenados.`,
+            });
+            isValid = false;
+          }
         }
       }
     }
-  
-    return true;
+
+    return isValid;
   }
+
+
+  getRangesBySection(section: string): Range[] {
+    switch (section) {
+      case 'contactoDirecto':
+        return this.contactoDirectoRanges;
+      case 'contactoIndirecto':
+        return this.contactoIndirectoRanges;
+      case 'promesasRotas':
+        return this.promesasRotasRanges;
+      case 'noContactado':
+        return this.noContactadoRanges;
+      default:
+        return [];
+    }
+  }
+
+
+  onRangeChange(section: keyof typeof this.rangeErrors): void {
+    // Solo validamos esa sección individualmente
+    const ranges = this.getRangesBySection(section);
+    const errors: string[] = Array(ranges.length).fill('');
+    let isValid = true;
+
+    // Validación individual
+    for (let i = 0; i < ranges.length; i++) {
+      const r = ranges[i];
+      if (!r.isChecked && r.min >= r.max) {
+        errors[i] = 'El mínimo debe ser menor al máximo.';
+        isValid = false;
+      }
+    }
+
+    // Validación cruzada
+    const sorted = ranges.map((r, i) => ({ ...r, _originalIndex: i })).sort((a, b) => a.min - b.min);
+
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const current = sorted[i];
+      const next = sorted[i + 1];
+
+      if (!current.isChecked && current.max > next.min) {
+        errors[current._originalIndex] = 'Este rango se superpone con el siguiente.';
+        errors[next._originalIndex] = 'Este rango se superpone con el anterior.';
+        isValid = false;
+      }
+
+      if (current.isChecked) {
+        errors[current._originalIndex] = 'Un rango sin límite superior debe ir al final.';
+        isValid = false;
+      }
+    }
+
+    this.rangeErrors[section] = errors;
+  }
+
+
   
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
