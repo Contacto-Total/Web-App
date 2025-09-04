@@ -36,7 +36,7 @@
             </div>
           </ng-template>
         </p-multiSelect>
-
+        
         <p-checkbox 
           label="Contenidos"
           [(ngModel)]="contenido"
@@ -45,7 +45,6 @@
           styleClass="contenido-checkbox">
         </p-checkbox>
        </div>
-      
       
       <p-button 
         label="Añadir Rango" 
@@ -60,7 +59,7 @@
       </p-button>
     </div>
   </div>
-
+  
   <!-- Tabs mejorados -->
   <div class="tabs-wrapper">
     <p-tabView class="custom-tabview" [(activeIndex)]="activeIndex">    
@@ -78,26 +77,25 @@
                 <span class="range-label">Rango {{ i + 1 }}</span>
                 <div class="range-inputs">
                   <div class="ranges">
-                      <div class="input-group">
+                    <div class="input-group">
                       <label>Desde</label>
                       <p-inputNumber 
                         [(ngModel)]="contactoDirectoRange.min"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('contactoDirecto')"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': contactoDirectoMinErrors[i], 'compact-input': !contactoDirectoMinErrors[i]}"
+                        (ngModelChange)="onMinInputChange(i)">
                       </p-inputNumber>
                     </div>
                   
-                  
                     <div class="input-group" 
-                        *ngIf="!contactoDirectoRange.isChecked">
+                         *ngIf="!contactoDirectoRange.isChecked">
                       <label>Hasta</label>
                       <p-inputNumber 
                         [(ngModel)]="contactoDirectoRange.max"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('contactoDirecto')"
                         [disabled]="contactoDirectoRange.isChecked"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': contactoDirectoMaxErrors[i], 'compact-input': !contactoDirectoMaxErrors[i]}"
+                        (ngModelChange)="onMaxInputChange(i)">
                       </p-inputNumber>
                     </div>
                   </div>
@@ -112,10 +110,6 @@
                       [disabled]="isAnyChecked() && !contactoDirectoRange.isChecked">
                     </p-checkbox>
                   </div>
-                </div>
-
-                <div *ngIf="rangeErrors.contactoDirecto[i]" class="range-error">
-                  {{ rangeErrors.contactoDirecto[i] }}
                 </div>
                 
                 <p-button 
@@ -146,30 +140,29 @@
           <div class="ranges-grid">
             <div *ngFor="let contactoIndirectoRange of contactoIndirectoRanges; let i = index" 
                  class="range-card">
-                <div class="range-header">
+              <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
                 <div class="range-inputs">
                   <div class="ranges">
-                      <div class="input-group">
+                    <div class="input-group">
                       <label>Desde</label>
                       <p-inputNumber 
                         [(ngModel)]="contactoIndirectoRange.min"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('contactoIndirecto')"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': contactoIndirectoMinErrors[i], 'compact-input': !contactoIndirectoMinErrors[i]}"
+                        (ngModelChange)="onMinInputChange(i)">
                       </p-inputNumber>
                     </div>
                   
-                  
                     <div class="input-group" 
-                        *ngIf="!contactoIndirectoRange.isChecked">
+                         *ngIf="!contactoIndirectoRange.isChecked">
                       <label>Hasta</label>
                       <p-inputNumber 
                         [(ngModel)]="contactoIndirectoRange.max"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('contactoIndirecto')"
+                        [ngClass]="{'error-border compact-input': contactoIndirectoMaxErrors[i], 'compact-input': !contactoIndirectoMaxErrors[i]}"
                         [disabled]="contactoIndirectoRange.isChecked"
-                        styleClass="compact-input">
+                        (ngModelChange)="onMaxInputChange(i)">
                       </p-inputNumber>
                     </div>
                   </div>
@@ -185,9 +178,7 @@
                     </p-checkbox>
                   </div>
                 </div>
-                <div *ngIf="rangeErrors.contactoIndirecto[i]" class="range-error">
-                  {{ rangeErrors.contactoIndirecto[i] }}
-                </div>
+                
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -209,29 +200,29 @@
           <div class="ranges-grid">
             <div *ngFor="let promesasRotasRange of promesasRotasRanges; let i = index" 
                  class="range-card">
-                 <div class="range-header">
+              <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
                 <div class="range-inputs">
                   <div class="ranges">
-                      <div class="input-group">
+                    <div class="input-group">
                       <label>Desde</label>
                       <p-inputNumber 
                         [(ngModel)]="promesasRotasRange.min"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('promesasRotas')"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': promesasRotasMinErrors[i], 'compact-input': !promesasRotasMinErrors[i]}"
+                        (ngModelChange)="onMinInputChange(i)">
                       </p-inputNumber>
                     </div>
                     
                     <div class="input-group" 
-                        *ngIf="!promesasRotasRange.isChecked">
+                         *ngIf="!promesasRotasRange.isChecked">
                       <label>Hasta</label>
                       <p-inputNumber 
                         [(ngModel)]="promesasRotasRange.max"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('promesasRotas')"
+                        [ngClass]="{'error-border compact-input': promesasRotasMaxErrors[i], 'compact-input': !promesasRotasMaxErrors[i]}"
                         [disabled]="promesasRotasRange.isChecked"
-                        styleClass="compact-input">
+                        (ngModelChange)="onMaxInputChange(i)">
                       </p-inputNumber>
                     </div>
                   </div>
@@ -247,16 +238,14 @@
                     </p-checkbox>
                   </div>
                 </div>
-                <div *ngIf="rangeErrors.promesasRotas[i]" class="range-error">
-                  {{ rangeErrors.promesasRotas[i] }}
-                </div>
+                
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
                   styleClass="p-button-danger p-button-text p-button-sm delete-btn">
                 </p-button>
               </div>
-              </div>
+            </div>
           </div>
         </div>
       </p-tabPanel>
@@ -271,30 +260,29 @@
           <div class="ranges-grid">
             <div *ngFor="let noContactadoRange of noContactadoRanges; let i = index" 
                  class="range-card">
-                 <div class="range-header">
+              <div class="range-header">
                 <span class="range-label">Rango {{ i + 1 }}</span>
                 <div class="range-inputs">
                   <div class="ranges">
-                      <div class="input-group">
+                    <div class="input-group">
                       <label>Desde</label>
                       <p-inputNumber 
                         [(ngModel)]="noContactadoRange.min"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('noContactado')"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': noContactadoRangeErrors[i], 'compact-input': !noContactadoRangeErrors[i]}"
+                        (ngModelChange)="onMinInputChange(i)">
                       </p-inputNumber>
                     </div>
                   
-                  
                     <div class="input-group" 
-                        *ngIf="!noContactadoRange.isChecked">
+                         *ngIf="!noContactadoRange.isChecked">
                       <label>Hasta</label>
                       <p-inputNumber 
                         [(ngModel)]="noContactadoRange.max"
                         [min]="0"
-                        (ngModelChange)="onRangeChange('noContactado')"
                         [disabled]="noContactadoRange.isChecked"
-                        styleClass="compact-input">
+                        [ngClass]="{'error-border compact-input': noContactadoRangeErrors[i], 'compact-input': !noContactadoRangeErrors[i]}"
+                        (ngModelChange)="onMaxInputChange(i)">
                       </p-inputNumber>
                     </div>
                   </div>
@@ -310,9 +298,7 @@
                     </p-checkbox>
                   </div>
                 </div>
-                <div *ngIf="rangeErrors.noContactado[i]" class="range-error">
-                  {{ rangeErrors.noContactado[i] }}
-                </div>
+                
                 <p-button 
                   icon="pi pi-trash" 
                   (onClick)="deleteRange(i)" 
@@ -321,7 +307,6 @@
               </div>
             </div>
               
-            
             <div *ngIf="noContactadoRanges.length === 0" class="empty-state">
               <i class="pi pi-inbox"></i>
               <p>No hay rangos configurados</p>

@@ -153,7 +153,6 @@
   gap: 1rem;
   flex-wrap: wrap;
   width: 100%;
-
 }
 
 .selectors {
@@ -194,6 +193,89 @@
   margin-top: 4px;
 }
 
+/* Estilos para inputs con error */
+.error-border .p-inputnumber-input {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25) !important;
+  color: #e74c3c !important;
+}
+
+.error-border .p-inputnumber-input:focus {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.4) !important;
+  color: #c0392b !important;
+}
+
+/* También para inputs normales si usas input regular */
+.error-border input {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25) !important;
+  color: #e74c3c !important;
+}
+
+.error-border input:focus {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.4) !important;
+  color: #c0392b !important;
+}
+
+/* Updated error styling - more specific selectors */
+:host ::ng-deep .error-border .p-inputnumber-input {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25) !important;
+  color: #e74c3c !important;
+  background-color: #fdf2f2 !important;
+}
+
+:host ::ng-deep .error-border .p-inputnumber-input:focus {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.4) !important;
+  color: #c0392b !important;
+}
+
+/* For PrimeNG InputNumber wrapper */
+:host ::ng-deep .error-border .p-inputnumber {
+  border-color: #e74c3c !important;
+}
+
+:host ::ng-deep .error-border .p-inputnumber:focus-within {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.4) !important;
+}
+
+/* Ensure the input wrapper also gets the error styling */
+:host ::ng-deep .error-border .p-inputwrapper-filled .p-inputnumber-input,
+:host ::ng-deep .error-border .p-inputwrapper .p-inputnumber-input {
+  border-color: #e74c3c !important;
+  color: #e74c3c !important;
+  background-color: #fdf2f2 !important;
+}
+
+/* Add error styling for the entire input number component */
+:host ::ng-deep .error-border .p-component {
+  border-color: #e74c3c !important;
+}
+
+/* Error styling for input number buttons if they exist */
+:host ::ng-deep .error-border .p-inputnumber-button {
+  border-color: #e74c3c !important;
+}
+
+/* Make sure the error class takes precedence over normal styles */
+:host ::ng-deep .error-border.compact-input .p-inputtext,
+:host ::ng-deep .error-border.compact-input .p-inputnumber-input {
+  border: 2px solid #e74c3c !important;
+  box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25) !important;
+  color: #e74c3c !important;
+  background-color: #fdf2f2 !important;
+}
+
+:host ::ng-deep .error-border.compact-input .p-inputtext:focus,
+:host ::ng-deep .error-border.compact-input .p-inputnumber-input:focus {
+  border-color: #c0392b !important;
+  box-shadow: 0 0 0 0.3rem rgba(231, 76, 60, 0.4) !important;
+  color: #c0392b !important;
+}
 
 /* Estado vacío */
 .empty-state {

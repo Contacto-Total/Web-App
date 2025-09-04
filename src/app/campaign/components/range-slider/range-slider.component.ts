@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { CampaignReportRequest } from '@/campaign/model/request/campaign-report.request';
 import { CampaignService } from '@/campaign/services/campaign-service/campaign.service';
-import e from 'express';
 
 interface Range {
   min: number;
@@ -47,23 +46,30 @@ export class RangeSliderComponent implements OnInit{
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
-
   contenido: boolean = true;
   
   totalRange = 10000;
   activeIndex: number = 3;
+  
+  // Sistema de errores con boolean para bordes rojos
+  contactoDirectoRangeErrors: boolean[] = [];
+  contactoIndirectoRangeErrors: boolean[] = [];
+  promesasRotasRangeErrors: boolean[] = [];
+  noContactadoRangeErrors: boolean[] = [];
 
-  rangeErrors: {
-    contactoDirecto: string[],
-    contactoIndirecto: string[],
-    promesasRotas: string[],
-    noContactado: string[]
-  } = {
-    contactoDirecto: [],
-    contactoIndirecto: [],
-    promesasRotas: [],
-    noContactado: []
-  };
+  contactoDirectoMinErrors:any = [];
+  contactoDirectoMaxErrors:any= [];
+  contactoIndirectoMinErrors:any= [];
+  contactoIndirectoMaxErrors:any= [];
+  promesasRotasMinErrors:any= [];
+  promesasRotasMaxErrors:any= [];
+  noContactadoMinErrors:any= [];
+noContactadoMaxErrors:any= [];
+
+  
+  // Variables para rastrear el último input editado
+  private lastEditedRangeIndex: number = -1;
+  private lastEditedField: 'min' | 'max' = 'min';
   
   constructor(private router: Router, private messageService: MessageService, private campañaService: CampaignService) {}
   
@@ -77,7 +83,7 @@ export class RangeSliderComponent implements OnInit{
         console.error('Error al obtener fechas:', err);
       }
     });
-
+    
     const initialRangesCd = [
       { min: 0, max: 8000, isChecked: true }
     ];
@@ -93,14 +99,24 @@ export class RangeSliderComponent implements OnInit{
       { min: 3000, max: 4000, isChecked: false },
       { min: 4000, max: 5000, isChecked: true }
     ];
-
-    this.campaignName = 'Tramo 3'; // Default campaign name
+    
+    this.campaignName = 'Tramo 3';
     this.contenido = true;
   
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
     this.promesasRotasRanges = initialRangesPr.map(range => ({ ...range }));
     this.noContactadoRanges = initialRangesNc.map(range => ({ ...range }));
+    
+    // Inicializar arrays de errores
+    this.updateErrorArrays();
+  }
+  
+  private updateErrorArrays() {
+    this.contactoDirectoRangeErrors = new Array(this.contactoDirectoRanges.length).fill(false);
+    this.contactoIndirectoRangeErrors = new Array(this.contactoIndirectoRanges.length).fill(false);
+    this.promesasRotasRangeErrors = new Array(this.promesasRotasRanges.length).fill(false);
+    this.noContactadoRangeErrors = new Array(this.noContactadoRanges.length).fill(false);
   }
   
   private getActiveRanges(): Range[] {
@@ -118,44 +134,60 @@ export class RangeSliderComponent implements OnInit{
     }
   }
   
+  private getActiveErrorArray(): boolean[] {
+    switch (this.activeIndex) {
+      case 0:
+        return this.contactoDirectoRangeErrors;
+      case 1:
+        return this.contactoIndirectoRangeErrors;
+      case 2:
+        return this.promesasRotasRangeErrors;
+      case 3:
+        return this.noContactadoRangeErrors;
+      default:
+        return [];
+    }
+  }
+  
   addRange() {
     const ranges = this.getActiveRanges();
-
     if (ranges.length > 0) {
       const lastRange = ranges[ranges.length - 1];
-
       // Si el último rango es infinito, lo convertimos a uno normal
       if (lastRange.isChecked) {
         lastRange.isChecked = false;
         lastRange.max = lastRange.min + 1000;
       }
-
       const newRange: Range = {
         min: lastRange.max,
         max: lastRange.max + 1000,
         isChecked: true
       };
-
       ranges.push(newRange);
     } else {
       const newRange: Range = { min: 0, max: 1000, isChecked: false };
       ranges.push(newRange);
     }
-
-    // Ordenar los rangos por min, para evitar desorden
+    
+    // Ordenar los rangos por min
     ranges.sort((a, b) => a.min - b.min);
+    this.updateErrorArrays();
+    
+    // Limpiar errores al agregar nuevo rango
+    this.clearAllErrors();
   }
-
-
   
   toggleCheck(index: number) {
     const ranges = this.getActiveRanges();
-  
     ranges.forEach((range, i) => {
       if (i !== index) {
         range.isChecked = false;
       }
     });
+    
+    // Al cambiar checkbox, limpiar errores y validar solo si hay conflicto
+    this.lastEditedRangeIndex = index;
+    this.validateSpecificRange(index);
   }
   
   isAnyChecked(): boolean {
@@ -166,139 +198,191 @@ export class RangeSliderComponent implements OnInit{
   deleteRange(index: number) {
     const ranges = this.getActiveRanges();
     ranges.splice(index, 1);
+    this.updateErrorArrays();
+    this.clearAllErrors(); // Limpiar errores al eliminar
   }
   
+  // Limpiar todos los errores
+  private clearAllErrors() {
+    const errors = this.getActiveErrorArray();
+    errors.fill(false);
+    this.lastEditedRangeIndex = -1;
+  }
+  
+  // Validar solo el rango específico que fue editado
+  private validateSpecificRange(editedIndex: number) {
+    const ranges = this.getActiveRanges();
+    const errors = this.getActiveErrorArray();
+    const editedRange = ranges[editedIndex];
+    
+    // Limpiar errores previos
+    errors.fill(false);
+    
+    // Verificar si min >= max en el rango editado (si no es infinito)
+    if (!editedRange.isChecked && editedRange.min >= editedRange.max) {
+      errors[editedIndex] = true;
+      return;
+    }
+    
+    // Verificar superposición solo del rango editado con otros
+    let hasOverlap = false;
+    
+    for (let i = 0; i < ranges.length; i++) {
+      if (i === editedIndex) continue; // Saltar el rango que estamos validando
+      
+      const otherRange = ranges[i];
+      let overlaps = false;
+      
+      if (!editedRange.isChecked && !otherRange.isChecked) {
+        // Ambos rangos tienen límites definidos
+        overlaps = (editedRange.min < otherRange.max && editedRange.max > otherRange.min);
+      } else if (editedRange.isChecked && !otherRange.isChecked) {
+        // editedRange es infinito, otherRange tiene límite
+        overlaps = (otherRange.min < editedRange.min);
+      } else if (!editedRange.isChecked && otherRange.isChecked) {
+        // editedRange tiene límite, otherRange es infinito
+        overlaps = (editedRange.max > otherRange.min);
+      } else if (editedRange.isChecked && otherRange.isChecked) {
+        // Ambos son infinitos - siempre se superponen
+        overlaps = true;
+      }
+      
+      if (overlaps) {
+        hasOverlap = true;
+        break; // Una vez que encontramos superposición, podemos parar
+      }
+    }
+    
+    // Solo marcar error en el rango editado si hay superposición
+    if (hasOverlap) {
+      errors[editedIndex] = true;
+    }
+  }
+  
+  // Método llamado cuando cambian los valores de los inputs
+  onRangeInputChange() {
+    // No hacer nada inmediatamente, esperar a onInputChange específico
+  }
+  
+  // Nuevos métodos para manejar cambios específicos en cada input
+  onMinInputChange(index: number) {
+    this.lastEditedRangeIndex = index;
+    this.lastEditedField = 'min';
+    setTimeout(() => {
+      this.validateSpecificRange(index);
+    }, 0);
+  }
+  
+  onMaxInputChange(index: number) {
+    this.lastEditedRangeIndex = index;
+    this.lastEditedField = 'max';
+    setTimeout(() => {
+      this.validateSpecificRange(index);
+    }, 0);
+  }
+  
+  // Validación completa para envío (mantener la lógica original)
   validateRanges(): boolean {
     this.messageService.clear();
     let isValid = true;
-
+    
     const sections = [
-      { name: 'Contacto Directo', ranges: this.contactoDirectoRanges },
-      { name: 'Contacto Indirecto', ranges: this.contactoIndirectoRanges },
-      { name: 'Promesas Rotas', ranges: this.promesasRotasRanges },
-      { name: 'No Contactado', ranges: this.noContactadoRanges },
+      { 
+        ranges: this.contactoDirectoRanges, 
+        minErrors: this.contactoDirectoMinErrors, 
+        maxErrors: this.contactoDirectoMaxErrors 
+      },
+      { 
+        ranges: this.contactoIndirectoRanges, 
+        minErrors: this.contactoIndirectoMinErrors, 
+        maxErrors: this.contactoIndirectoMaxErrors 
+      },
+      { 
+        ranges: this.promesasRotasRanges, 
+        minErrors: this.promesasRotasMinErrors, 
+        maxErrors: this.promesasRotasMaxErrors 
+      },
+      { 
+        ranges: this.noContactadoRanges, 
+        minErrors: this.noContactadoMinErrors, 
+        maxErrors: this.noContactadoMaxErrors 
+      },
     ];
-
+    
     for (const section of sections) {
-      const { name, ranges } = section;
-
-      // Ya no ordenamos: evaluamos tal como están
+      const { ranges, minErrors, maxErrors } = section;
+      minErrors.fill(false);
+      maxErrors.fill(false);
+      
       for (let i = 0; i < ranges.length; i++) {
         const current = ranges[i];
-
-        // Validar que min < max, si no es rango infinito
+        
+        // Error si min >= max (si no es rango infinito)
         if (!current.isChecked && current.min >= current.max) {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error en ' + name,
-            detail: `El rango ${i + 1} debe tener un mínimo menor que el máximo.`,
-          });
+          minErrors[i] = true;
+          maxErrors[i] = true;
           isValid = false;
+          continue;
         }
-
-        // Validar superposición con anterior
-        if (i > 0) {
-          const prev = ranges[i - 1];
-
-          if (prev.isChecked) {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error en ' + name,
-              detail: `El rango ${i} tiene un límite superior infinito. No puedes agregar más rangos después.`,
-            });
-            isValid = false;
+        
+        // Verificar superposición solo con rangos posteriores
+        for (let j = i + 1; j < ranges.length; j++) {
+          const other = ranges[j];
+          let hasOverlap = false;
+          
+          if (!current.isChecked && !other.isChecked) {
+            // Ambos rangos tienen límites definidos
+            hasOverlap = (current.min < other.max && current.max > other.min);
+          } else if (current.isChecked && !other.isChecked) {
+            // current es infinito, other tiene límite
+            hasOverlap = (other.min < current.min);
+          } else if (!current.isChecked && other.isChecked) {
+            // current tiene límite, other es infinito
+            hasOverlap = (current.max > other.min);
+          } else if (current.isChecked && other.isChecked) {
+            // Ambos son infinitos - siempre se superponen
+            hasOverlap = true;
           }
-
-          if (!prev.isChecked && prev.max > current.min) {
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error en ' + name,
-              detail: `Los rangos ${i} y ${i + 1} se superponen o están desordenados.`,
-            });
+          
+          if (hasOverlap) {
+            minErrors[i] = true;
+            maxErrors[i] = true;
+            minErrors[j] = true;
+            maxErrors[j] = true;
             isValid = false;
           }
         }
       }
     }
-
+    
+    if (!isValid) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error de validación',
+        detail: 'Por favor, corrige los rangos marcados en rojo antes de continuar.'
+      });
+    }
+    
     return isValid;
   }
-
-
-  getRangesBySection(section: string): Range[] {
-    switch (section) {
-      case 'contactoDirecto':
-        return this.contactoDirectoRanges;
-      case 'contactoIndirecto':
-        return this.contactoIndirectoRanges;
-      case 'promesasRotas':
-        return this.promesasRotasRanges;
-      case 'noContactado':
-        return this.noContactadoRanges;
-      default:
-        return [];
-    }
-  }
-
-
-  onRangeChange(section: keyof typeof this.rangeErrors): void {
-    // Solo validamos esa sección individualmente
-    const ranges = this.getRangesBySection(section);
-    const errors: string[] = Array(ranges.length).fill('');
-    let isValid = true;
-
-    // Validación individual
-    for (let i = 0; i < ranges.length; i++) {
-      const r = ranges[i];
-      if (!r.isChecked && r.min >= r.max) {
-        errors[i] = 'El mínimo debe ser menor al máximo.';
-        isValid = false;
-      }
-    }
-
-    // Validación cruzada
-    const sorted = ranges.map((r, i) => ({ ...r, _originalIndex: i })).sort((a, b) => a.min - b.min);
-
-    for (let i = 0; i < sorted.length - 1; i++) {
-      const current = sorted[i];
-      const next = sorted[i + 1];
-
-      if (!current.isChecked && current.max > next.min) {
-        errors[current._originalIndex] = 'Este rango se superpone con el siguiente.';
-        errors[next._originalIndex] = 'Este rango se superpone con el anterior.';
-        isValid = false;
-      }
-
-      if (current.isChecked) {
-        errors[current._originalIndex] = 'Un rango sin límite superior debe ir al final.';
-        isValid = false;
-      }
-    }
-
-    this.rangeErrors[section] = errors;
-  }
-
-
   
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
       this.dueDatesSelected = [];
       this.contenido = false;
-    }
-    else {
+    } else {
       this.contenido = true;
     }
-    console.log(this.contenido)
   }
 
   onContenidoChange() {
-    console.log(this.contenido)
+    console.log(this.contenido);
   }
-
+  
   isDatesDisabled(): boolean {
     return this.campaignName === 'Tramo 5';
   }
-
+  
   getSelectedDatesLabel(): string {
     const count = this.dueDatesSelected.length;
     if (count === 0) {
@@ -306,7 +390,7 @@ export class RangeSliderComponent implements OnInit{
     }
     return count === 1 ? '1 fecha seleccionada' : `${count} fechas seleccionadas`;
   }
-
+  
   printRanges() {
     if (!this.validateRanges()) {
       return;
