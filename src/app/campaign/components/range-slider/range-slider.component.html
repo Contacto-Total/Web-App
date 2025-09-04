@@ -102,6 +102,7 @@
                   
                   <div class="checkbox-section">
                     <p-checkbox 
+                      *ngIf="i === contactoDirectoRanges.length - 1"
                       label="Rango máximo (sin límite superior)"
                       [(ngModel)]="contactoDirectoRange.isChecked" 
                       (onChange)="toggleCheck(i)" 
@@ -166,6 +167,7 @@
                   
                   <div class="checkbox-section">
                     <p-checkbox 
+                      *ngIf="i === contactoIndirectoRanges.length - 1"
                       label="Rango máximo (sin límite superior)"
                       [(ngModel)]="contactoIndirectoRange.isChecked" 
                       (onChange)="toggleCheck(i)" 
@@ -222,6 +224,7 @@
                   
                   <div class="checkbox-section">
                     <p-checkbox 
+                      *ngIf="i === promesasRotasRanges.length - 1"
                       label="Rango máximo (sin límite superior)"
                       [(ngModel)]="promesasRotasRange.isChecked" 
                       (onChange)="toggleCheck(i)" 
@@ -278,7 +281,8 @@
                   </div>
                   
                   <div class="checkbox-section">
-                    <p-checkbox 
+                    <p-checkbox
+                      *ngIf="i === noContactadoRanges.length - 1" 
                       label="Rango máximo (sin límite superior)"
                       [(ngModel)]="noContactadoRange.isChecked" 
                       (onChange)="toggleCheck(i)" 
