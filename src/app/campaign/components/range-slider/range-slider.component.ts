@@ -76,9 +76,9 @@ export class RangeSliderComponent implements OnInit{
       { min: 0, max: 8000, isChecked: true }
     ];
     const initialRangesNc = [
-      { min: 1000, max: 2000, isChecked: true },
-      { min: 2000, max: 3000, isChecked: true },
-      { min: 3000, max: 4000, isChecked: true },
+      { min: 1000, max: 2000, isChecked: false },
+      { min: 2000, max: 3000, isChecked: false },
+      { min: 3000, max: 4000, isChecked: false },
       { min: 4000, max: 5000, isChecked: true }
     ];
 
