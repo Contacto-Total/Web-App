@@ -212,12 +212,9 @@ export class RangeSliderComponent implements OnInit{
     const maxErrors = this.getActiveMaxErrors();
     const editedRange = ranges[editedIndex];
 
-    // Clear only the error for the specific field that was edited
-    if (field === 'min') {
-      minErrors[editedIndex] = false;
-    } else {
-      maxErrors[editedIndex] = false;
-    }
+    // Clear errors for the edited range
+    minErrors[editedIndex] = false;
+    maxErrors[editedIndex] = false;
 
     // Check if min >= max in the edited range (if not infinite)
     if (!editedRange.isChecked && editedRange.min >= editedRange.max) {
@@ -239,13 +236,16 @@ export class RangeSliderComponent implements OnInit{
       let overlaps = false;
 
       if (!editedRange.isChecked && !otherRange.isChecked) {
-        // Both ranges have defined limits
+        // Both ranges have defined limits - check for actual overlap
+        // Ranges overlap if: editedRange.min < otherRange.max AND editedRange.max > otherRange.min
         overlaps = (editedRange.min < otherRange.max && editedRange.max > otherRange.min);
       } else if (editedRange.isChecked && !otherRange.isChecked) {
         // editedRange is infinite, otherRange has limit
-        overlaps = (otherRange.min < editedRange.min);
+        // Overlap if otherRange starts before editedRange's min
+        overlaps = (otherRange.max > editedRange.min);
       } else if (!editedRange.isChecked && otherRange.isChecked) {
         // editedRange has limit, otherRange is infinite
+        // Overlap if editedRange extends beyond otherRange's start
         overlaps = (editedRange.max > otherRange.min);
       } else if (editedRange.isChecked && otherRange.isChecked) {
         // Both are infinite - always overlap
