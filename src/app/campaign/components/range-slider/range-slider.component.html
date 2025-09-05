@@ -269,7 +269,7 @@
                       <p-inputNumber 
                         [(ngModel)]="noContactadoRange.min"
                         [min]="0"
-                        [ngClass]="{'error-border compact-input': noContactadoRangeErrors[i], 'compact-input': !noContactadoRangeErrors[i]}"
+                        [ngClass]="{'error-border compact-input': noContactadoMinErrors[i], 'compact-input': !noContactadoMinErrors[i]}"
                         (ngModelChange)="onMinInputChange(i)">
                       </p-inputNumber>
                     </div>
@@ -281,7 +281,7 @@
                         [(ngModel)]="noContactadoRange.max"
                         [min]="0"
                         [disabled]="noContactadoRange.isChecked"
-                        [ngClass]="{'error-border compact-input': noContactadoRangeErrors[i], 'compact-input': !noContactadoRangeErrors[i]}"
+                        [ngClass]="{'error-border compact-input': noContactadoMaxErrors[i], 'compact-input': !noContactadoMaxErrors[i]}"
                         (ngModelChange)="onMaxInputChange(i)">
                       </p-inputNumber>
                     </div>

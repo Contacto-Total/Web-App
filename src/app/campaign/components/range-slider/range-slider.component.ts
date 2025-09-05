@@ -33,7 +33,6 @@ export class RangeSliderComponent implements OnInit{
   
   step = 100;
   campaignName: string = '';
-  
   tramoOptions = [
     { label: 'Tramo 3', value: 'Tramo 3' },
     { label: 'Tramo 5', value: 'Tramo 5' }
@@ -41,38 +40,30 @@ export class RangeSliderComponent implements OnInit{
   
   dueDatesSelected: string[] = [];
   dueDatesOptions: any[] = [];
-  
   contactoDirectoRanges: Range[] = [];
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
   contenido: boolean = true;
-  
   totalRange = 10000;
   activeIndex: number = 3;
-  
-  // Sistema de errores con boolean para bordes rojos
-  contactoDirectoRangeErrors: boolean[] = [];
-  contactoIndirectoRangeErrors: boolean[] = [];
-  promesasRotasRangeErrors: boolean[] = [];
-  noContactadoRangeErrors: boolean[] = [];
 
-  contactoDirectoMinErrors:any = [];
-  contactoDirectoMaxErrors:any= [];
-  contactoIndirectoMinErrors:any= [];
-  contactoIndirectoMaxErrors:any= [];
-  promesasRotasMinErrors:any= [];
-  promesasRotasMaxErrors:any= [];
-  noContactadoMinErrors:any= [];
-noContactadoMaxErrors:any= [];
+  // Separate error tracking for min and max inputs
+  contactoDirectoMinErrors: boolean[] = [];
+  contactoDirectoMaxErrors: boolean[] = [];
+  contactoIndirectoMinErrors: boolean[] = [];
+  contactoIndirectoMaxErrors: boolean[] = [];
+  promesasRotasMinErrors: boolean[] = [];
+  promesasRotasMaxErrors: boolean[] = [];
+  noContactadoMinErrors: boolean[] = [];
+  noContactadoMaxErrors: boolean[] = [];
 
-  
   // Variables para rastrear el último input editado
   private lastEditedRangeIndex: number = -1;
   private lastEditedField: 'min' | 'max' = 'min';
-  
+
   constructor(private router: Router, private messageService: MessageService, private campañaService: CampaignService) {}
-  
+
   ngOnInit() {
     this.campañaService.getDueDates().subscribe({
       next: (dates: string[]) => {
@@ -83,7 +74,7 @@ noContactadoMaxErrors:any= [];
         console.error('Error al obtener fechas:', err);
       }
     });
-    
+
     const initialRangesCd = [
       { min: 0, max: 8000, isChecked: true }
     ];
@@ -99,56 +90,60 @@ noContactadoMaxErrors:any= [];
       { min: 3000, max: 4000, isChecked: false },
       { min: 4000, max: 5000, isChecked: true }
     ];
-    
+
     this.campaignName = 'Tramo 3';
     this.contenido = true;
-  
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
     this.promesasRotasRanges = initialRangesPr.map(range => ({ ...range }));
     this.noContactadoRanges = initialRangesNc.map(range => ({ ...range }));
-    
+
     // Inicializar arrays de errores
     this.updateErrorArrays();
   }
-  
+
   private updateErrorArrays() {
-    this.contactoDirectoRangeErrors = new Array(this.contactoDirectoRanges.length).fill(false);
-    this.contactoIndirectoRangeErrors = new Array(this.contactoIndirectoRanges.length).fill(false);
-    this.promesasRotasRangeErrors = new Array(this.promesasRotasRanges.length).fill(false);
-    this.noContactadoRangeErrors = new Array(this.noContactadoRanges.length).fill(false);
+    // Initialize both min and max error arrays for each tab
+    this.contactoDirectoMinErrors = new Array(this.contactoDirectoRanges.length).fill(false);
+    this.contactoDirectoMaxErrors = new Array(this.contactoDirectoRanges.length).fill(false);
+    this.contactoIndirectoMinErrors = new Array(this.contactoIndirectoRanges.length).fill(false);
+    this.contactoIndirectoMaxErrors = new Array(this.contactoIndirectoRanges.length).fill(false);
+    this.promesasRotasMinErrors = new Array(this.promesasRotasRanges.length).fill(false);
+    this.promesasRotasMaxErrors = new Array(this.promesasRotasRanges.length).fill(false);
+    this.noContactadoMinErrors = new Array(this.noContactadoRanges.length).fill(false);
+    this.noContactadoMaxErrors = new Array(this.noContactadoRanges.length).fill(false);
   }
-  
+
   private getActiveRanges(): Range[] {
     switch (this.activeIndex) {
-      case 0:
-        return this.contactoDirectoRanges;
-      case 1:
-        return this.contactoIndirectoRanges;
-      case 2:
-        return this.promesasRotasRanges;
-      case 3:
-        return this.noContactadoRanges;
-      default:
-        return [];
+      case 0: return this.contactoDirectoRanges;
+      case 1: return this.contactoIndirectoRanges;
+      case 2: return this.promesasRotasRanges;
+      case 3: return this.noContactadoRanges;
+      default: return [];
     }
   }
-  
-  private getActiveErrorArray(): boolean[] {
+
+  private getActiveMinErrors(): boolean[] {
     switch (this.activeIndex) {
-      case 0:
-        return this.contactoDirectoRangeErrors;
-      case 1:
-        return this.contactoIndirectoRangeErrors;
-      case 2:
-        return this.promesasRotasRangeErrors;
-      case 3:
-        return this.noContactadoRangeErrors;
-      default:
-        return [];
+      case 0: return this.contactoDirectoMinErrors;
+      case 1: return this.contactoIndirectoMinErrors;
+      case 2: return this.promesasRotasMinErrors;
+      case 3: return this.noContactadoMinErrors;
+      default: return [];
     }
   }
-  
+
+  private getActiveMaxErrors(): boolean[] {
+    switch (this.activeIndex) {
+      case 0: return this.contactoDirectoMaxErrors;
+      case 1: return this.contactoIndirectoMaxErrors;
+      case 2: return this.promesasRotasMaxErrors;
+      case 3: return this.noContactadoMaxErrors;
+      default: return [];
+    }
+  }
+
   addRange() {
     const ranges = this.getActiveRanges();
     if (ranges.length > 0) {
@@ -172,11 +167,10 @@ noContactadoMaxErrors:any= [];
     // Ordenar los rangos por min
     ranges.sort((a, b) => a.min - b.min);
     this.updateErrorArrays();
-    
     // Limpiar errores al agregar nuevo rango
     this.clearAllErrors();
   }
-  
+
   toggleCheck(index: number) {
     const ranges = this.getActiveRanges();
     ranges.forEach((range, i) => {
@@ -187,105 +181,115 @@ noContactadoMaxErrors:any= [];
     
     // Al cambiar checkbox, limpiar errores y validar solo si hay conflicto
     this.lastEditedRangeIndex = index;
-    this.validateSpecificRange(index);
+    this.validateSpecificRange(index, 'min'); // Default to min for checkbox changes
   }
-  
+
   isAnyChecked(): boolean {
     const ranges = this.getActiveRanges();
     return ranges.some(range => range.isChecked);
   }
-  
+
   deleteRange(index: number) {
     const ranges = this.getActiveRanges();
     ranges.splice(index, 1);
     this.updateErrorArrays();
     this.clearAllErrors(); // Limpiar errores al eliminar
   }
-  
+
   // Limpiar todos los errores
   private clearAllErrors() {
-    const errors = this.getActiveErrorArray();
-    errors.fill(false);
+    const minErrors = this.getActiveMinErrors();
+    const maxErrors = this.getActiveMaxErrors();
+    minErrors.fill(false);
+    maxErrors.fill(false);
     this.lastEditedRangeIndex = -1;
   }
-  
+
   // Validar solo el rango específico que fue editado
-  private validateSpecificRange(editedIndex: number) {
+  private validateSpecificRange(editedIndex: number, field: 'min' | 'max') {
     const ranges = this.getActiveRanges();
-    const errors = this.getActiveErrorArray();
+    const minErrors = this.getActiveMinErrors();
+    const maxErrors = this.getActiveMaxErrors();
     const editedRange = ranges[editedIndex];
-    
-    // Limpiar errores previos
-    errors.fill(false);
-    
-    // Verificar si min >= max en el rango editado (si no es infinito)
+
+    // Clear only the error for the specific field that was edited
+    if (field === 'min') {
+      minErrors[editedIndex] = false;
+    } else {
+      maxErrors[editedIndex] = false;
+    }
+
+    // Check if min >= max in the edited range (if not infinite)
     if (!editedRange.isChecked && editedRange.min >= editedRange.max) {
-      errors[editedIndex] = true;
+      // Set error only on the field that was just edited
+      if (field === 'min') {
+        minErrors[editedIndex] = true;
+      } else {
+        maxErrors[editedIndex] = true;
+      }
       return;
     }
-    
-    // Verificar superposición solo del rango editado con otros
+
+    // Check for overlap with other ranges
     let hasOverlap = false;
-    
     for (let i = 0; i < ranges.length; i++) {
-      if (i === editedIndex) continue; // Saltar el rango que estamos validando
+      if (i === editedIndex) continue;
       
       const otherRange = ranges[i];
       let overlaps = false;
-      
+
       if (!editedRange.isChecked && !otherRange.isChecked) {
-        // Ambos rangos tienen límites definidos
+        // Both ranges have defined limits
         overlaps = (editedRange.min < otherRange.max && editedRange.max > otherRange.min);
       } else if (editedRange.isChecked && !otherRange.isChecked) {
-        // editedRange es infinito, otherRange tiene límite
+        // editedRange is infinite, otherRange has limit
         overlaps = (otherRange.min < editedRange.min);
       } else if (!editedRange.isChecked && otherRange.isChecked) {
-        // editedRange tiene límite, otherRange es infinito
+        // editedRange has limit, otherRange is infinite
         overlaps = (editedRange.max > otherRange.min);
       } else if (editedRange.isChecked && otherRange.isChecked) {
-        // Ambos son infinitos - siempre se superponen
+        // Both are infinite - always overlap
         overlaps = true;
       }
-      
+
       if (overlaps) {
         hasOverlap = true;
-        break; // Una vez que encontramos superposición, podemos parar
+        break;
       }
     }
-    
-    // Solo marcar error en el rango editado si hay superposición
+
+    // Set error only on the specific field that was edited if there's overlap
     if (hasOverlap) {
-      errors[editedIndex] = true;
+      if (field === 'min') {
+        minErrors[editedIndex] = true;
+      } else {
+        maxErrors[editedIndex] = true;
+      }
     }
   }
-  
-  // Método llamado cuando cambian los valores de los inputs
-  onRangeInputChange() {
-    // No hacer nada inmediatamente, esperar a onInputChange específico
-  }
-  
-  // Nuevos métodos para manejar cambios específicos en cada input
+
+  // Updated methods for handling specific input changes
   onMinInputChange(index: number) {
     this.lastEditedRangeIndex = index;
     this.lastEditedField = 'min';
     setTimeout(() => {
-      this.validateSpecificRange(index);
+      this.validateSpecificRange(index, 'min');
     }, 0);
   }
-  
+
   onMaxInputChange(index: number) {
     this.lastEditedRangeIndex = index;
     this.lastEditedField = 'max';
     setTimeout(() => {
-      this.validateSpecificRange(index);
+      this.validateSpecificRange(index, 'max');
     }, 0);
   }
-  
-  // Validación completa para envío (mantener la lógica original)
+
+  // Full validation for submission (keep original logic)
   validateRanges(): boolean {
     this.messageService.clear();
     let isValid = true;
-    
+
     const sections = [
       { 
         ranges: this.contactoDirectoRanges, 
@@ -308,42 +312,38 @@ noContactadoMaxErrors:any= [];
         maxErrors: this.noContactadoMaxErrors 
       },
     ];
-    
+
     for (const section of sections) {
       const { ranges, minErrors, maxErrors } = section;
       minErrors.fill(false);
       maxErrors.fill(false);
-      
+
       for (let i = 0; i < ranges.length; i++) {
         const current = ranges[i];
         
-        // Error si min >= max (si no es rango infinito)
+        // Error if min >= max (if not infinite range)
         if (!current.isChecked && current.min >= current.max) {
           minErrors[i] = true;
           maxErrors[i] = true;
           isValid = false;
           continue;
         }
-        
-        // Verificar superposición solo con rangos posteriores
+
+        // Check overlap only with subsequent ranges
         for (let j = i + 1; j < ranges.length; j++) {
           const other = ranges[j];
           let hasOverlap = false;
-          
+
           if (!current.isChecked && !other.isChecked) {
-            // Ambos rangos tienen límites definidos
             hasOverlap = (current.min < other.max && current.max > other.min);
           } else if (current.isChecked && !other.isChecked) {
-            // current es infinito, other tiene límite
             hasOverlap = (other.min < current.min);
           } else if (!current.isChecked && other.isChecked) {
-            // current tiene límite, other es infinito
             hasOverlap = (current.max > other.min);
           } else if (current.isChecked && other.isChecked) {
-            // Ambos son infinitos - siempre se superponen
             hasOverlap = true;
           }
-          
+
           if (hasOverlap) {
             minErrors[i] = true;
             maxErrors[i] = true;
@@ -354,7 +354,7 @@ noContactadoMaxErrors:any= [];
         }
       }
     }
-    
+
     if (!isValid) {
       this.messageService.add({
         severity: 'error',
@@ -362,10 +362,10 @@ noContactadoMaxErrors:any= [];
         detail: 'Por favor, corrige los rangos marcados en rojo antes de continuar.'
       });
     }
-    
+
     return isValid;
   }
-  
+
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
       this.dueDatesSelected = [];
@@ -378,11 +378,11 @@ noContactadoMaxErrors:any= [];
   onContenidoChange() {
     console.log(this.contenido);
   }
-  
+
   isDatesDisabled(): boolean {
     return this.campaignName === 'Tramo 5';
   }
-  
+
   getSelectedDatesLabel(): string {
     const count = this.dueDatesSelected.length;
     if (count === 0) {
@@ -390,32 +390,32 @@ noContactadoMaxErrors:any= [];
     }
     return count === 1 ? '1 fecha seleccionada' : `${count} fechas seleccionadas`;
   }
-  
+
   printRanges() {
     if (!this.validateRanges()) {
       return;
     }
-    
+
     const contactoDirectoRangesToConsult = this.contactoDirectoRanges.map(range => ({
       min: range.min.toString(),
       max: range.isChecked ? '+' : range.max.toString()
     }));
-    
+
     const contactoIndirectoRangesToConsult = this.contactoIndirectoRanges.map(range => ({
       min: range.min.toString(),
       max: range.isChecked ? '+' : range.max.toString()
     }));
-    
+
     const promesasRotasRangesToConsult = this.promesasRotasRanges.map(range => ({
       min: range.min.toString(),
       max: range.isChecked ? '+' : range.max.toString()
     }));
-    
+
     const noContactadoRangesToConsult = this.noContactadoRanges.map(range => ({
       min: range.min.toString(),
       max: range.isChecked ? '+' : range.max.toString()
     }));
-    
+
     const campañaYReporteRequest: CampaignReportRequest = {
       campaignName: this.campaignName,
       dueDates: this.dueDatesSelected,
@@ -425,9 +425,9 @@ noContactadoMaxErrors:any= [];
       notContactedRanges: noContactadoRangesToConsult,
       content: this.contenido
     };
-    
+
     console.log(campañaYReporteRequest);
-    
+
     Swal.fire({
       title: 'Procesando...',
       html: 'Insertando rangos, consultando y generando reporte...',
@@ -436,7 +436,7 @@ noContactadoMaxErrors:any= [];
         Swal.showLoading();
       }
     });
-    
+
     this.campañaService.getFileToCampaña(campañaYReporteRequest).subscribe(
       (data: Blob) => {
         const url = window.URL.createObjectURL(data);
@@ -447,7 +447,7 @@ noContactadoMaxErrors:any= [];
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        
+
         Swal.fire({
           icon: 'success',
           title: 'Exitoso!',
