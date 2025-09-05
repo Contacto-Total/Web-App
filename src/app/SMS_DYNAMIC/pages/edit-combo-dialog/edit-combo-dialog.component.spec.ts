@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SmsComposePageComponent } from './sms-compose-page.component';
+import { EditComboDialogComponent } from './edit-combo-dialog.component';
 
-describe('SmsComposePageComponent', () => {
-  let component: SmsComposePageComponent;
-  let fixture: ComponentFixture<SmsComposePageComponent>;
+describe('EditComboDialogComponent', () => {
+  let component: EditComboDialogComponent;
+  let fixture: ComponentFixture<EditComboDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SmsComposePageComponent]
+      imports: [EditComboDialogComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(SmsComposePageComponent);
+    fixture = TestBed.createComponent(EditComboDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -57,7 +57,7 @@ export class ToolbarComponent implements OnInit {
   }
 
   goToTemplateSMS(): void {
-    this.router.navigate(['/templateSMS']).then();
+    this.router.navigate(['/List-sms']).then();
   }
 
   goToRecordings(): void {

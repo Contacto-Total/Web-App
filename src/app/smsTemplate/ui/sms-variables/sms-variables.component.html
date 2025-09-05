@@ -1,8 +1,0 @@
-<h3>Variables</h3>
-<mat-chip-set>
-  <mat-chip-option *ngFor="let v of variables"
-                   [selected]="isSelected(v.key)"
-                   (click)="toggle(v.key)">
-    {{ v.label }}
-  </mat-chip-option>
-</mat-chip-set>

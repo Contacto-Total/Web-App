@@ -41,7 +41,7 @@ a {
   height: 5rem;
 }
 
-.nav__burger, 
+.nav__burger,
 .nav__close {
   color: white;
 }
@@ -68,7 +68,7 @@ a {
   height: 32px;
 }
 
-.nav__burger, 
+.nav__burger,
 .nav__close {
   position: absolute;
   width: max-content;
@@ -213,7 +213,7 @@ a {
     height: 100%;
     display: flex;
     column-gap: 3rem;
-  } 
+  }
 
   .nav__link {
     height: 100%;
@@ -248,4 +248,110 @@ a {
     pointer-events: initial;
     transition: top .3s;
   }
+}
+
+
+/* --- contenedor de tarjetas --- */
+.card-grid{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+/* 3 columnas en desktop, 2 en tablet, 1 en móvil */
+.combo-card{
+  grid-column: span 12;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(15,23,42,.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 680px){
+  .combo-card{ grid-column: span 6; }
+}
+@media (min-width: 1080px){
+  .combo-card{ grid-column: span 4; }
+}
+
+/* --- cabecera --- */
+.card-head{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.title{
+  margin: 0 0 4px 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+.muted{
+  margin: 0;
+  color: #64748b;
+  font-size: .92rem;
+}
+.badges{
+  display: flex;
+  gap: 8px;
+}
+.badge{
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 700;
+  border: 1px solid #e5e7eb;
+  background: #f8fafc;
+  color: #334155;
+}
+.badge.ok{ border-color:#22c55e33; background:#f0fdf4; color:#166534; }
+.badge.off{ border-color:#fca5a533; background:#fff1f2; color:#7f1d1d; }
+.badge.tone{ border-color:#a78bfa33; background:#eef2ff; color:#3730a3; }
+
+/* --- chips de selects --- */
+.chips.selects{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pill{
+  border: 1px solid #cfd8dc;
+  background: #fff;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .2px;
+}
+
+/* --- pie --- */
+.card-foot{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+.updated{
+  color: #64748b;
+  font-size: .85rem;
+}
+.actions{
+  display: flex;
+  gap: 8px;
+}
+
+/* vacíos / estados */
+.empty{
+  text-align: center;
+  color: #64748b;
+  padding: 24px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
 }

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SmsFiltersComponent } from './sms-filters.component';
+import { DynQueryPageComponent } from './dyn-query-page.component';
 
-describe('SmsFiltersComponent', () => {
-  let component: SmsFiltersComponent;
-  let fixture: ComponentFixture<SmsFiltersComponent>;
+describe('DynQueryPageComponent', () => {
+  let component: DynQueryPageComponent;
+  let fixture: ComponentFixture<DynQueryPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SmsFiltersComponent]
+      imports: [DynQueryPageComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(SmsFiltersComponent);
+    fixture = TestBed.createComponent(DynQueryPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

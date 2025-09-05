@@ -1,0 +1,166 @@
+<app-toolbar></app-toolbar>
+<div class="container">
+  <!-- Header con filtros -->
+  <div class="header-section">
+    <h2 class="main-title">Gestión de Tenores</h2>
+    <div class="filters-wrapper">
+      <div class="search-filters">
+        <input type="text"
+               class="search-input"
+               placeholder="Buscar por nombre o tenor..."
+               [formControl]="form.controls.q">
+
+        <select class="tramo-select" [formControl]="form.controls.tramo">
+          <option value="ALL">Todos los tramos</option>
+          <option value="3">Tramo 3</option>
+          <option value="5">Tramo 5</option>
+        </select>
+      </div>
+
+      <div class="action-buttons">
+        <button mat-button
+                type="button"
+                class="clear-filters-btn"
+                (click)="clearChips()">
+          <span class="material-icons">clear_all</span>
+          Limpiar
+        </button>
+        <button mat-button
+                type="button"
+                class="create-tenor-btn"
+                (click)="New()">
+          <span class="material-icons">add</span>
+          Crear
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chips de filtros -->
+  <div class="chips-wrapper">
+    <button
+      *ngFor="let c of chips"
+      type="button"
+      class="filter-chip"
+      [class.active]="isSelected(c.key)"
+      (click)="toggleChip(c.key)"
+      [attr.aria-pressed]="isSelected(c.key)">
+      {{ c.label }}
+    </button>
+  </div>
+
+  <!-- Lista de tenores en filas -->
+  <div class="tenors-wrapper" *ngIf="filtered().length; else noData">
+    <div class="tenors-list">
+      <div class="tenor-row" *ngFor="let r of filtered(); trackBy: trackById">
+        <div class="tenor-header">
+          <span class="tenor-label">{{ r.name || '(Sin nombre)' }}</span>
+          <div class="tenor-actions">
+            <button mat-button
+                    class="preview-btn"
+                    (click)="preview(r)">
+              <span class="material-icons">visibility</span>
+              Preview
+            </button>
+            <button mat-button
+                    class="edit-btn"
+                    (click)="openEdit(r)">
+              <span class="material-icons">edit</span>
+              Editar
+            </button>
+          </div>
+        </div>
+
+        <div class="tenor-content">
+          <div class="tenor-text">
+            <p class="sms-text" *ngIf="r.plantillaTexto as t; else noSms">
+              {{ t }}
+            </p>
+            <ng-template #noSms>
+              <p class="sms-text no-text">(sin texto de SMS)</p>
+            </ng-template>
+          </div>
+
+          <div class="tenor-tags">
+            <span class="tag" *ngFor="let s of r.selects">
+              {{ s === 'SALDO_MORA' ? 'MORA' : (s === 'LTD_LTDE' ? 'LTD + LTDE' : s) }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado vacío -->
+  <ng-template #noData>
+    <div class="empty-state">
+      <i class="material-icons">inbox</i>
+      <p>No hay tenores disponibles</p>
+      <p class="empty-subtitle">Crea un nuevo tenor o ajusta los filtros</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Side Sheet Preview -->
+<div class="sheet-backdrop" *ngIf="previewOpen()" (click)="closePreview()"></div>
+<aside class="preview-sheet" *ngIf="previewOpen()" (click)="$event.stopPropagation()">
+  <header class="sheet-header">
+    <h3 class="sheet-title">{{ previewTitle() }}</h3>
+    <div class="sheet-spacer"></div>
+    <button mat-button
+            class="close-btn"
+            (click)="closePreview()">
+      <span class="material-icons">close</span>
+      Cerrar
+    </button>
+  </header>
+  <div class="sheet-body" *ngIf="!previewLoading(); else loadingTpl">
+    <ng-container *ngIf="previewRow(); else emptyTpl">
+      <!-- Key-Value Pairs -->
+      <div class="data-grid">
+        <div class="data-row" *ngFor="let p of previewPairs()">
+          <div class="data-key">{{ p[0] }}</div>
+          <div class="data-value">{{ p[1] }}</div>
+        </div>
+      </div>
+      <!-- SMS Preview -->
+      <section class="sms-section" *ngIf="previewSms() !== null">
+        <label class="sms-label">Previsualización del SMS</label>
+        <div class="sms-bubble">{{ previewSms() }}</div>
+        <small class="sms-counter" *ngIf="previewSms() as sms">
+          {{ smsLen(sms).chars }}/160 caracteres
+        </small>
+      </section>
+    </ng-container>
+  </div>
+  <footer class="sheet-footer">
+    <div class="sheet-spacer"></div>
+    <button mat-stroked-button
+            class="export-btn"
+            (click)="exportSelected()">
+      <span class="material-icons">download</span>
+      Exportar
+    </button>
+    <button mat-button
+            color="warn"
+            class="delete-btn"
+            (click)="removeSelected()">
+      <span class="material-icons">delete</span>
+      Eliminar
+    </button>
+  </footer>
+</aside>
+<!-- Loading Template -->
+<ng-template #loadingTpl>
+  <div class="sheet-loading">
+    <div class="loading-spinner"></div>
+    <p>Cargando…</p>
+  </div>
+</ng-template>
+<!-- Empty Template -->
+<ng-template #emptyTpl>
+  <div class="sheet-empty">
+    <span class="material-icons">info</span>
+    <p>No se encontraron filas para este combo.</p>
+  </div>
+</ng-template>

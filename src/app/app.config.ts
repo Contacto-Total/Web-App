@@ -7,6 +7,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { withFetch, withInterceptors} from '@angular/common/http';
 import { provideHttpClient } from '@angular/common/http';
+import {ngrokInterceptor} from "../environments/ngrok.interceptor";
 
 /*import { authInterceptor } from 'environments/auth.interceptor';*/
 
@@ -17,5 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(), provideAnimationsAsync(),
     provideHttpClient(),
     provideAnimations(),
+    provideHttpClient(withInterceptors([ngrokInterceptor])),
     /*provideHttpClient(withInterceptors([authInterceptor]))*/]
 };

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SmsVariablesComponent } from './sms-variables.component';
+import { ComboListPageComponent } from './combo-list-page.component';
 
-describe('SmsVariablesComponent', () => {
-  let component: SmsVariablesComponent;
-  let fixture: ComponentFixture<SmsVariablesComponent>;
+describe('ComboListPageComponent', () => {
+  let component: ComboListPageComponent;
+  let fixture: ComponentFixture<ComboListPageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SmsVariablesComponent]
+      imports: [ComboListPageComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(SmsVariablesComponent);
+    fixture = TestBed.createComponent(ComboListPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

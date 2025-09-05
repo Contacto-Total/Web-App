@@ -12,13 +12,15 @@ import { RankingReportPageComponent } from './reports/pages/ranking-report-page/
 import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
 import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
-import {SmsComposerPageComponent} from "@/smsTemplate/sms-compose-page/sms-compose-page.component";
+import {DynQueryPageComponent} from "@/SMS_DYNAMIC/pages/dyn-query-page/dyn-query-page.component";
+import {ComboListPageComponent} from "@/SMS_DYNAMIC/pages/combo-list-page/combo-list-page.component";
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
-    {'path': 'templateSMS', component: SmsComposerPageComponent},
+    {'path': 'List-sms', component: ComboListPageComponent},
+    {'path': 'Dynamic', component: DynQueryPageComponent},
     {'path': 'add/template', component: CreateSmsTemplatePageComponent},
     {'path': 'edit/template', component: UpdateSmsTemplatePageComponent, canActivate: [updateTemplateGuard]},
     {'path': 'recordings', component: RecordingsPageComponent},
