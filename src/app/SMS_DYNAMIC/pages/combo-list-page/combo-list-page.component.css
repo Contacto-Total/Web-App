@@ -112,8 +112,13 @@
 
 .create-tenor-btn {
   background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-  color: white;
+  color: white !important;
 }
+
+.create-tenor-btn .material-icons {
+  color: white !important;
+}
+
 
 .create-tenor-btn:hover {
   background: linear-gradient(135deg, #2563eb, #7c3aed);
@@ -501,13 +506,22 @@
 .delete-btn {
   background: #ef4444;
   border: none;
-  color: white;
+  color: white !important; /* Asegúrate de que el texto sea blanco */
+}
+
+.delete-btn .material-icons {
+  color: white; /* Asegura que el ícono también sea blanco */
 }
 
 .delete-btn:hover {
-  background: #dc2626;
+  background: white;
+  border: 2px solid #dc2626;
+  color: #dc2626 !important;; /* Mantén el texto blanco en hover */
 }
 
+.delete-btn:hover .material-icons {
+  color: #dc2626; /* Mantén el ícono blanco en hover */
+}
 .sheet-loading,
 .sheet-empty {
   display: flex;

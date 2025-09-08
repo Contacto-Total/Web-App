@@ -114,7 +114,6 @@
         <div class="form-field">
           <label class="form-label label-with-count">
             <span>Texto de SMS</span>
-            <span class="count-badge">{{ (form.controls.plantillaTexto.value || '').length }}/160</span>
           </label>
           <textarea class="form-textarea" formControlName="plantillaTexto" placeholder="Escribe el mensaje y usa BOTONES"></textarea>
         </div>
@@ -147,20 +146,22 @@
       </h3>
 
       <div class="preview-box">
-        {{ form.controls.plantillaTexto.value || 'Tu SMS aparecerá aquí…' }}
+        {{ previewText() || 'Tu SMS aparecerá aquí…' }}
       </div>
 
       <div class="character-meter">
         <div class="character-bar"
-             [class.warning]="(form.controls.plantillaTexto.value?.length || 0) > 120"
-             [class.danger]="(form.controls.plantillaTexto.value?.length || 0) > 160"
-             [style.width.%]="Math.min(((form.controls.plantillaTexto.value?.length || 0) / 160) * 100, 100)">
+             [class.warning]="previewText().length > 120"
+             [class.danger]="previewText().length > 160"
+             [style.width.%]="Math.min((previewText().length / 160) * 100, 100)">
         </div>
       </div>
-
       <div class="character-count">
-        {{ (form.controls.plantillaTexto.value?.length || 0) }} / 160
+        {{ previewText().length }} / 160
       </div>
+
+
+
 
       <p class="hint">
         💡 Consejo: mantén el mensaje bajo 160 caracteres o usa variables cortas.

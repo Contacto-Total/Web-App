@@ -1,0 +1,11 @@
+<div class="ldg-container">
+  <div class="loader-wrapper" aria-label="loading animation">
+    <ng-container *ngFor="let ch of letters; let i = index">
+      <span class="loader-letter">{{ ch }}</span>
+    </ng-container>
+    <div class="loader"></div>
+  </div>
+
+  <h2 class="ldg-title">{{ data?.title || 'Generando…' }}</h2>
+  <p class="ldg-subtitle" *ngIf="data?.subtitle">{{ data?.subtitle }}</p>
+</div>

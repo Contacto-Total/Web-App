@@ -8,7 +8,7 @@ import { ToolbarComponent } from '@/shared/components/toolbar/toolbar.component'
 import { ComboService } from '../../services/combo.service';
 import { ComboResponse } from '../../models/combo-response';
 import {toSignal} from "@angular/core/rxjs-interop";
-import {startWith} from "rxjs";
+import {finalize, startWith} from "rxjs";
 import { MatBottomSheet, MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import {Row} from "@/SMS_DYNAMIC/models/dyn-query";
 import { Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import {EditComboDialogComponent} from "@/SMS_DYNAMIC/pages/edit-combo-dialog/edit-combo-dialog.component";
 import { renderPreviewMessage, smsSegmentsLen } from '../../utils';
 import {AlertDialogComponent} from "@/SMS_DYNAMIC/Common/alert-dialog.component";
-
+import {LoadingDialogComponent} from "@/SMS_DYNAMIC/Common/loading-dialog/loading-dialog.component";
 
 
 type ChipKey =
@@ -55,6 +55,7 @@ export class ComboListPageComponent {
   private dialog = inject(MatDialog);
   private router = inject(Router);
 
+
   previewSms = signal<string | null>(null);
   smsLen = (t: string) => smsSegmentsLen(t);
 
@@ -62,7 +63,7 @@ export class ComboListPageComponent {
   openEdit(c: ComboResponse) {
     this.dialog.open(EditComboDialogComponent, {
       data: c,
-      width: '720px',
+      width: '650px',
       maxWidth: '92vw',
       autoFocus: false,
       panelClass: 'combo-dialog'   // para estilos del contenedor
@@ -228,30 +229,39 @@ export class ComboListPageComponent {
   export(c: ComboResponse) {
     const id = c.id;
 
+    // Abre el loader (hamster)
+    const dlg = this.matDialog.open(LoadingDialogComponent, {
+      disableClose: true,
+      data: { title: 'Generando Excel…', subtitle: 'Preparando datos y creando archivo' },
+      panelClass: 'loading-dialog-panel',
+      backdropClass: 'blur-dialog-backdrop',
+      width: '460px',
+      height: '310px',
+    });
+
     // 1) Precheck del combo (backend calcula usando la plantilla del combo)
     this.api.precheck(id).subscribe({
       next: (res) => {
         if (!res.ok) {
-          const ejemplos = (res.ejemplos ?? [])
-            .slice(0, 10)
-            .map(e => `• ${e.len} chars${e.documento ? ' • Doc ' + e.documento : ''}`)
+          // Cierra loader y muestra detalle del porqué no pasa el límite
+          dlg.close();
+
+          const header = `${res.excedidos} ${res.excedidos === 1 ? 'fila' : 'filas'} superan los caracteres.`;
+
+          const ejemplosTxt = (res.ejemplos ?? [])
+            .map((e, i) => `• ${e.len} caracteres — DNI: ${e.documento || '(sin DNI)'}`)
             .join('\n');
 
-          const peor = res.peor
-            ? `\n\nPeor caso: ${res.peor.len} chars (${res.peor.segments} SMS)` +
-            (res.peor.documento ? ` • Doc ${res.peor.documento}` : '')
-            : '';
-
           this.alert(
-            `No se puede exportar el combo: ${res.excedidos} filas superan ${res.limite} caracteres.` +
-            peor + (ejemplos ? `\n\nEjemplos:\n${ejemplos}` : ''),
+            `${header}\n\nPrimeros ${Math.min((res.ejemplos ?? []).length, 3)} casos:\n${ejemplosTxt}$`,
             'Mensaje demasiado largo'
           );
           return;
         }
 
         // 2) Exportar (el backend devolverá 422 si no hay filas)
-        this.api.exportFromCombo(id).subscribe({
+        this.api.exportFromCombo(id).pipe(finalize(() => dlg.close()))
+          .subscribe({
           next: (blob) => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -261,6 +271,7 @@ export class ComboListPageComponent {
             URL.revokeObjectURL(url);
           },
           error: (err) => {
+            dlg.close();
             // 422 => backend detectó “sin filas para exportar”
             const msg =
               err?.status === 422

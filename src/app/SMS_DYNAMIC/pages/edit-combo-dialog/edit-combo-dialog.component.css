@@ -20,15 +20,13 @@
 .dlg__head h2{ margin:0; font-size:1.2rem; font-weight:700; }
 .icon-btn{ border:none; background:transparent; font-size:18px; margin-left:auto; cursor:pointer; }
 
-.dlg__body{
-  padding:16px 18px;
-  overflow:auto;
-}
+.dlg__body{ padding:16px 18px 10px; }
 .dlg__foot{
   padding:12px 18px;
   border-top:1px solid #e5e7eb;
-  display:flex; gap:10px; justify-content:flex-end;
-  position: sticky; bottom: 0; background:#fff;
+  background:#fff;
+  /* sombra suave para separar el footer sticky del scroll */
+  box-shadow: 0 -6px 12px -10px rgba(0,0,0,.12);
 }
 
 /* Grid */
@@ -40,7 +38,7 @@
 .grid .full{ grid-column: 1/-1; }
 
 /* Inputs */
-label{ font-weight:600; color:#1f2937; display:block; margin-bottom:6px; }
+label{ margin-bottom:6px; }
 input, select, textarea{
   width:100%; border:1.5px solid #d1d5db; border-radius:10px;
   padding:10px 12px; outline:none; background:#fff; color:#0f172a;
@@ -58,19 +56,138 @@ textarea{ resize: vertical; }
 .error{ color:#ef4444; margin-top:6px; }
 
 /* Chips */
-.chips{ display:flex; flex-wrap:wrap; gap:8px; }
-.chip{
-  border:1px solid #cfd8dc; background:#fff; border-radius:999px;
-  padding:8px 12px; font-weight:600; cursor:pointer; transition:.15s;
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 12px;
 }
-.chip.active{ border-color:#6366f1; background:#eef2ff; color:#1e1b4b; }
+
+.chip{
+  appearance: none;                 /* evita estilos nativos del botón */
+  border: 1px solid #cfd8dc;        /* borde gris claro */
+  background: #fff;                 /* fondo blanco */
+  color: #111827;
+  border-radius: 999px;             /* pill */
+  padding: 8px 14px;                /* aire */
+  font-weight: 600;
+  line-height: 1.1;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .04s;
+  box-shadow: 0 1px 0 rgba(0,0,0,.02); /* sutil */
+}
+
+.chip:hover{
+  background: #f8fafc;
+}
+
+.chip:active{
+  transform: translateY(1px);
+}
+
+.chip:focus-visible{
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.chip.active{
+  border-color: #6366f1;
+  background: #eef2ff;
+  color: #1e1b4b;
+}
 
 /* details */
-.adv{ margin-top:10px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; }
+.adv { margin-top: 12px; border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; }
+.adv__title{ font-weight:600; background:#f6f7f9; padding:12px 16px; border-bottom:1px solid #e5e7eb; }
 .adv > summary{ cursor:pointer; padding:10px 14px; background:#f8fafc; font-weight:700; }
 .adv[open] > summary{ border-bottom:1px solid #e5e7eb; }
-.adv .grid{ padding:12px 14px; }
+.adv .grid{ padding:14px 16px; gap:16px; }
 
+@media (min-width: 980px){
+  .adv .grid > div:nth-child(1){ /* Tramo */
+    grid-column: span 4;
+  }
+  .adv .grid > div:nth-child(2){ /* Selects */
+    grid-column: 1 / -1;    /* full width */
+  }
+  .adv .grid > div:nth-child(3){ /* Restricciones */
+    grid-column: span 6;
+  }
+}
+/* Mobile: todo a una columna, ya lo cubre tu @media actual */
 @media (max-width: 980px){
   .grid > div{ grid-column: 1/-1; }
+}
+
+
+.preview-box {
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  min-height: 100px;
+  margin-bottom: 16px;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.character-meter {
+  background: #f3f4f6;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.character-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.character-bar.warning {
+  background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.character-bar.danger {
+  background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+.character-count {
+  font-size: 12px;
+  color: #6b7280;
+  text-align: right;
+}
+
+
+@media (max-width: 980px){
+  .checks{ grid-template-columns: 1fr; }            /* una columna en móvil */
+}
+
+.checks{
+  display: flex;
+  flex-direction: row;
+  gap: 9px;
+  width: 550px;          /* evita tarjetas demasiado anchas */
+}
+
+.checks label{
+  display: flex;
+  align-items: center;       /* texto alineado con el check */
+  gap: 7px;
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  line-height: 1.25;         /* mejor lectura en 2-3 líneas */
+  user-select: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.checks label:hover{
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px -8px rgba(0,0,0,.25);
+}
+
+.checks input{
+  transform: scale(1.06);
+  margin-top: 1px;           /* alinea el check con la primera línea */
 }

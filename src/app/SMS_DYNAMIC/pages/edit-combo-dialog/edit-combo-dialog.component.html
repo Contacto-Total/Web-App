@@ -1,11 +1,18 @@
 <!-- edit-combo-dialog.component.html -->
-<form [formGroup]="form" class="dlg" (ngSubmit)="save()" novalidate>
-  <header class="dlg__head">
-    <h2>Editar combo</h2>
+<form
+  [formGroup]="form"
+  class="dlg"
+  (ngSubmit)="save()"
+  novalidate
+  style="display:flex; flex-direction:column; width:640px; max-height:80vh;"
+>
+  <header class="dlg__head" style="flex:0 0 auto;">
+    <h2>Editar</h2>
     <button type="button" class="icon-btn" (click)="close()" aria-label="Cerrar">✕</button>
   </header>
 
-  <section class="dlg__body">
+  <!-- Cuerpo con scroll: crece dentro del alto fijo sin expandir el diálogo -->
+  <section class="dlg__body" style="flex:1 1 auto; overflow:auto; padding-right:8px;">
     <!-- Obligatorios -->
     <div class="grid">
       <div class="full">
@@ -16,35 +23,42 @@
       <div class="full">
         <div class="row-between">
           <label>Texto de SMS (Plantilla) <span class="req">*</span></label>
-          <small class="muted">{{ smsLength() }}/{{ SMS_MAX }}</small>
         </div>
         <textarea formControlName="plantillaTexto" rows="5" placeholder="Hola {NOMBRE}, …"></textarea>
         <div class="error" *ngIf="smsCtrl.invalid && (smsCtrl.dirty || submitted)">
-        El texto es obligatorio.
+          El texto es obligatorio.
+        </div>
+        <label>Preview</label>
+        <div class="preview-box">
+          {{ previewText() || 'Tu SMS aparecerá aquí…' }}
+        </div>
+        <div class="character-meter">
+          <div class="character-bar"
+               [class.warning]="previewText().length > 120"
+               [class.danger]="previewText().length > 160"
+               [style.width.%]="Math.min((previewText().length / 160) * 100, 100)">
+          </div>
+        </div>
+        <div class="character-count">
+          {{ previewText().length }} / 160
         </div>
       </div>
     </div>
 
-    <!-- Avanzado colapsable -->
-    <details class="adv">
-      <summary>Opciones avanzadas</summary>
+    <!-- Opciones avanzadas SIEMPRE visibles (sin <details>) -->
+    <section class="adv" style="margin-top:16px;">
+      <div class="adv__title" style="font-weight:600; background:#f6f7f9; padding:12px 16px; border-radius:10px;">
+        Opciones avanzadas
+      </div>
 
-      <div class="grid">
+      <div class="grid" style="margin-top:12px;">
+
         <div>
           <label>Tramo</label>
           <select formControlName="tramo">
             <option value="3">Tramo 3</option>
             <option value="5">Tramo 5</option>
           </select>
-        </div>
-
-        <div>
-          <label>Restricciones</label>
-          <div class="checks">
-            <label><input type="checkbox" formControlName="excluirPromesasPeriodoActual" /> Excluir promesas periodo</label>
-            <label><input type="checkbox" formControlName="excluirCompromisos" /> Excluir compromisos</label>
-            <label><input type="checkbox" formControlName="excluirBlacklist" /> Excluir blacklist</label>
-          </div>
         </div>
 
         <div class="full">
@@ -62,16 +76,24 @@
             <button type="button" class="chip" [class.active]="hasSelect('PKM')" (click)="onChipClick($event,'PKM')">PKM</button>
             <button type="button" class="chip" [class.active]="hasSelect('HOY')" (click)="onChipClick($event,'HOY')">Hoy</button>
             <button type="button" class="chip" [class.active]="hasSelect('MANANA')" (click)="onChipClick($event,'MANANA')">Mañana</button>
-
           </div>
         </div>
-      </div>
-    </details>
 
-    <!-- (Descripción la dejamos fuera; si la quieres, ponla en este bloque) -->
+        <div>
+          <label>Restricciones</label>
+          <div class="checks">
+            <label><input type="checkbox" formControlName="excluirPromesasPeriodoActual" /> Excluir promesas periodo</label>
+            <label><input type="checkbox" formControlName="excluirCompromisos" /> Excluir compromisos</label>
+            <label><input type="checkbox" formControlName="excluirBlacklist" /> Excluir blacklist</label>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
   </section>
 
-  <footer class="dlg__foot">
+    <footer class="dlg__foot" style="flex:0 0 auto;">
     <button type="button" mat-button (click)="close()">Cancelar</button>
     <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid || saving">
       {{ saving ? 'Guardando…' : 'Guardar' }}

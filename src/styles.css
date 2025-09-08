@@ -9,3 +9,33 @@ body.no-scroll {
   overflow: hidden;     /* oculta la barra */
   width: 100%;
 }
+/* Contenedor del diálogo de carga */
+.loading-dialog-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* Backdrop con blur suave */
+.blur-dialog-backdrop {
+  backdrop-filter: blur(2px);
+}
+/* Superficie transparente, sin sombra ni borde */
+.loading-dialog-panel .mat-mdc-dialog-container .mdc-dialog__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Contenido sin padding y sin scroll */
+.loading-dialog-panel .mat-mdc-dialog-content,
+.loading-dialog-panel .mdc-dialog__content {
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Backdrop con blur suave y un pelín de oscurecido */
+.blur-dialog-backdrop {
+  backdrop-filter: blur(3px);
+  background: rgba(0,0,0,0.15);
+}
