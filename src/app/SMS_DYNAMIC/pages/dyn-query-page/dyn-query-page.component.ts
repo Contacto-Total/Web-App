@@ -486,7 +486,7 @@ export class DynQueryPageComponent implements OnInit {
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = `resultado_${new Date().toISOString().slice(0, 10)}.xlsx`;
+              a.download = `sms report ${new Date().toISOString().slice(0, 10)}.xlsx`;
               document.body.appendChild(a); a.click(); a.remove();
               URL.revokeObjectURL(url);
               this.showSuccess('Exportación exitosa', 'Tu archivo se generó correctamente.').subscribe();
