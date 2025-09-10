@@ -13,6 +13,13 @@ export class AgreementsService {
   baseUrl = environment.baseUrl + 'cartas'
   constructor(private http: HttpClient) { }
 
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      "ngrok-skip-browser-warning": "69420",
+    })
+  }
+
   fileHttpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -41,7 +48,7 @@ export class AgreementsService {
   } 
 
   getAgreementData(dni: string, tramo: string) {
-    return this.http.get<AgreementDataResponse>(this.baseUrl + `/datos-cliente/${dni}/${tramo}`);
+    return this.http.get<AgreementDataResponse>(this.baseUrl + `/datos-cliente/${dni}/${tramo}`, this.httpOptions);
   }
 
 }
