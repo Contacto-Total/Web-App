@@ -15,6 +15,7 @@ import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blackli
 import {SmsTemplateComponent} from "@/smsTemplate/components/sms-template/sms-template.component";
 import {PaymentReminderSmsComponent} from "@/smsTemplate/pages/payment-reminder-sms/payment-reminder-sms.component";
 import {FollowUpSmsComponent} from "@/smsTemplate/pages/follow-up-sms/follow-up-sms.component";
+import { PaymentAgreementCardPageComponent } from './agreements/pages/payment-agreement-card-page/payment-agreement-card-page.component';
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
@@ -31,5 +32,6 @@ export const routes: Routes = [
     {'path': 'ranking/report', component: RankingReportPageComponent},
     {'path': 'speech/report', component: SpeechReportPageComponent},
     {'path': 'powerbi/report', component: PowerBiReportPageComponent},
-    {'path': 'blacklist', component: BlacklistPageComponent}
+    {'path': 'blacklist', component: BlacklistPageComponent},
+    {'path': 'acuerdo-de-pago', component: PaymentAgreementCardPageComponent}
 ];
