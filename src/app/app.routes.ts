@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 
 import { CampaignPageComponent } from './campaign/pages/campaign-page/campaign-page.component';
-import { SmsPageComponent } from './sms/pages/sms-page/sms-page.component';
 import { RecordingsPageComponent } from './recordings/pages/recordings-page/recordings-page.component';
 import { ContactReportPageComponent } from './reports/pages/contact-report-page/contact-report-page.component';
 import { MonitoringReportPageComponent } from './reports/pages/monitoring-report-page/monitoring-report-page.component';
@@ -16,7 +15,6 @@ import {DynQueryPageComponent} from "@/SMS_DYNAMIC/pages/dyn-query-page/dyn-quer
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
-    {'path': 'sms', component: SmsPageComponent},
     {'path': 'SMS', component: ComboListPageComponent},
     {'path': 'crear', component: DynQueryPageComponent},
     {'path': 'recordings', component: RecordingsPageComponent},
