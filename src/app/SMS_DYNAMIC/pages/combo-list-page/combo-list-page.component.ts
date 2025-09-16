@@ -188,9 +188,15 @@ export class ComboListPageComponent {
       if (tramo !== 'ALL' && c.tramo !== tramo) return false;
 
       if (keys.size) {
-        const s = new Set(c.selects);
+        const s = new Set(c.selects ?? []);
+        const hasNombre =
+          s.has('NOMBRE' as any) || /\{NOMBRE\}/i.test(c.plantillaTexto || '');
+
         for (const k of keys) {
-          if (k === 'NOMBRE') continue; // no filtra por selects
+          if (k === 'NOMBRE') {
+            if (!hasNombre) return false;   // ahora sí filtra por NOMBRE
+            continue;
+          }
           if (!s.has(k)) return false;
         }
       }
