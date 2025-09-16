@@ -38,7 +38,9 @@
                   class="chip"
                   [class.active]="isSelected(c.key)"
                   (click)="toggleChip(c.key, c.affectsSelects !== false)"
-                  [attr.aria-pressed]="isSelected(c.key)">
+                  [attr.aria-pressed]="isSelected(c.key)"
+                  [disabled]="isChipDisabled(c.key)"
+                >
                   {{ c.label }}
                 </button>
               </div>

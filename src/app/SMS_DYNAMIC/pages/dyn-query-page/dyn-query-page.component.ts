@@ -228,20 +228,57 @@ export class DynQueryPageComponent implements OnInit {
 
 // Toggle visual + lógica (insertar solo al seleccionar)
   toggleChip(key: string, affectsSelects = true) {
-    if (this.selectedChips.has(key)) {
+    const wasActive = this.selectedChips.has(key);
+
+    if (wasActive) {
+      // Quitar selección normal
       this.selectedChips.delete(key);
       if (affectsSelects) this.selects.delete(key);
       this.removePlaceholder(key);
     } else {
+      // 🔒 Reglas de exclusión existentes (BAJA30/MORA ↔ BAJA30_SALDOMORA)
+      if (key === 'BAJA30' || key === 'MORA') {
+        if (this.selectedChips.has('BAJA30_SALDOMORA')) {
+          this.selectedChips.delete('BAJA30_SALDOMORA');
+          this.selects.delete('BAJA30_SALDOMORA');
+          this.removePlaceholder('BAJA30_SALDOMORA');
+        }
+      }
+      if (key === 'BAJA30_SALDOMORA') {
+        if (this.selectedChips.has('BAJA30')) {
+          this.selectedChips.delete('BAJA30');
+          this.selects.delete('BAJA30');
+          this.removePlaceholder('BAJA30');
+        }
+        if (this.selectedChips.has('MORA')) {
+          this.selectedChips.delete('MORA');
+          this.selects.delete('MORA');
+          this.removePlaceholder('MORA');
+        }
+      }
+
+      // 🔒 NUEVO: Reglas de exclusión para LTD / LTDE ↔ LTD_LTDE
+      if (key === 'LTD' || key === 'LTDE') {
+        this.forceDeselect('LTD_LTDE');
+      }
+      if (key === 'LTD_LTDE') {
+        this.forceDeselect('LTD');
+        this.forceDeselect('LTDE');
+      }
+
+      // Selección normal
       this.selectedChips.add(key);
       if (affectsSelects) this.selects.add(key);
       this.insertPlaceholderOnce(key);
     }
+
     if (!this.hasTopUpSelect()) {
       this.form.controls.importeExtra.setValue(0);
     }
     this.fetchSampleRow();
   }
+
+
 
   previewText = computed(() => {
     const tpl = this.tplSig();
@@ -656,6 +693,35 @@ export class DynQueryPageComponent implements OnInit {
     }).afterClosed();
   }
 
+  private forceDeselect(key: string, affectsSelects = true) {
+    if (!this.selectedChips.has(key)) return;
+    this.selectedChips.delete(key);
+    if (affectsSelects) this.selects.delete(key);
+    this.removePlaceholder(key);
+  }
+
+  isChipDisabled(key: string): boolean {
+    // Si el propio chip está activo, NO lo deshabilites (permitimos deseleccionar)
+    if (this.selectedChips.has(key)) return false;
+
+    if (key === 'LTD_LTDE') {
+      return this.selectedChips.has('LTD') || this.selectedChips.has('LTDE');
+    }
+    if (key === 'LTD' || key === 'LTDE') {
+      return this.selectedChips.has('LTD_LTDE');
+    }
+
+    // Regla de exclusión:
+    // - Si está seleccionado BAJA30 o MORA ⇒ deshabilita BAJA30_SALDOMORA
+    // - Si está seleccionado BAJA30_SALDOMORA ⇒ deshabilita BAJA30 y MORA
+    if (key === 'BAJA30_SALDOMORA') {
+      return this.selectedChips.has('BAJA30') || this.selectedChips.has('MORA');
+    }
+    if (key === 'BAJA30' || key === 'MORA') {
+      return this.selectedChips.has('BAJA30_SALDOMORA');
+    }
+    return false;
+  }
 
 
 }

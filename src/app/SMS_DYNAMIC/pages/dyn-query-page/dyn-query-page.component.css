@@ -497,3 +497,9 @@
   color: #fff;
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
+
+.chip[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none; /* por si acaso */
+}

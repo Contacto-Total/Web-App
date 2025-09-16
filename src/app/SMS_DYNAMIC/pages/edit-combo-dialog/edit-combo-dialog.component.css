@@ -255,3 +255,9 @@ textarea{ resize: vertical; }
   margin-bottom: 8px;
   font-size: 14px;
 }
+.chip[disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none; /* por si acaso */
+}
+

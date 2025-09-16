@@ -227,18 +227,40 @@ export class EditComboDialogComponent implements OnInit {
     const ph = this.placeholderFromKey(k);
 
     if (was) {
+      // Quitar selección normal
       this.selected.delete(k);
       this.removePlaceholder(ph);
     } else {
+      // 🔒 Reglas de exclusión (financiero)
+      // BAJA30 / SALDO_MORA ↔ BAJA30_SALDOMORA
+      if (k === 'BAJA30' || k === 'SALDO_MORA') {
+        this.forceDeselect('BAJA30_SALDOMORA');
+      }
+      if (k === 'BAJA30_SALDOMORA') {
+        this.forceDeselect('BAJA30');
+        this.forceDeselect('SALDO_MORA');
+      }
+
+      // LTD / LTDE ↔ LTD_LTDE
+      if (k === 'LTD' || k === 'LTDE') {
+        this.forceDeselect('LTD_LTDE');
+      }
+      if (k === 'LTD_LTDE') {
+        this.forceDeselect('LTD');
+        this.forceDeselect('LTDE');
+      }
+
+      // Selección normal
       this.selected.add(k);
       this.insertPlaceholderOnce(ph);
     }
 
-    // 👇 siempre después de actualizar `selected`
+    // Ajuste de importe extra
     if (!this.hasTopUpSelect()) {
       this.form.controls.importeExtra.setValue(0);
     }
   }
+
 
 
 
@@ -327,6 +349,34 @@ export class EditComboDialogComponent implements OnInit {
     const has = /\{NOMBRE\}/i.test(this.smsCtrl.value || '');
     if (has) this.selected.add('NOMBRE' as any);
     else this.selected.delete('NOMBRE' as any);
+  }
+  private forceDeselect(k: ChipKey) {
+    if (!this.selected.has(k)) return;
+    this.selected.delete(k);
+    this.removePlaceholder(this.placeholderFromKey(k));
+  }
+
+  isChipDisabled(k: ChipKey): boolean {
+    // Si ya está activo, no lo deshabilites (permitir deselección)
+    if (this.selected.has(k)) return false;
+
+    // BAJA30 / SALDO_MORA ↔ BAJA30_SALDOMORA
+    if (k === 'BAJA30_SALDOMORA') {
+      return this.selected.has('BAJA30') || this.selected.has('SALDO_MORA');
+    }
+    if (k === 'BAJA30' || k === 'SALDO_MORA') {
+      return this.selected.has('BAJA30_SALDOMORA');
+    }
+
+    // LTD / LTDE ↔ LTD_LTDE
+    if (k === 'LTD_LTDE') {
+      return this.selected.has('LTD') || this.selected.has('LTDE');
+    }
+    if (k === 'LTD' || k === 'LTDE') {
+      return this.selected.has('LTD_LTDE');
+    }
+
+    return false;
   }
 
 

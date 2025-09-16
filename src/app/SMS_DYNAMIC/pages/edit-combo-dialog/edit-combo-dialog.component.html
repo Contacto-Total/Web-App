@@ -80,17 +80,42 @@
             <div class="chip-group chip-group--financiero">
               <h4 class="chip-group-title">Financiero</h4>
               <div class="chip-container">
-                <button type="button" class="chip" [class.active]="hasSelect('LTD')" (click)="onChipClick($event,'LTD')">LTD</button>
-                <button type="button" class="chip" [class.active]="hasSelect('LTDE')" (click)="onChipClick($event,'LTDE')">LTDE</button>
-                <button type="button" class="chip" [class.active]="hasSelect('LTD_LTDE')" (click)="onChipClick($event,'LTD_LTDE')">LTD + LTDE</button>
-                <button type="button" class="chip" [class.active]="hasSelect('BAJA30')" (click)="onChipClick($event,'BAJA30')">Baja 30</button>
-                <button type="button" class="chip" [class.active]="hasSelect('SALDO_MORA')" (click)="onChipClick($event,'SALDO_MORA')">Mora</button>
-                <button type="button" class="chip" [class.active]="hasSelect('BAJA30_SALDOMORA')" (click)="onChipClick($event,'BAJA30_SALDOMORA')">Baja 30 y Saldo Mora</button>
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('LTD')"
+                        [disabled]="isChipDisabled('LTD')"
+                        (click)="onChipClick($event,'LTD')">LTD</button>
+
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('LTDE')"
+                        [disabled]="isChipDisabled('LTDE')"
+                        (click)="onChipClick($event,'LTDE')">LTDE</button>
+
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('LTD_LTDE')"
+                        [disabled]="isChipDisabled('LTD_LTDE')"
+                        (click)="onChipClick($event,'LTD_LTDE')">LTD + LTDE</button>
+
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('BAJA30')"
+                        [disabled]="isChipDisabled('BAJA30')"
+                        (click)="onChipClick($event,'BAJA30')">Baja 30</button>
+
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('SALDO_MORA')"
+                        [disabled]="isChipDisabled('SALDO_MORA')"
+                        (click)="onChipClick($event,'SALDO_MORA')">Mora</button>
+
+                <button type="button" class="chip"
+                        [class.active]="hasSelect('BAJA30_SALDOMORA')"
+                        [disabled]="isChipDisabled('BAJA30_SALDOMORA')"
+                        (click)="onChipClick($event,'BAJA30_SALDOMORA')">Baja 30 y Saldo Mora</button>
+
                 <button type="button" class="chip" [class.active]="hasSelect('PKM')" (click)="onChipClick($event,'PKM')">PKM</button>
                 <button type="button" class="chip" [class.active]="hasSelect('CAPITAL')" (click)="onChipClick($event,'CAPITAL')">Capital</button>
                 <button type="button" class="chip" [class.active]="hasSelect('DEUDA_TOTAL')" (click)="onChipClick($event,'DEUDA_TOTAL')">Deuda Total</button>
               </div>
             </div>
+
 
             <!-- Fechas -->
             <div class="chip-group chip-group--fechas">
