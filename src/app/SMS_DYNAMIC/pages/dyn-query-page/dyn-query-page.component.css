@@ -52,7 +52,7 @@
   font-size: 18px;
   font-weight: 600;
   color: #2c3e50;
-  margin: 24px 0 16px 0;
+  margin: 44px 0 16px 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -79,6 +79,7 @@
   display: block;
   font-weight: 500;
   color: #374151;
+  margin-top: 25px;
   margin-bottom: 8px;
   font-size: 14px;
 }
@@ -116,11 +117,11 @@
 
 /* Chips */
 .chip-container {
-  display: flex;
-  flex-wrap: wrap;
+  display: flex; /* Esto los alinea en fila */
   gap: 8px;
-  margin-bottom: 16px;
+  flex-wrap: wrap; /* Si no hay espacio, permite el ajuste a la siguiente línea */
 }
+
 
 .chip {
   padding: 8px 16px;
@@ -132,6 +133,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   color: #6b7280;
+  margin-right: 8px; /* Espacio a la derecha de cada chip */
 }
 
 .chip:hover {
@@ -404,4 +406,94 @@
     flex-direction: column;
     gap: 12px;
   }
+}
+
+
+/* === Grupos de chips con tinte suave === */
+.chip-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chip-group {
+  --group-accent: #374151;
+  --group-bg: rgba(0,0,0,0.03);
+  --group-border: rgba(0,0,0,0.08);
+  --label-col: 90px;
+
+  border: 1px solid var(--group-border);
+  border-radius: 12px;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: var(--label-col) 1fr;
+  column-gap: 12px;
+  row-gap: 6px;
+  align-items: center; /* Alineamos los elementos */
+}
+
+.chip-group-title {
+  grid-column: 1;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--group-accent);
+  opacity: .9;
+  margin: 0;                 /* quita márgenes que empujen */
+  padding: 2px 0 0 0;        /* opcional: micro-ajuste vertical */
+}
+
+.chip-container{
+  grid-column: 2;            /* chips en la col fluida */
+  margin: 0;                 /* asegúrate de no tener margen izq */
+}
+
+/* Variante: Cliente (indigo/púrpura de tu header) */
+.chip-group--cliente {
+  --group-accent: #364278;
+  --group-bg: rgba(102, 126, 234, 0.06);
+  --group-border: rgba(102, 126, 234, 0.18);
+}
+
+/* Variante: Financiero (verde del medidor) */
+.chip-group--financiero {
+  --group-accent: #3a4785;
+  --group-bg: rgba(102, 126, 234, 0.06);
+  --group-border: rgba(102, 126, 234, 0.18);
+}
+
+/* Variante: Fechas (ámbar suave) */
+.chip-group--fechas {
+  --group-accent: #4563a1;
+  --group-bg: rgba(102, 126, 234, 0.06);
+  --group-border: rgba(102, 126, 234, 0.18);
+}
+
+/* (Opcional) chips inactivos heredan un filo/tinte del grupo */
+.chip-group--cliente .chip,
+.chip-group--financiero .chip,
+.chip-group--fechas .chip {
+  background: rgba(255, 255, 255, 0.6);
+  border-color: var(--group-border);
+}
+
+.chip-group--cliente .chip:hover,
+.chip-group--financiero .chip:hover,
+.chip-group--fechas .chip:hover {
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 2px 10px var(--group-border);
+}
+
+/* Colores de acento por grupo (2 tonos para el degradado del chip activo) */
+.chip-group--cliente    { --group-accent: #445ab8; --group-accent-2: #282e61; }
+.chip-group--financiero { --group-accent: #445ab8; --group-accent-2: #282e61; }
+.chip-group--fechas     { --group-accent: #445ab8; --group-accent-2: #282e61; }
+
+/* 🔧 FIX: que el chip activo gane a los estilos de grupo */
+.chip-group .chip.active {
+  background: linear-gradient(135deg,
+  var(--group-accent, #764ba2) 0%,
+  var(--group-accent-2, #764ba2) 100%);
+  border-color: var(--group-accent, #667eea);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }

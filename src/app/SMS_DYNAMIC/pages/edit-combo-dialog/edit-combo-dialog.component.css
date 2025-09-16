@@ -90,9 +90,12 @@ textarea{ resize: vertical; }
 }
 
 .chip.active{
-  border-color: #6366f1;
-  background: #eef2ff;
-  color: #1e1b4b;
+  background: linear-gradient(135deg,
+  var(--group-accent, #764ba2) 0%,
+  var(--group-accent-2, #764ba2) 100%);
+  border-color: var(--group-accent, #667eea);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* details */
@@ -190,4 +193,65 @@ textarea{ resize: vertical; }
 .checks input{
   transform: scale(1.06);
   margin-top: 1px;           /* alinea el check con la primera línea */
+}
+
+/* Grupos de chips (mismo look que en Crear) */
+.chip-groups {
+  display: grid;
+  gap: 12px;
+}
+
+.chip-group {
+  border: 1px solid #e9ecf3;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.chip-group-title {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4b587c;
+}
+
+.chip-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center; /* asegura alineación horizontal uniforme */
+}
+
+/* Si ya tienes estilos para .chip, no toques nada.
+   Si no, estos son neutrales: */
+.chip {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid #dfe3ee;
+  background: #f8f9fc;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Colores de acento por grupo (2 tonos para el degradado del chip activo) */
+.chip-group--cliente    { --group-accent: #445ab8; --group-accent-2: #282e61; }
+.chip-group--financiero { --group-accent: #445ab8; --group-accent-2: #282e61; }
+.chip-group--fechas     { --group-accent: #445ab8; --group-accent-2: #282e61; }
+
+.chip.active {
+  background: linear-gradient(135deg,
+  var(--group-accent, #764ba2) 0%,
+  var(--group-accent-2, #764ba2) 100%);
+  border-color: var(--group-accent, #667eea);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.form-label {
+  display: block;
+  font-weight: 500;
+  color: #374151;
+  margin-top: 25px;
+  margin-bottom: 8px;
+  font-size: 14px;
 }

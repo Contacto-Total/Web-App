@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { DynamicQueryRequest, Row, SmsPrecheckResult } from '../models/dyn-query';
 import { environment } from '../../../environments/environment.development';
@@ -25,10 +25,11 @@ export class DynQueryService {
   }
 
 // ✅ no fuerces limit:null; no envíes plantillaTexto
-  export(body: DynamicQueryRequest) {
+  export(body: DynamicQueryRequest, template: string) {
     const payload: any = { ...body };
     if (payload.limit == null) delete payload.limit;
-    delete payload.plantillaTexto;
+    payload.selectAll = true;      // para que vengan todas las columnas
+    payload.template = template;   // 👈 MANDAR LA PLANTILLA EN EL BODY
     return this.http.post(this.exportUrl, payload, { responseType: 'blob' });
   }
 }

@@ -24,23 +24,33 @@
           <span class="material-icons">tune</span>
           Variables
         </h2>
-        <div class="chip-container">
-          <button
-            *ngFor="let c of chips"
-            type="button"
-            class="chip"
-            [class.active]="isSelected(c.key)"
-            (click)="toggleChip(c.key, c.affectsSelects !== false)"
-            [attr.aria-pressed]="isSelected(c.key)">
-            {{ c.label }}
-          </button>
+
+        <div class="chip-groups">
+          <ng-container *ngFor="let g of chipGroups">
+            <!-- ⬇️ wrapper con clase por grupo -->
+            <div class="chip-group" [ngClass]="'chip-group--' + g.key">
+              <h3 class="chip-group-title">{{ g.title }}</h3>
+
+              <div class="chip-container">
+                <button
+                  *ngFor="let c of g.items"
+                  type="button"
+                  class="chip"
+                  [class.active]="isSelected(c.key)"
+                  (click)="toggleChip(c.key, c.affectsSelects !== false)"
+                  [attr.aria-pressed]="isSelected(c.key)">
+                  {{ c.label }}
+                </button>
+              </div>
+            </div>
+          </ng-container>
         </div>
+
 
         <!-- Importe Extra -->
         <div *ngIf="selectedChips.has('LTD') || selectedChips.has('LTDE') || selectedChips.has('LTD_LTDE')" class="form-field">
-          <label class="form-label">Sumar importe a LTD/LTDE</label>
+          <label class="form-label">Sumar importe</label>
           <input type="number" min="0" step="1" class="form-input" formControlName="importeExtra" placeholder="0">
-          <div class="hint">Se suma y se respeta el tope de Deuda Total.</div>
         </div>
 
         <!-- Condiciones Section -->
@@ -65,6 +75,13 @@
           </label>
           <label class="checkbox-item">
             <div class="checkbox">
+              <input type="checkbox" (change)="toggleCond($event,'PROMESAS_MANANA2')">
+              <span class="checkmark"></span>
+            </div>
+            PROMESAS MAÑANA Y PASADO MAÑANA
+          </label>
+          <label class="checkbox-item">
+            <div class="checkbox">
               <input type="checkbox" (change)="toggleCond($event,'PROMESAS_ROTAS')">
               <span class="checkmark"></span>
             </div>
@@ -78,6 +95,13 @@
           Restricciones
         </h2>
         <div class="checkbox-group">
+          <label class="checkbox-item">
+            <div class="checkbox">
+              <input type="checkbox" formControlName="noContenido">
+              <span class="checkmark"></span>
+            </div>
+            No Contenido
+          </label>
           <label class="checkbox-item">
             <div class="checkbox">
               <input type="checkbox" formControlName="excluirPromesasPeriodoActual">

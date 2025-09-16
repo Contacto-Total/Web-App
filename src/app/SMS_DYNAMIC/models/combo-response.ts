@@ -8,6 +8,7 @@ export interface ComboResponse {
   tramo: '3' | '5';
   condiciones: string[];
   restricciones: {
+    noContenido: boolean;
     excluirPromesasPeriodoActual: boolean;
     excluirCompromisos: boolean;
     excluirBlacklist: boolean;
@@ -16,4 +17,5 @@ export interface ComboResponse {
   isActive: boolean;
   createdAt: string; // ISO
   updatedAt: string; // ISO
+  importeExtra?: number | null;
 }

@@ -18,7 +18,7 @@ import {SuccessDialogComponent} from "@/SMS_DYNAMIC/Common/success-dialog.compon
 type ChipKey =
   | 'NOMBRE' | 'LTD' | 'LTDE' | 'LTD_LTDE'
   | 'BAJA30' | 'SALDO_MORA' | 'BAJA30_SALDOMORA'
-  | 'CAPITAL' | 'DEUDA_TOTAL' | 'PKM' | 'HOY' | 'MANANA';
+  | 'CAPITAL' | 'DEUDA_TOTAL' | 'PKM' | 'HOY' | 'MANANA' | 'NOMBRECOMPLETO' | 'EMAIL' | 'NUMCUENTAPMCP' | 'DIASMORA';
 
 const VAR_RE = /\{([A-Z0-9_]+)\}/gi;
 
@@ -44,7 +44,7 @@ export class EditComboDialogComponent implements OnInit {
   saving = false;
 
   chips = [
-    { key: 'NOMBRE' as ChipKey, label: 'Nombre', affectsSelects: false },
+    { key: 'NOMBRE' as ChipKey, label: 'Nombre', affectsSelects: true },
     { key: 'LTD' as ChipKey, label: 'LTD', affectsSelects: true },
     { key: 'LTDE' as ChipKey, label: 'LTDE', affectsSelects: true },
     { key: 'LTD_LTDE' as ChipKey, label: 'LTD + LTDE', affectsSelects: true },
@@ -54,6 +54,10 @@ export class EditComboDialogComponent implements OnInit {
     { key: 'CAPITAL' as ChipKey, label: 'Capital', affectsSelects: true },
     { key: 'DEUDA_TOTAL' as ChipKey, label: 'Deuda Total', affectsSelects: true },
     { key: 'PKM' as ChipKey, label: 'PKM', affectsSelects: true },
+    { key: 'NOMBRECOMPLETO', label: 'Nombre completo', affectsSelects: true },
+    { key: 'EMAIL', label: 'Correo', affectsSelects: true },
+    { key: 'NUMCUENTAPMCP', label: 'N° de Cuenta', affectsSelects: true },
+    { key: 'DIASMORA', label: 'Días mora', affectsSelects: true },
     { key: 'HOY' as ChipKey,    label: 'Hoy',    affectsSelects: false },
     { key: 'MANANA' as ChipKey, label: 'Mañana', affectsSelects: false },
   ];
@@ -66,10 +70,16 @@ export class EditComboDialogComponent implements OnInit {
     plantillaTexto: ['', [Validators.required, Validators.maxLength(612)]],
     descripcion: this.data.descripcion ?? '',
     tramo: (this.data.tramo as '3'|'5') ?? '3',
+    noContenido: this.data.restricciones?.noContenido ?? true,
     excluirPromesasPeriodoActual: this.data.restricciones?.excluirPromesasPeriodoActual ?? true,
     excluirCompromisos: this.data.restricciones?.excluirCompromisos ?? true,
     excluirBlacklist: this.data.restricciones?.excluirBlacklist ?? true,
+    importeExtra: this.fb.nonNullable.control<number>((this.data as any)?.importeExtra ?? 0),
   });
+
+  hasTopUpSelect(): boolean {
+    return this.selected.has('LTD') || this.selected.has('LTDE') || this.selected.has('LTD_LTDE');
+  }
 
   private aliasKeys(raw: string): string[] {
     const k = raw.toUpperCase();
@@ -112,9 +122,13 @@ export class EditComboDialogComponent implements OnInit {
     if (embebido && typeof embebido === 'string') {
       this.smsCtrl.setValue(embebido);
       this.smsCtrl.markAsPristine();
+      this.syncNombreChipWithText();                 // 👈 aquí
       this.fetchSampleRow();
-      this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => this.fetchSampleRow());
-      return; // <-- importante para no sobreescribir con la llamada remota
+      this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => {
+        this.syncNombreChipWithText();               // 👈 y aquí
+        this.fetchSampleRow();
+      });
+      return;
     }
 
     if (this.data.plantillaSmsId) {
@@ -123,17 +137,23 @@ export class EditComboDialogComponent implements OnInit {
           const real = typeof txt === 'string' ? txt : (txt?.template ?? '');
           this.smsCtrl.setValue(real || '');
           this.smsCtrl.markAsPristine();
+          this.syncNombreChipWithText();             // 👈 después de setValue asíncrono
         },
         error: _ => {
           this.smsCtrl.setValue('');
           this.smsCtrl.markAsPristine();
+          this.syncNombreChipWithText();             // 👈 por consistencia
         }
       });
     }
 
     this.fetchSampleRow();
-    this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => this.fetchSampleRow());
+    this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => {
+      this.syncNombreChipWithText();                 // 👈 también aquí
+      this.fetchSampleRow();
+    });
   }
+
 
 
   private fetchSampleRow() {
@@ -160,6 +180,7 @@ export class EditComboDialogComponent implements OnInit {
         case 'NOMBRE': return firstName(this.getVal(r, 'NOMBRE'));
         case 'HOY':    return fmtDate(hoy);
         case 'MANANA': return fmtDate(manana);
+        case 'DIASMORA':
         case 'LTD':
         case 'LTDE':
         case 'LTD_LTDE':
@@ -207,12 +228,18 @@ export class EditComboDialogComponent implements OnInit {
 
     if (was) {
       this.selected.delete(k);
-      this.removePlaceholder(ph);   // 👈 quita {KEY} del textarea
-      return;
+      this.removePlaceholder(ph);
+    } else {
+      this.selected.add(k);
+      this.insertPlaceholderOnce(ph);
     }
-    this.selected.add(k);
-    this.insertPlaceholderOnce(ph);
+
+    // 👇 siempre después de actualizar `selected`
+    if (!this.hasTopUpSelect()) {
+      this.form.controls.importeExtra.setValue(0);
+    }
   }
+
 
 
 
@@ -223,21 +250,31 @@ export class EditComboDialogComponent implements OnInit {
     if (this.form.invalid) { this.smsCtrl.markAsTouched(); return; }
 
     const v = this.form.getRawValue();
+    const importeExtraAplica =
+      this.hasTopUpSelect() && Number(v.importeExtra) > 0
+        ? Math.trunc(Number(v.importeExtra))
+        : null;
+    const selectsSet = new Set<ChipKey>(this.selected);
+    if (/\{NOMBRE\}/i.test(v.plantillaTexto || '')) {
+      selectsSet.add('NOMBRE' as any);
+    }
     const payload = {
       id: this.data.id,                // si decides dejar el PUT sin /{id}, igual lo mandas
       name: v.nombre,
       descripcion: v.descripcion,
       tramo: v.tramo,
-      selects: Array.from(this.selected).filter(s => s !== 'NOMBRE'),
+      selects: Array.from(selectsSet),
       condiciones: this.data.condiciones ?? [],
       restricciones: {
+        noContenido: !!v.noContenido,
         excluirPromesasPeriodoActual: !!v.excluirPromesasPeriodoActual,
         excluirCompromisos: !!v.excluirCompromisos,
         excluirBlacklist: !!v.excluirBlacklist
       },
       plantillaSmsId: this.data.plantillaSmsId ?? null,  // << AÑADIR ESTO
       plantillaTexto: v.plantillaTexto, // 👈 ENVIAR TEXTO
-      plantillaName: v.nombre           // 👈 opcional para renombrar
+      plantillaName: v.nombre,
+      importeExtra: importeExtraAplica,
     };
 
     this.saving = true;
@@ -285,5 +322,12 @@ export class EditComboDialogComponent implements OnInit {
       disableClose: true
     }).afterClosed();
   }
+
+  private syncNombreChipWithText() {
+    const has = /\{NOMBRE\}/i.test(this.smsCtrl.value || '');
+    if (has) this.selected.add('NOMBRE' as any);
+    else this.selected.delete('NOMBRE' as any);
+  }
+
 
 }

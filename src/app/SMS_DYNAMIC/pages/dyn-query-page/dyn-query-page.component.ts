@@ -22,6 +22,8 @@ import { SuccessDialogComponent } from '@/SMS_DYNAMIC/Common/success-dialog.comp
 
 
 const VAR_PATTERN = /\{([A-Z0-9_]+)\}/g;
+type VarChip = { key: string; label: string; affectsSelects: boolean };
+type VarGroup = { key: 'cliente' | 'financiero' | 'fechas'; title: string; items: VarChip[] };
 @Component({
   selector: 'app-dyn-query-page',
   standalone: true,
@@ -48,20 +50,49 @@ export class DynQueryPageComponent implements OnInit {
   private selects = new Set<string>();
   private condiciones = new Set<string>(); // solo PROMESAS_* visibles
 
-  chips = [
-    { key: 'NOMBRE', label: 'Nombre', affectsSelects: false },
-    { key: 'LTD', label: 'LTD', affectsSelects: true },
-    { key: 'LTDE', label: 'LTDE', affectsSelects: true },
-    { key: 'LTD_LTDE', label: 'LTD y LTDE', affectsSelects: true },
-    { key: 'BAJA30', label: 'Baja 30', affectsSelects: true },
-    { key: 'MORA', label: 'Saldo Mora', affectsSelects: true },
-    { key: 'BAJA30_SALDOMORA', label: 'Baja 30 y Saldo Mora', affectsSelects: true },
-    { key: 'PKM', label: 'PKM', affectsSelects: true },
-    { key: 'CAPITAL', label: 'Capital', affectsSelects: true },
-    { key: 'DEUDA_TOTAL', label: 'Deuda Total', affectsSelects: true },
-    { key: 'HOY',    label: 'Hoy',    affectsSelects: false },
-    { key: 'MANANA', label: 'Mañana', affectsSelects: false },
+
+
+  // GRUPOS
+  chipGroups: VarGroup[] = [
+    {
+      key: 'cliente',
+      title: 'Cliente',
+      items: [
+        { key: 'NOMBRE',         label: 'Nombre',           affectsSelects: true },
+        { key: 'NOMBRECOMPLETO', label: 'Nombre completo',  affectsSelects: true },
+        { key: 'EMAIL',          label: 'Correo',           affectsSelects: true },
+        { key: 'NUMCUENTAPMCP',  label: 'N° de Cuenta',     affectsSelects: true },
+      ]
+    },
+    {
+      key: 'financiero',
+      title: 'Financiero',
+      items: [
+        { key: 'LTD',              label: 'LTD',                    affectsSelects: true },
+        { key: 'LTDE',             label: 'LTDE',                   affectsSelects: true },
+        { key: 'LTD_LTDE',         label: 'LTD y LTDE',             affectsSelects: true },
+        { key: 'BAJA30',           label: 'Baja 30',                affectsSelects: true },
+        { key: 'MORA',             label: 'Saldo Mora',             affectsSelects: true },
+        { key: 'BAJA30_SALDOMORA', label: 'Baja 30 y Saldo Mora',   affectsSelects: true },
+        { key: 'PKM',              label: 'PKM',                    affectsSelects: true },
+        { key: 'CAPITAL',          label: 'Capital',                affectsSelects: true },
+        { key: 'DEUDA_TOTAL',      label: 'Deuda Total',            affectsSelects: true },
+      ]
+    },
+    {
+      key: 'fechas',
+      title: 'Fechas',
+      items: [
+        { key: 'DIASMORA', label: 'Días mora', affectsSelects: true },
+        { key: 'HOY',      label: 'Hoy',       affectsSelects: false },
+        { key: 'MANANA',   label: 'Mañana',    affectsSelects: false },
+      ]
+    }
   ];
+
+// (compat) si aún usas 'chips' en algún lado, lo dejamos como flatten:
+  chips = this.chipGroups.flatMap(g => g.items);
+
   // estado visual de selección
   selectedChips = new Set<string>();
 
@@ -86,6 +117,18 @@ export class DynQueryPageComponent implements OnInit {
 
       case 'LTD_LTDE':
         return ['LTD_LTDE', 'LTD+LTDE', 'LTD LTDE'];
+
+      case 'NOMBRECOMPLETO':
+        return ['NOMBRECOMPLETO', 'NOMBRE COMPLETO'];
+
+      case 'EMAIL':
+        return ['EMAIL'];
+
+      case 'NUMCUENTAPMCP':
+        return ['NUMCUENTAPMCP', 'NUMCUENTA_PMCP', 'NUM_CUENTA_PMCP', 'NUMCUENTA PMCP', 'N° CUENTA PMCP'];
+
+      case 'DIASMORA':
+        return ['DIASMORA', 'DIAS_MORA', 'DIAS MORA'];
 
       default:
         return [k, k.replace(/\s+/g, '_')];
@@ -272,6 +315,7 @@ export class DynQueryPageComponent implements OnInit {
         case 'MANANA': return fmtDate(manana);
 
         // numéricas esperadas (todas pasan por getVal para soportar alias)
+        case 'DIASMORA':
         case 'LTD':
         case 'LTDE':
         case 'LTD_LTDE':
@@ -349,6 +393,7 @@ export class DynQueryPageComponent implements OnInit {
 
   form = inject(FormBuilder).nonNullable.group({
     tramo: '3' as '3' | '5',
+    noContenido: false,
     excluirPromesasPeriodoActual: true,
     excluirCompromisos: true,
     excluirBlacklist: true,
@@ -386,7 +431,7 @@ export class DynQueryPageComponent implements OnInit {
   }
 
   // change de condiciones (solo PROMESAS)
-  toggleCond(ev: Event, key: 'PROMESAS_HOY'|'PROMESAS_MANANA'|'PROMESAS_ROTAS') {
+  toggleCond(ev: Event, key: 'PROMESAS_HOY'|'PROMESAS_MANANA'|'PROMESAS_MANANA2'|'PROMESAS_ROTAS') {
     const input = ev.target as HTMLInputElement;
     if (input.checked) this.condiciones.add(key);
     else this.condiciones.delete(key);
@@ -397,7 +442,7 @@ export class DynQueryPageComponent implements OnInit {
     const v = this.form.getRawValue();
 
     const selects = Array.from(this.selects).map(s => (s === 'MORA' ? 'SALDO_MORA' : s));
-    const PROMESAS = new Set(['PROMESAS_HOY', 'PROMESAS_MANANA', 'PROMESAS_ROTAS']);
+    const PROMESAS = new Set(['PROMESAS_HOY', 'PROMESAS_MANANA', 'PROMESAS_MANANA2', 'PROMESAS_ROTAS']);
     const condiciones = Array.from(this.condiciones).filter(c => PROMESAS.has(c));
 
     const importeExtraAplica =
@@ -405,15 +450,18 @@ export class DynQueryPageComponent implements OnInit {
         ? Math.trunc(Number(v.importeExtra))
         : null;
 
-    // ⚠️ sin selectAll, sin plantillaTexto
     return {
       selects,
       tramo: v.tramo,
       condiciones,
-      restricciones: { /* ... tus flags reales ... */ },
+      restricciones: {
+        noContenido: !!v.noContenido,
+        excluirPromesasPeriodoActual: !!v.excluirPromesasPeriodoActual,
+        excluirCompromisos:           !!v.excluirCompromisos,
+        excluirBlacklist:             !!v.excluirBlacklist,
+      },
       limit: limitForPreview ? Number(v.limit || 1000) : undefined,
       importeExtra: importeExtraAplica,
-      selectAll: true
     } as any;
   }
 
@@ -450,7 +498,6 @@ export class DynQueryPageComponent implements OnInit {
     const query = this.compactQuery(rawQuery);           // base limpia
     const queryAll = { ...query, selectAll: true };      // ✅ TODAS las columnas en pruebas
     const template = (this.form.controls.plantillaTexto.value ?? '').trim();
-
     if (!template) {
       this.alert('Ingresa un texto de SMS antes de exportar.', 'Falta texto');
       return;
@@ -479,7 +526,7 @@ export class DynQueryPageComponent implements OnInit {
         }
 
         // ✅ Export también con TODAS las columnas
-        this.api.export(queryAll)
+        this.api.export(queryAll, template)
           .pipe(finalize(() => dlg.close()))
           .subscribe({
             next: (blob) => {
@@ -522,6 +569,10 @@ export class DynQueryPageComponent implements OnInit {
 
   guardarCombo() {
     const v = this.form.getRawValue();
+    const importeExtraAplica =
+      this.hasTopUpSelect() && Number(v.importeExtra) > 0
+        ? Math.trunc(Number(v.importeExtra))
+        : null;
 
     const payload: ComboCreateRequest = {
       name: v.nombre,
@@ -531,12 +582,14 @@ export class DynQueryPageComponent implements OnInit {
       selects: Array.from(this.selects),
       condiciones: Array.from(this.condiciones),
       restricciones: {
+        noContenido: !!v.noContenido,
         excluirPromesasPeriodoActual: !!v.excluirPromesasPeriodoActual,
         excluirCompromisos: !!v.excluirCompromisos,
         excluirBlacklist: !!v.excluirBlacklist
       },
       // crea también la plantilla si viene el texto
-      plantillaTexto: v.plantillaTexto
+      plantillaTexto: v.plantillaTexto,
+      importeExtra: importeExtraAplica,
     };
 
     this.comboApi.createCombo(payload).subscribe({
@@ -602,5 +655,7 @@ export class DynQueryPageComponent implements OnInit {
       disableClose: true
     }).afterClosed();
   }
+
+
 
 }

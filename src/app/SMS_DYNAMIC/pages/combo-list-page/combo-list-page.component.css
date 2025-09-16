@@ -238,7 +238,20 @@
   align-items: center;
 }
 
-.preview-btn,
+.preview-btn{
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #293c4e;
+  background: transparent;
+  border: 2px solid #e2e8f0;
+}
 .edit-btn {
   display: flex;
   align-items: center;
@@ -248,19 +261,19 @@
   font-size: 0.9rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  border: none;
   cursor: pointer;
+  color: #255d80;
   background: transparent;
-  color: #64748b;
+  border: 2px solid #e2e8f0;
 }
 
 .preview-btn:hover {
-  background: #3b82f6;
+  background: #293c4e;
   color: white;
 }
 
 .edit-btn:hover {
-  background: #8b5cf6;
+  background: #345187;
   color: white;
 }
 

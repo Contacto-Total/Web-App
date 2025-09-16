@@ -32,7 +32,12 @@ type ChipKey =
   | 'CAPITAL'
   | 'DEUDA_TOTAL'
   | 'HOY'
-  | 'MANANA';
+  | 'MANANA'
+  | 'NOMBRECOMPLETO'
+  | 'EMAIL'
+  | 'NUMCUENTAPMCP'
+  | 'DIASMORA';
+
 
 @Component({
   selector: 'app-combo-list-page',
@@ -151,6 +156,11 @@ export class ComboListPageComponent {
     { key: 'DEUDA_TOTAL', label: 'Deuda Total' },
     { key: 'MANANA', label: 'Mañana'},
     { key: 'HOY',    label: 'Hoy'},
+    { key: 'NOMBRECOMPLETO', label: 'Nombre Completo' },
+    { key: 'EMAIL', label: 'Correo' },
+    { key: 'NUMCUENTAPMCP', label: 'Número de Cuenta'},
+    { key: 'DIASMORA',    label: 'Días Mora'},
+
   ];
 
   selected = signal<Set<ChipKey>>(new Set());
@@ -362,5 +372,12 @@ export class ComboListPageComponent {
   }
 
 
+  visibleTags(c: ComboResponse) {
+    const out = [...(c.selects ?? [])];
+    if (/\{NOMBRE\}/i.test(c.plantillaTexto || '') && !out.includes('NOMBRE' as any)) {
+      out.unshift('NOMBRE' as any);
+    }
+    return out;
+  }
 
 }

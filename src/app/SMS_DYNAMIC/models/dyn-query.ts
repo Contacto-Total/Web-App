@@ -3,6 +3,7 @@ export interface DynamicQueryRequest {
   tramo?: '3' | '5';
   condiciones: string[];
   restricciones: {
+    noContenido: boolean;
     excluirPromesasPeriodoActual: boolean;
     excluirCompromisos: boolean;
     excluirBlacklist: boolean;

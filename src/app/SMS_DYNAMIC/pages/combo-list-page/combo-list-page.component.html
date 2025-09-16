@@ -82,8 +82,8 @@
           </div>
 
           <div class="tenor-tags">
-            <span class="tag" *ngFor="let s of r.selects">
-              {{ s === 'SALDO_MORA' ? 'MORA' : (s === 'LTD_LTDE' ? 'LTD + LTDE' : s) }}
+            <span class="tag" *ngFor="let s of visibleTags(r)">
+                {{ s === 'SALDO_MORA' ? 'MORA' : (s === 'LTD_LTDE' ? 'LTD y LTDE' : s) }}
             </span>
           </div>
         </div>
