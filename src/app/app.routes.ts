@@ -11,12 +11,14 @@ import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
 import { PaymentAgreementCardPageComponent } from './agreements/pages/payment-agreement-card-page/payment-agreement-card-page.component';
 import {ComboListPageComponent} from "@/SMS_DYNAMIC/pages/combo-list-page/combo-list-page.component";
+import {DynQueryPageComponent} from "@/SMS_DYNAMIC/pages/dyn-query-page/dyn-query-page.component";
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
     {'path': 'templateSMS', component: ComboListPageComponent},
+    {'path': 'Crear', component: DynQueryPageComponent},
     {'path': 'recordings', component: RecordingsPageComponent},
     {'path': 'contacto/report', component: ContactReportPageComponent},
     {'path': 'monitoreo/report', component: MonitoringReportPageComponent},
