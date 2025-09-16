@@ -52,6 +52,10 @@ export class ToolbarComponent implements OnInit {
     this.router.navigate(['/']).then();
   }
 
+  goToCartas(): void {
+    this.router.navigate(['/acuerdo-de-pago']).then();
+  }
+
   goToSMS(): void {
     this.router.navigate(['/sms']).then();
   }

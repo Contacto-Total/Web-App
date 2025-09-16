@@ -3,15 +3,29 @@
 </div>
 
 <form #dateForm="ngForm" class="form-search">
-    <div class="action-section">
-        <div class="search-section">
-            <div>
+    <div class="action-section w-full">
+        <div class="search-filters w-full">
+            <div class="tramo-filter w-full">
+              <p-dropdown 
+                class="w-full"
+                [options]="tramos"
+                [(ngModel)]="selectedTramo"
+                optionLabel="label"
+                optionValue="value"
+                name="selectedTramo"
+                placeholder="Tramo">
+              </p-dropdown>
+            </div>
+
+            <div class="type-search w-full">
                 <p-dropdown 
+                    class="w-full"
                     [options]="tipoBusqueda" 
                     [(ngModel)]="selectedTipoBusqueda"
                     optionLabel="label"
                     (onChange)="changeTypeSearch()" 
-                    name="selectedTipoBusqueda" />
+                    name="selectedTipoBusqueda"
+                     />
             </div>
     
             <div *ngIf="selectedTipoBusqueda.value === 'fechas'" class="search-per-dates">
@@ -47,7 +61,7 @@
             </div>
         </div>
     
-        <div>
+        <div class="massive-actions">
             <button pButton label="Todos" icon="pi pi-volume-down" class="first-action-btn" (click)="massiveDownloadAudios()"></button>
             <button pButton label="Todos" icon="pi pi-file-excel" class="p-button-success" (click)="massiveDownloadReports()"></button>
         </div>
@@ -61,6 +75,7 @@
 <p-toast></p-toast>
 
 <p-table
+    class="styled-table"
     #dt
     [value]="gestiones"
     [paginator]="true"
@@ -79,6 +94,20 @@
                 <p-columnFilter type="text" field="documento" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
             </th>
             <th style="width:auto">
+                Tramo
+                <p-columnFilter field="cartera" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-dropdown [ngModel]="value" [options]="tramos" (onChange)="filter($event.value)" placeholder="Todos">
+                            <ng-template let-option pTemplate="item">
+                                <p class="filter-resultado-field">
+                                    {{ option.label }}
+                                </p>
+                            </ng-template>
+                        </p-dropdown>
+                    </ng-template>
+                </p-columnFilter>
+            </th>
+            <th style="width:auto">
                 Telefono
                 <p-columnFilter type="text" field="telefono" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false"/>
             </th>
@@ -94,7 +123,7 @@
                 Resultado
                 <p-columnFilter field="resultado" matchMode="equals" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
                     <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Any">
+                        <p-dropdown [ngModel]="value" [options]="resultados" (onChange)="filter($event.value)" placeholder="Todos">
                             <ng-template let-option pTemplate="item">
                                 <p class="filter-resultado-field">
                                     {{ option.label }}
@@ -112,6 +141,7 @@
     <ng-template pTemplate="body" let-gestion>
         <tr>
             <td>{{ gestion.documento }}</td>
+            <td>{{ gestion.cartera }}</td>
             <td>{{ gestion.telefono }}</td>
             <td>{{ gestion.fechagestion }}</td>
             <td>{{ gestion.horagestion }}</td>
@@ -127,7 +157,7 @@
                 </button>
             </td>
             <td>
-                <button 
+                <button *ngIf="gestion.resultado === 'PROMESA DE PAGO' || gestion.resultado === 'CONTACTO CON TITULAR O ENCARGADO'"
                     type="button" 
                     pButton 
                     pRipple 

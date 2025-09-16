@@ -24,6 +24,7 @@ import { HistoricalRecordingsService } from '@/recordings/services/historical-re
 import { RecordingDownloadService } from '@/recordings/services/recording-download-service/recording-download.service';
 import { RecordingEvaluationReportService } from '@/recordings/services/recording-evaluation-report-service/recording-evaluation-report.service';
 import { CreateRecordingEvaluationReportRequest } from '@/recordings/model/request/create-recording-evaluation-report.request';
+import { HistoricalRecordingsByTractRequest } from '@/recordings/model/request/historical-recordings-by-tract';
 
 @Component({
   selector: 'app-recordings-tracker',
@@ -48,6 +49,8 @@ export class RecordingsTrackerComponent implements OnInit {
 
   resultados!: any[];
 
+  tramos!: any[];
+
   tipoBusqueda = [
     { label: 'Fechas', value: 'fechas' },
     { label: 'Documento', value: 'documento' },
@@ -55,6 +58,10 @@ export class RecordingsTrackerComponent implements OnInit {
   ];
 
   selectedTipoBusqueda: any;
+
+
+  selectedTramo: string = 'TODOS'; 
+
 
   isLoading: boolean = false;
 
@@ -66,6 +73,12 @@ export class RecordingsTrackerComponent implements OnInit {
       monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
       monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     });
+
+    this.tramos = [
+      { label: 'Todos', value: 'todos' },
+      { label: 'Tramo 3', value: 'FO_TRAMO 3' },
+      { label: 'Tramo 5', value: 'FO_TRAMO 5' }
+    ];
 
     this.resultados = [
       { label: 'FUERA DE SERVICIO - NO EXISTE', value: 'FUERA DE SERVICIO - NO EXISTE' },
@@ -132,6 +145,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const dateRangeRequest = {
+      tramo: this.selectedTramo,
       startDate: this.startDate.toISOString().split('T')[0],
       endDate: this.endDate.toISOString().split('T')[0]
     };
@@ -159,6 +173,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const documentoRequest: HistoricalRecordingsByDocumentRequest = {
+      tramo: this.selectedTramo,
       documento: this.documento
     };
 
@@ -185,6 +200,7 @@ export class RecordingsTrackerComponent implements OnInit {
     this.isLoading = true;
 
     const telefonoRequest: HistoricalRecordingsByPhoneRequest = {
+      tramo: this.selectedTramo,
       telefono: this.telefono
     };
 

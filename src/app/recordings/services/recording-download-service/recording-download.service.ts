@@ -36,6 +36,7 @@ export class RecordingDownloadService {
   }
 
   downloadGestionHistoricaAudioFileByName(downloadHistoricoAudioRequest: RecordingDownloadRequest) {
+    console.log('Download Request:', downloadHistoricoAudioRequest);
     return this.http
       .post(this.baseUrl + '/download/historico/audio', downloadHistoricoAudioRequest, { ...this.fileHttpOptions, responseType: 'blob' })
       .pipe(retry(2), catchError(this.handleError));

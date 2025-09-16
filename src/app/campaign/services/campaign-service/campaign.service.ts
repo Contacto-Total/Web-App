@@ -42,9 +42,15 @@ export class CampaignService {
     return throwError(() => ({ status: error.status, message: error.error.message }))
   }
 
+  getDueDates() {
+    return this.http
+      .get<string[]>(this.baseUrl + 'campania/fechas-de-vencimiento-disponibles', this.httpOptions)
+      .pipe(retry(2), catchError(this.handleError));
+  }
+
   getFileToCampaña(campañaYReporteRequest: CampaignReportRequest) {
     return this.http
-      .post(this.baseUrl + 'rangos/consulta', campañaYReporteRequest, { ...this.fileHttpOptions, responseType: 'blob' })
+      .post(this.baseUrl + 'campania/generar-zip-reportes', campañaYReporteRequest, { ...this.fileHttpOptions, responseType: 'blob' })
       .pipe(retry(2), catchError(this.handleError));
   }
 }

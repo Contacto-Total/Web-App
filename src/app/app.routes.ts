@@ -12,15 +12,18 @@ import { RankingReportPageComponent } from './reports/pages/ranking-report-page/
 import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
 import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
-import {DynQueryPageComponent} from "@/SMS_DYNAMIC/pages/dyn-query-page/dyn-query-page.component";
-import {ComboListPageComponent} from "@/SMS_DYNAMIC/pages/combo-list-page/combo-list-page.component";
+import {SmsTemplateComponent} from "@/smsTemplate/components/sms-template/sms-template.component";
+import {PaymentReminderSmsComponent} from "@/smsTemplate/pages/payment-reminder-sms/payment-reminder-sms.component";
+import {FollowUpSmsComponent} from "@/smsTemplate/pages/follow-up-sms/follow-up-sms.component";
+import { PaymentAgreementCardPageComponent } from './agreements/pages/payment-agreement-card-page/payment-agreement-card-page.component';
 
 export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
-    {'path': 'List-sms', component: ComboListPageComponent},
-    {'path': 'Dynamic', component: DynQueryPageComponent},
+    {'path': 'templateSMS', component: SmsTemplateComponent},
+    {'path': 'follow-up-SMS', component: FollowUpSmsComponent},
+    {'path': 'payment-reminder-SMS', component: PaymentReminderSmsComponent},
     {'path': 'add/template', component: CreateSmsTemplatePageComponent},
     {'path': 'edit/template', component: UpdateSmsTemplatePageComponent, canActivate: [updateTemplateGuard]},
     {'path': 'recordings', component: RecordingsPageComponent},
@@ -29,5 +32,6 @@ export const routes: Routes = [
     {'path': 'ranking/report', component: RankingReportPageComponent},
     {'path': 'speech/report', component: SpeechReportPageComponent},
     {'path': 'powerbi/report', component: PowerBiReportPageComponent},
-    {'path': 'blacklist', component: BlacklistPageComponent}
+    {'path': 'blacklist', component: BlacklistPageComponent},
+    {'path': 'acuerdo-de-pago', component: PaymentAgreementCardPageComponent}
 ];

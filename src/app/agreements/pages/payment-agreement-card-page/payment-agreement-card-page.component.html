@@ -1,0 +1,368 @@
+<body>
+  <app-toolbar></app-toolbar>
+  <div class="payment-agreement-container">
+    <!-- Header con título y botones -->
+    <div class="document-header">
+      <h1 class="document-title">Generador de Acuerdo de Pago</h1>
+      <form [formGroup]="searchForm" style="display: flex; gap: 10px; align-items: center; margin-right: 10px;">
+    <input 
+      formControlName="dniBusqueda"
+      type="text"
+      placeholder="DNI"
+      class="editable-input"
+      maxlength="8"
+      style="width: 120px;" />
+
+    <select 
+      formControlName="tramo"
+      class="editable-input"
+      style="width: 120px;">
+      <option value="Tramo 3">Tramo 3</option>
+      <option value="Tramo 5">Tramo 5</option>
+    </select>
+
+    <button 
+      type="button"
+      class="btn btn-search"
+      (click)="buscarPorDniYTramo()"
+      [disabled]="searchForm.invalid">
+      Buscar
+    </button>
+  </form>
+      <div class="document-actions">
+        <button 
+          type="button" 
+          class="btn btn-clean" 
+          (click)="resetForm()">
+          Limpiar
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-primary" 
+          (click)="onSubmit()" 
+          [disabled]="agreementForm.invalid || isLoading">
+          <span *ngIf="isLoading" class="spinner"></span>
+          {{ isLoading ? 'Generando...' : 'Generar PDF' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Documento con inputs incrustados -->
+    <div class="document-container">
+      <form [formGroup]="agreementForm" class="document">
+        <!-- Header con logos -->
+        <div class="header">
+          <div class="logo-section">
+            <div class="logo-left">
+              <div class="logo-placeholder">LOGO 1</div>
+            </div>
+            <div class="logo-right">
+              <div class="logo-placeholder">LOGO 2</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Línea debajo de los logos -->
+        <div class="line"></div>
+
+        <!-- Fecha -->
+        <div class="date-location">
+          <div class="date-input-container">
+            <input 
+              type="date" 
+              formControlName="fechaActual"
+              class="editable-input date-input"
+              [class.is-invalid]="isFieldInvalid('fechaActual')">
+
+            <div class="formatted-date" *ngIf="agreementForm.get('fechaActual')?.value">
+              {{ formatDisplayDate(agreementForm.get('fechaActual')?.value) }}
+            </div>
+          </div>
+          <div class="error-message" *ngIf="isFieldInvalid('fechaActual')">
+            {{ getFieldError('fechaActual') }}
+          </div>
+        </div>
+
+        <div class="red-header">
+          ACUERDO DE PAGO - CAMPAÑA LIMPIA TU DEUDA
+        </div>
+
+        <table class="client-table">
+          <tr>
+            <td class="label-cell">NOMBRE DEL TITULAR</td>
+            <td class="highlight input-cell">
+              <input 
+                type="text" 
+                formControlName="nombreTitular"
+                class="editable-input large-input"
+                placeholder="Ingrese el nombre completo"
+                [class.is-invalid]="isFieldInvalid('nombreTitular')"
+                [readonly]="readonlyInputs">
+              <div class="error-message" *ngIf="isFieldInvalid('nombreTitular')">
+                {{ getFieldError('nombreTitular') }}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-cell">NUMERO DNI</td>
+            <td class="highlight input-cell">
+              <input 
+                type="text" 
+                formControlName="dni"
+                class="editable-input dni-input"
+                placeholder="12345678"
+                maxlength="8"
+                [class.is-invalid]="isFieldInvalid('dni')"
+                [readonly]="readonlyInputs">
+              <div class="error-message" *ngIf="isFieldInvalid('dni')">
+                {{ getFieldError('dni') }}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td class="label-cell">Nro. CUENTA TARJETA Oh!</td>
+            <td class="highlight input-cell">
+              <input 
+                type="text" 
+                formControlName="cuentaTarjeta"
+                class="editable-input large-input"
+                placeholder="0000111122223333"
+                [class.is-invalid]="isFieldInvalid('cuentaTarjeta')"
+                [readonly]="readonlyInputs">
+              <div class="error-message" *ngIf="isFieldInvalid('cuentaTarjeta')">
+                {{ getFieldError('cuentaTarjeta') }}
+              </div>
+            </td>
+          </tr>
+        </table>
+
+        <div class="congratulations">
+          ¡Felicitaciones!, ya se encuentra <strong>APROBADO</strong> su <strong>CAMPAÑA ESPECIAL</strong> con el cual estaría cancelando <strong>TODA SU DEUDA</strong>, lo puede pagar desde el día de hoy, se encontrará habilitado hasta este:
+        </div>
+
+        <div class="date-highlight">
+          <div class="date-input-container">
+            <input 
+              type="date" 
+              formControlName="fechaCompromiso"
+              class="editable-input date-input"
+              [class.is-invalid]="isFieldInvalid('fechaCompromiso')"
+              [readonly]="readonlyInputs">
+
+            <div class="formatted-date" *ngIf="agreementForm.get('fechaCompromiso')?.value">
+              {{ formatDisplayDate(agreementForm.get('fechaCompromiso')?.value) }}
+            </div>
+          </div>
+          <div class="error-message" *ngIf="isFieldInvalid('fechaCompromiso')">
+            {{ getFieldError('fechaCompromiso') }}
+          </div>
+        </div>
+
+        <div class="debt-header">
+          DETALLE DE DEUDA Y PROMOCIÓN APROBADA
+        </div>
+
+        <table class="debt-table">
+          <tr>
+            <th>DEUDA TOTAL</th>
+            <th>DESCUENTO</th>
+            <th>MONTO APROBADO</th>
+          </tr>
+          <tr>
+            <td class="amount">
+              <div class="amount-input-container">
+                S/ <input 
+                    type="number" 
+                    formControlName="deudaTotal"
+                    class="editable-input number-input"
+                    [class.blackout]="isBlackoutMode"
+                    step="1"
+                    min="0"
+                    (input)="calculateDiscount()"
+                    [class.is-invalid]="isFieldInvalid('deudaTotal')">
+              </div>
+            </td>
+
+            <td class="amount">
+              <div class="amount-input-container">
+                S/ <input 
+                    type="number" 
+                    formControlName="descuento"
+                    class="editable-input number-input"
+                    [class.blackout]="isBlackoutMode"
+                    readonly>
+              </div>
+            </td>
+
+            <td class="highlight-amount">
+              <div class="amount-input-container">
+                S/ <input 
+                      type="number" 
+                      formControlName="montoAprobado"
+                      class="editable-input number-input"
+                      step="1"
+                      min="0"
+                      (input)="calculateDiscount()"
+                      [class.is-invalid]="isFieldInvalid('montoAprobado')">
+                <button 
+                  type="button" 
+                  class="btn-toggle-debt"
+                  [class.active]="isBlackoutMode"
+                  (click)="toggleBlackoutMode()"
+                  [title]="getToggleTitle()">
+                  {{ getToggleIcon() }}
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Sección de formas de pago -->
+          <tr>
+            <td colspan="3" class="payment-header-clean">
+              <div class="payment-header-container">
+                <span class="payment-title">Formas de pago</span>
+                <button type="button" class="btn btn-success btn-sm" (click)="addFormaPago()">+ Agregar</button>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Opciones de pago dinámicas -->
+          <ng-container formArrayName="formasDePago">
+            <tr *ngFor="let forma of formasDePagoArray.controls; let i = index" [formGroupName]="i">
+              <!-- Columna con botones y detalles del pago -->
+              <td class="payment-row" colspan="3">
+                <div class="payment-row-content">
+                  <!-- Primero la información del pago -->
+                  <div class="payment-info">
+                    <strong>{{ i + 1 }}{{ getOrdinalSuffix(i + 1) }} PAGO</strong> — 
+                    {{ forma.get('fechaPago')?.value }} — 
+                    S/ {{ forma.get('montoPago')?.value }} SOLES
+                  </div>
+                  
+                  <!-- Después los botones -->
+                  <div class="payment-actions">
+                    <button type="button" class="btn btn-outline-primary btn-sm" (click)="abrirEditorFormaPago(i)">Editar</button>
+                    <button type="button" class="btn btn-outline-danger btn-sm" [disabled]="formasDePagoArray.length <= 1" (click)="removeFormaPago(i)">Eliminar</button>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- Observación única (solo se muestra si existe) -->
+          <tr *ngIf="mostrarObservacion">
+            <td colspan="3" class="payment-observation-unique">
+              <div class="observation-header">Observación:</div>
+              <div class="observation-content">{{ observacionTexto }}</div>
+            </td>
+          </tr>
+          
+          <!-- Mensaje cuando no hay formas de pago -->
+          <tr *ngIf="formasDePagoArray.length === 0">
+            <td colspan="3" class="payment-section">
+              <em>No hay formas de pago definidas.</em>
+            </td>
+          </tr>
+        </table>
+
+        <div class="instructions">
+          Acercarse con su DNI, tarjeta Oh! y este documento; Indicar en los cajeros que va a realizar un <strong>pago o abono</strong> a su Tarjeta Oh por el monto <strong>APROBADO</strong>, en caso de no tener la tarjeta puede pagar con el número de cuenta de su tarjeta consignada en la parte superior de este documento.
+        </div>
+
+        <div class="section-header">CENTROS DE PAGO VIRTUAL:</div>
+        <div class="section-content">
+          <div class="centers-content">
+            <div class="bcp-logo">BCP</div>
+            <div class="center">APP/WEB</div>
+            <div class="dni">Con su número de DNI</div>
+          </div>
+        </div>
+
+        <div class="section-header">CENTROS DE PAGO PRESENCIAL :</div>
+        <div class="section-content">
+          <div class="centers-content">
+            <div class="bcp-logo">BCP</div>
+            <div class="center">AGENTE/VENTANILLA</div>
+            <div class="dni">Presentando su DNI</div>
+          </div>
+        </div>
+
+        <div class="section-header">CONFIRMACIÓN DE PAGO:</div>
+        <div class="section-content">
+          Enviar foto del voucher de transacción al WhatsApp corporativo de Financiera Oh para su validación, registro, cancelación de deuda y retiro de cobranza.
+        </div>
+
+        <div class="section-header">TRAMITE DE CARTA DE NO ADEUDO:</div>
+        <div class="section-content">
+          A partir de 15 días hábiles de la cancelación ya puede solicitar el trámite su carta de no adeudo escribiendo al <strong>WhatsApp: 980732405 - OPCION 2</strong> o llamando al (01) 619-4800; (01) 631-5400; para que lo pueda recoger en plataforma o solicitar el envío a su correo.
+        </div>
+
+        <div class="contact-info">
+          Si desea mayor información, comuníquese a los siguientes números de contacto directo: Vía Telf.: o vía WhatsApp: <strong>968437436</strong>
+        </div>
+
+        <!-- Sección de firma -->
+        <div class="signature-section">
+          <div class="signature-left">
+            <span>Atentamente,</span>
+          </div>
+          <div class="signature-center">
+            <div class="logo-placeholder small">LOGO BCP</div>
+            <div style="text-align: center; padding: 10px;">
+              <strong>Romina Tapia Albinagorta &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Dpto.</strong><br />
+              <strong>COBRANZAS Oh!</strong>
+            </div>
+          </div>
+          <div class="signature-right">
+            <div class="logo-placeholder small">COMPROMISO</div>
+          </div>
+        </div>
+
+        <div class="footer-notes">
+          <p>(*) Si al recibir esta comunicación Ud. Ha cancelado o regularizado su deuda, por favor desestimar su contenido.</p>
+          <p>(*) Para acceder a las facilidades deberá estar incluida en la relación de cuentas pre -aprobado.</p>
+          <p>(*) Sujeto a variación, por negativa a facilidad.</p>
+        </div>
+      </form>
+
+    <!--Modal-->
+    <div class="modal-backdrop" *ngIf="formaPagoSeleccionadaIndex !== null">
+      <div class="modal-dialog enhanced" cdkDrag>
+        <div class="modal-header" cdkDragHandle>
+          <h3>Editar forma de pago</h3>
+          <button (click)="cerrarEditor()" class="close-btn">×</button>
+        </div>
+
+        <div class="modal-body" [formGroup]="formaPagoTemporal">
+          <div class="modal-field">
+            <label for="fechaPago">📅 Fecha del pago</label>
+            <input 
+              type="date" 
+              formControlName="fechaPago" 
+              id="fechaPago"
+              class="editable-input date-input" />
+          </div>
+
+          <div class="modal-field">
+            <label for="montoPago">💰 Monto (S/)</label>
+            <input 
+              type="number" 
+              formControlName="montoPago" 
+              step="0.01" 
+              min="0"
+              id="montoPago"
+              class="editable-input number-input" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cerrarEditor()">Cancelar</button>
+          <button class="btn btn-primary" (click)="guardarEdicionFormaPago()">Guardar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  </div>
+</body>
