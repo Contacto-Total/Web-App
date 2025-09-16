@@ -18,7 +18,7 @@ export const routes: Routes = [
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
     {'path': 'templateSMS', component: ComboListPageComponent},
-    {'path': 'Crear', component: DynQueryPageComponent},
+    {'path': 'crear', component: DynQueryPageComponent},
     {'path': 'recordings', component: RecordingsPageComponent},
     {'path': 'contacto/report', component: ContactReportPageComponent},
     {'path': 'monitoreo/report', component: MonitoringReportPageComponent},

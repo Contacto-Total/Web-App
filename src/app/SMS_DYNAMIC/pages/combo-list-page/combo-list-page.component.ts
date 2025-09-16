@@ -346,7 +346,7 @@ export class ComboListPageComponent {
   }
 
   New() {
-    this.router.navigate(['/Crear']);
+    this.router.navigate(['/crear']);
   }
 
 
