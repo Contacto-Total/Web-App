@@ -17,7 +17,7 @@ export const routes: Routes = [
     {'path': '', redirectTo: '/campaña', pathMatch: 'full'},
     {'path': 'campaña', component: CampaignPageComponent},
     {'path': 'sms', component: SmsPageComponent},
-    {'path': 'templateSMS', component: ComboListPageComponent},
+    {'path': 'SMS', component: ComboListPageComponent},
     {'path': 'crear', component: DynQueryPageComponent},
     {'path': 'recordings', component: RecordingsPageComponent},
     {'path': 'contacto/report', component: ContactReportPageComponent},
