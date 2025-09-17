@@ -53,7 +53,7 @@
 
       <div class="grid" style="margin-top:12px;">
 
-        <div>
+        <div class="group-card group--tramo">
           <label>Tramo</label>
           <select formControlName="tramo">
             <option value="3">Tramo 3</option>
@@ -61,7 +61,8 @@
           </select>
         </div>
 
-        <div class="full">
+
+        <div class="group-card group--selects">
           <label>Selects</label>
 
           <div class="chip-groups">
@@ -134,14 +135,24 @@
           </div>
         </div>
 
-
-        <div>
-          <label>Restricciones</label>
+        <!-- … dentro de la grid de Opciones avanzadas, cerca de Restricciones … -->
+        <div class="group-card group--cond">
+          <div class="group-title">Condiciones</div>
           <div class="checks">
-            <label><input type="checkbox" formControlName="noContenido" /> No Conteni</label>
-            <label><input type="checkbox" formControlName="excluirPromesasPeriodoActual" /> Excluir promesas periodo</label>
-            <label><input type="checkbox" formControlName="excluirCompromisos" /> Excluir compromisos</label>
-            <label><input type="checkbox" formControlName="excluirBlacklist" /> Excluir blacklist</label>
+            <label><input type="checkbox" formControlName="cond_PROMESAS_HOY"> Promesas HOY</label>
+            <label><input type="checkbox" formControlName="cond_PROMESAS_MANANA"> Promesas MAÑANA</label>
+            <label><input type="checkbox" formControlName="cond_PROMESAS_MANANA2"> Promesas HOY y MAÑANA</label>
+            <label><input type="checkbox" formControlName="cond_PROMESAS_ROTAS"> Promesas ROTAS</label>
+          </div>
+        </div>
+
+        <div class="group-card group--restr">
+          <div class="group-title">Restricciones</div>
+          <div class="checks">
+            <label><input type="checkbox" formControlName="noContenido"> No Contenido</label>
+            <label><input type="checkbox" formControlName="excluirPromesasPeriodoActual"> Excluir promesas periodo</label>
+            <label><input type="checkbox" formControlName="excluirCompromisos"> Excluir compromisos</label>
+            <label><input type="checkbox" formControlName="excluirBlacklist"> Excluir blacklist</label>
           </div>
         </div>
 

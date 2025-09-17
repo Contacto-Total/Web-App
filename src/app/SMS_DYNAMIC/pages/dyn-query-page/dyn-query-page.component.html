@@ -36,12 +36,12 @@
                   *ngFor="let c of g.items"
                   type="button"
                   class="chip"
-                  [class.active]="isSelected(c.key)"
-                  (click)="toggleChip(c.key, c.affectsSelects !== false)"
-                  [attr.aria-pressed]="isSelected(c.key)"
-                  [disabled]="isChipDisabled(c.key)"
+                  [class.active]="isActive(c.key)"
+                (click)="toggleChip(c.key, c.affectsSelects !== false)"
+                [attr.aria-pressed]="isActive(c.key)"
+                [disabled]="isChipDisabled(c.key)"
                 >
-                  {{ c.label }}
+                {{ c.label }}
                 </button>
               </div>
             </div>
@@ -80,7 +80,7 @@
               <input type="checkbox" (change)="toggleCond($event,'PROMESAS_MANANA2')">
               <span class="checkmark"></span>
             </div>
-            PROMESAS MAÑANA Y PASADO MAÑANA
+            PROMESAS HOY Y MAÑANA
           </label>
           <label class="checkbox-item">
             <div class="checkbox">

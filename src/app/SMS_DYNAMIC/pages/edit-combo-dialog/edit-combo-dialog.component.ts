@@ -70,10 +70,19 @@ export class EditComboDialogComponent implements OnInit {
     plantillaTexto: ['', [Validators.required, Validators.maxLength(612)]],
     descripcion: this.data.descripcion ?? '',
     tramo: (this.data.tramo as '3'|'5') ?? '3',
+
+    // RESTRICCIONES
     noContenido: this.data.restricciones?.noContenido ?? true,
     excluirPromesasPeriodoActual: this.data.restricciones?.excluirPromesasPeriodoActual ?? true,
     excluirCompromisos: this.data.restricciones?.excluirCompromisos ?? true,
     excluirBlacklist: this.data.restricciones?.excluirBlacklist ?? true,
+
+    // 💡 NUEVO: Condiciones (PROMESAS_*)
+    cond_PROMESAS_HOY:      (this.data.condiciones ?? []).includes('PROMESAS_HOY'),
+    cond_PROMESAS_MANANA:   (this.data.condiciones ?? []).includes('PROMESAS_MANANA'),
+    cond_PROMESAS_MANANA2:  (this.data.condiciones ?? []).includes('PROMESAS_MANANA2'),
+    cond_PROMESAS_ROTAS:    (this.data.condiciones ?? []).includes('PROMESAS_ROTAS'),
+
     importeExtra: this.fb.nonNullable.control<number>((this.data as any)?.importeExtra ?? 0),
   });
 
@@ -272,6 +281,13 @@ export class EditComboDialogComponent implements OnInit {
     if (this.form.invalid) { this.smsCtrl.markAsTouched(); return; }
 
     const v = this.form.getRawValue();
+
+    const condiciones: string[] = [];
+    if (v.cond_PROMESAS_HOY)     condiciones.push('PROMESAS_HOY');
+    if (v.cond_PROMESAS_MANANA)  condiciones.push('PROMESAS_MANANA');
+    if (v.cond_PROMESAS_MANANA2) condiciones.push('PROMESAS_MANANA2'); // hoy y mañana
+    if (v.cond_PROMESAS_ROTAS)   condiciones.push('PROMESAS_ROTAS');
+
     const importeExtraAplica =
       this.hasTopUpSelect() && Number(v.importeExtra) > 0
         ? Math.trunc(Number(v.importeExtra))
@@ -286,7 +302,6 @@ export class EditComboDialogComponent implements OnInit {
       descripcion: v.descripcion,
       tramo: v.tramo,
       selects: Array.from(selectsSet),
-      condiciones: this.data.condiciones ?? [],
       restricciones: {
         noContenido: !!v.noContenido,
         excluirPromesasPeriodoActual: !!v.excluirPromesasPeriodoActual,
@@ -296,6 +311,7 @@ export class EditComboDialogComponent implements OnInit {
       plantillaSmsId: this.data.plantillaSmsId ?? null,  // << AÑADIR ESTO
       plantillaTexto: v.plantillaTexto, // 👈 ENVIAR TEXTO
       plantillaName: v.nombre,
+      condiciones,
       importeExtra: importeExtraAplica,
     };
 

@@ -21,6 +21,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { SuccessDialogComponent } from '@/SMS_DYNAMIC/Common/success-dialog.component';
 
 
+const VAR_PATTERN_I = /\{([A-Z0-9_]+)\}/gi;
 const VAR_PATTERN = /\{([A-Z0-9_]+)\}/g;
 type VarChip = { key: string; label: string; affectsSelects: boolean };
 type VarGroup = { key: 'cliente' | 'financiero' | 'fechas'; title: string; items: VarChip[] };
@@ -398,13 +399,15 @@ export class DynQueryPageComponent implements OnInit {
       distinctUntilChanged((a,b) => JSON.stringify(a) === JSON.stringify(b)),
     );
 
-    form$.subscribe(() => this.fetchSampleRow());
+    form$.subscribe(() => { this.syncChipsWithTemplate(); this.fetchSampleRow(); });
+
 
     this.form.controls.plantillaTexto.valueChanges
       .pipe(debounceTime(200))
-      .subscribe(() => this.fetchSampleRow());
+      .subscribe(() => { this.syncChipsWithTemplate(); this.fetchSampleRow(); });
 
     // primera carga
+    this.syncChipsWithTemplate();
     this.fetchSampleRow();
   }
 
@@ -412,9 +415,8 @@ export class DynQueryPageComponent implements OnInit {
   private insertPlaceholderOnce(key: string) {
     const ctrl = this.form.controls.plantillaTexto;
     const cur = ctrl.value ?? '';
-    const already = new RegExp(`\\{${key}\\}(?!\\w)`).test(cur);
+    const already = new RegExp(`\\{${key}\\}(?!\\w)`, 'i').test(cur); // <- 'i'
     if (already) return;
-
     const sep = cur && !cur.endsWith(' ') ? ' ' : '';
     ctrl.setValue(cur + `${sep}{${key}}`);
     ctrl.markAsDirty();
@@ -478,9 +480,17 @@ export class DynQueryPageComponent implements OnInit {
   private buildBody(limitForPreview: boolean): DynamicQueryRequest {
     const v = this.form.getRawValue();
 
-    const selects = Array.from(this.selects).map(s => (s === 'MORA' ? 'SALDO_MORA' : s));
-    const PROMESAS = new Set(['PROMESAS_HOY', 'PROMESAS_MANANA', 'PROMESAS_MANANA2', 'PROMESAS_ROTAS']);
+    // base desde chips (normalizando MORA -> SALDO_MORA)
+    let selects = Array.from(this.selects)
+      .map(s => (s === 'MORA' ? 'SALDO_MORA' : s));
+
+    const PROMESAS = new Set(['PROMESAS_HOY','PROMESAS_MANANA','PROMESAS_MANANA2','PROMESAS_ROTAS']);
     const condiciones = Array.from(this.condiciones).filter(c => PROMESAS.has(c));
+
+    // añade variables que están escritas en el texto y que afectan selects
+    const tokens = Array.from(this.extractTokens());
+    const fromText = tokens.filter(t => this.affectsMap.get(t));
+    selects = Array.from(new Set([...selects, ...fromText]));
 
     const importeExtraAplica =
       this.hasTopUpSelect() && Number(v.importeExtra) > 0
@@ -494,13 +504,14 @@ export class DynQueryPageComponent implements OnInit {
       restricciones: {
         noContenido: !!v.noContenido,
         excluirPromesasPeriodoActual: !!v.excluirPromesasPeriodoActual,
-        excluirCompromisos:           !!v.excluirCompromisos,
-        excluirBlacklist:             !!v.excluirBlacklist,
+        excluirCompromisos: !!v.excluirCompromisos,
+        excluirBlacklist: !!v.excluirBlacklist,
       },
       limit: limitForPreview ? Number(v.limit || 1000) : undefined,
       importeExtra: importeExtraAplica,
     } as any;
   }
+
 
   ejecutar() {
     const body = this.buildBody(true);
@@ -701,27 +712,128 @@ export class DynQueryPageComponent implements OnInit {
   }
 
   isChipDisabled(key: string): boolean {
-    // Si el propio chip está activo, NO lo deshabilites (permitimos deseleccionar)
-    if (this.selectedChips.has(key)) return false;
+    // si ya está activo (por chip o por token en texto), no deshabilites
+    if (this.isActive(key)) return false;
 
-    if (key === 'LTD_LTDE') {
-      return this.selectedChips.has('LTD') || this.selectedChips.has('LTDE');
-    }
-    if (key === 'LTD' || key === 'LTDE') {
-      return this.selectedChips.has('LTD_LTDE');
-    }
+    // LTD/LTDE ↔ LTD_LTDE
+    if (key === 'LTD_LTDE') return this.isActive('LTD') || this.isActive('LTDE');
+    if (key === 'LTD' || key === 'LTDE') return this.isActive('LTD_LTDE');
 
-    // Regla de exclusión:
-    // - Si está seleccionado BAJA30 o MORA ⇒ deshabilita BAJA30_SALDOMORA
-    // - Si está seleccionado BAJA30_SALDOMORA ⇒ deshabilita BAJA30 y MORA
-    if (key === 'BAJA30_SALDOMORA') {
-      return this.selectedChips.has('BAJA30') || this.selectedChips.has('MORA');
-    }
-    if (key === 'BAJA30' || key === 'MORA') {
-      return this.selectedChips.has('BAJA30_SALDOMORA');
-    }
+    // BAJA30/MORA ↔ BAJA30_SALDOMORA
+    if (key === 'BAJA30_SALDOMORA') return this.isActive('BAJA30') || this.isActive('MORA');
+    if (key === 'BAJA30' || key === 'MORA') return this.isActive('BAJA30_SALDOMORA');
+
     return false;
   }
+
+  private tokensInText = signal<Set<string>>(new Set());
+
+  // mapa de si un chip afecta selects (sale de tu definición de grupos)
+  private affectsMap = new Map<string, boolean>(
+    this.chipGroups.flatMap(g =>
+      g.items.map(i => [this.mapVar(i.key), i.affectsSelects !== false] as [string, boolean])
+    )
+  );
+
+  // extrae {TOKENS} del textarea normalizados (MORA -> SALDO_MORA)
+  private extractTokens(): Set<string> {
+    const tpl = this.form.controls.plantillaTexto.value ?? '';
+    const ks = (tpl.match(VAR_PATTERN) || []).map(m => this.mapVar(m.slice(1, -1)));
+    return new Set(ks);
+  }
+
+// sincroniza chips/sets con el contenido del textarea
+  private syncChipsWithText() {
+    const tokens = this.extractTokens();
+    this.tokensInText.set(tokens);
+
+    // podas automáticas: si ya no está el token, des-selecciona
+    for (const k of Array.from(this.selectedChips)) {
+      const norm = this.mapVar(k);
+      const affects = this.affectsMap.get(norm) ?? true;
+      if (affects && !tokens.has(norm)) {
+        this.selectedChips.delete(k);
+        // ojo con el mapeo MORA -> SALDO_MORA en selects
+        this.selects.delete(k === 'MORA' ? 'SALDO_MORA' : k);
+      }
+    }
+  }
+
+  // “activo” si está seleccionado o si el token existe en el texto
+  isActive(key: string): boolean {
+    return this.selectedChips.has(key) || this.tokensInText().has(this.mapVar(key));
+  }
+
+  // devuelve el meta del chip
+  private chipMeta(key: string) {
+    for (const g of this.chipGroups) {
+      const f = g.items.find(i => i.key === key);
+      if (f) return f;
+    }
+    return undefined;
+  }
+  private affectsSelects(key: string) {
+    return this.chipMeta(key)?.affectsSelects !== false;
+  }
+
+  /** Mantiene chips y selects en sincronía con lo que realmente hay escrito en el textarea */
+  private syncChipsWithTemplate() {
+    const tpl = this.form.controls.plantillaTexto.value ?? '';
+
+    const tokens = new Set<string>();
+    for (const m of tpl.matchAll(VAR_PATTERN_I)) tokens.add(String(m[1]).toUpperCase());
+
+    if (tokens.has('SALDO_MORA')) tokens.add('MORA');
+    if (tokens.has('MORA'))      tokens.add('SALDO_MORA');
+
+    // 🔁 mantener señal sincronizada para isActive()
+    this.tokensInText.set(new Set(tokens));
+
+    const want = (k: string) => tokens.has(k.toUpperCase());
+
+    const activate = (k: string) => {
+      if (!this.selectedChips.has(k)) {
+        this.selectedChips.add(k);
+        if (this.affectsSelects(k)) this.selects.add(k === 'MORA' ? 'SALDO_MORA' : k);
+      }
+    };
+    const deactivate = (k: string) => {
+      if (this.selectedChips.has(k)) {
+        this.selectedChips.delete(k);
+        if (this.affectsSelects(k)) this.selects.delete(k === 'MORA' ? 'SALDO_MORA' : k);
+      }
+    };
+
+    // 2) reglas exclusivas (primero las combinadas)
+    if (want('BAJA30_SALDOMORA')) {
+      activate('BAJA30_SALDOMORA'); deactivate('BAJA30'); deactivate('MORA');
+    } else {
+      deactivate('BAJA30_SALDOMORA');
+      want('BAJA30') ? activate('BAJA30') : deactivate('BAJA30');
+      want('MORA')   ? activate('MORA')   : deactivate('MORA');
+    }
+
+    if (want('LTD_LTDE')) {
+      activate('LTD_LTDE'); deactivate('LTD'); deactivate('LTDE');
+    } else {
+      deactivate('LTD_LTDE');
+      want('LTD')  ? activate('LTD')  : deactivate('LTD');
+      want('LTDE') ? activate('LTDE') : deactivate('LTDE');
+    }
+
+    // 3) resto de chips (no exclusivos)
+    const alreadyHandled = new Set(['BAJA30','MORA','BAJA30_SALDOMORA','LTD','LTDE','LTD_LTDE']);
+    for (const g of this.chipGroups) {
+      for (const c of g.items) {
+        if (alreadyHandled.has(c.key)) continue;
+        want(c.key) ? activate(c.key) : deactivate(c.key);
+      }
+    }
+
+    // 4) coherencia del importe extra
+    if (!this.hasTopUpSelect()) this.form.controls.importeExtra.setValue(0);
+  }
+
 
 
 }
