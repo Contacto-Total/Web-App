@@ -28,7 +28,7 @@ export class DynQueryService {
   export(body: DynamicQueryRequest, template: string) {
     const payload: any = { ...body };
     if (payload.limit == null) delete payload.limit;
-    payload.selectAll = true;      // para que vengan todas las columnas
+    payload.selectAll = false;      // para que vengan todas las columnas
     payload.template = template;   // 👈 MANDAR LA PLANTILLA EN EL BODY
     return this.http.post(this.exportUrl, payload, { responseType: 'blob' });
   }
