@@ -77,7 +77,7 @@ export type RoundWizardData = {
     <footer class="dlg__foot">
       <button mat-button type="button" (click)="skip()" [disabled]="loading()">Omitir</button>
       <span class="spacer"></span>
-      <button mat-raised-button color="primary" type="button" (click)="download()" [disabled]="loading()">
+      <button mat-raised-button style="color: white; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);" type="button" (click)="download()" [disabled]="loading()">
         Generar
       </button>
     </footer>
