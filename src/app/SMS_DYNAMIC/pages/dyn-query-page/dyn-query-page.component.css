@@ -223,6 +223,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-top:10px;
 }
 
 .preview-box {
@@ -502,4 +503,148 @@
   opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none; /* por si acaso */
+}
+
+/* The switch - the box around the slider */
+.switch {
+  font-size: 1rem;
+  position: relative;
+  display: inline-block;
+  width: 4em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #eee;
+  transition: 0.4s;
+  border-radius: 0.5em;
+  box-shadow: 0 0.2em #dfd9d9;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 1.5em;
+  width: 1.4em;
+  border-radius: 0.3em;
+  left: 0.3em;
+  bottom: 0.7em;
+  background-color: #5d6ebc;
+  transition: 0.4s;
+  box-shadow: 0 0.4em #b4b8bc;
+}
+
+.slider:hover::before {
+  box-shadow: 0 0.2em #b4b7bc;
+  bottom: 0.5em;
+}
+
+input:checked+.slider:before {
+  transform: translateX(2em);
+  background: #282e61;
+}
+
+
+/* ===== Preview controls row ===== */
+.preview-controls{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;               /* permite bajar elementos en pantallas pequeñas */
+}
+
+.preview-controls .mode-label{
+  font-size: 13px;
+  color: #374151;
+}
+
+/* botón compacto a la misma altura que el switch */
+.btn-small{
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 10px;
+  line-height: 1;                /* quita “alto extra” del texto */
+}
+
+/* mantener el botón pegado al switch en la misma fila,
+   pero que la “badge” pueda ir después sin empujar */
+.btn-inline{
+  margin-left: 8px;
+}
+
+/* badge sutil y alineado */
+.badge{
+  background: #eef2ff;
+  color: #374151;
+  border: 1px solid #dbeafe;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* pequeño ajuste para que el switch quede visualmente centrado */
+.switch{ vertical-align: middle; }
+
+/* Header de Previsualización con botón a la derecha */
+.preview-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 30px;    /* mantiene el mismo respiro que tenías */
+  margin-bottom: 12px;
+}
+
+/* Botón “ghost” para el header */
+.btn-ghost{
+  background: #eef2ff;
+  color: #374151;
+  border: 1px solid #dbeafe;
+}
+.btn-ghost:hover{
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+}
+
+/* Empujar el toggle a la derecha */
+.preview-controls{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;   /* <- acá lo pegamos a la derecha */
+  gap: 12px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.preview-controls .mode-label{
+  font-size: 13px;
+  color: #374151;
+}
+
+/* Estado deshabilitado para botones */
+.btn:disabled,
+.btn[disabled],
+.btn-ghost:disabled,
+.btn-ghost[disabled],
+  /* por si usas <a> con clase de botón */
+.btn.is-disabled,
+.btn-ghost.is-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;   /* <- bloquea el clic */
+  box-shadow: none;
+  transform: none;
+  filter: grayscale(0.2) saturate(0.6);
 }

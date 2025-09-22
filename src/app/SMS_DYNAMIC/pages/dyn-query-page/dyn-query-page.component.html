@@ -166,10 +166,38 @@
 
     <!-- Sidebar -->
     <aside class="aside-card">
-      <h3 class="preview-title">
-        <span class="material-icons">preview</span>
-        Previsualización
-      </h3>
+
+      <!-- Controles de vista previa (toggle a la derecha) -->
+      <div class="preview-controls">
+        <span class="mode-label">Manual</span>
+
+        <label class="switch" aria-label="Cambiar modo de previsualización">
+          <input type="checkbox"
+                 [checked]="previewMode() === 'auto'"
+                 (change)="setMode($any($event.target).checked ? 'auto' : 'manual')">
+          <span class="slider"></span>
+        </label>
+
+        <span class="mode-label">Auto</span>
+        
+      </div>
+
+
+
+      <!-- Header de previsualización con botón a la derecha -->
+      <div class="preview-header">
+        <h3 class="preview-title">
+          <span class="material-icons">preview</span>
+          Previsualización
+        </h3>
+
+        <button type="button"
+                class="btn btn-small btn-ghost"
+                (click)="refreshPreview()"
+                [disabled]="previewMode() !== 'manual' || loadingPreview()">
+          Actualizar
+        </button>
+      </div>
 
       <div class="preview-box">
         {{ previewText() || 'Tu SMS aparecerá aquí…' }}

@@ -300,32 +300,11 @@ export class DynQueryPageComponent implements OnInit {
 
   // 2) Pide la fila de muestra con fallback y normalización
   private fetchSampleRow() {
-    const base = this.buildBody(true);
-
-    // Trae un batch más grande para aumentar probabilidad de BAJA30, etc.
-    const PREVIEW_BATCH = 100;
-    base.limit = PREVIEW_BATCH;
-
-    // Asegúrate de pedir también las columnas que aparecen en la plantilla
-    const tpl = this.form.controls.plantillaTexto.value ?? '';
-    const needed = Array.from(new Set(
-      (tpl.match(VAR_PATTERN) || []).map((m: string) => this.mapVar(m.slice(1, -1)))
-    ));
-
-    base.selects = Array.from(new Set([...(base.selects || []), ...needed]));
-    const expanded = this.expandWithAliases(base.selects || []);
-    base.selects = Array.from(new Set([...(base.selects || []), ...expanded]));
-
-    const required = this.requiredColumnsForPreview();
-    const preferred = this.preferredColumnsForPreview();
-
-    this.api.run(base).subscribe({
-      next: (rows) => {
-        const pick = this.pickBestRow(rows || [], required, preferred);
-        this.sampleRow.set(pick ?? null);
-      },
-      error: () => this.sampleRow.set(null),
-    });
+    // En modo AUTO: dispara la vista previa inmediatamente (como antes)
+    if (this.previewMode() === 'auto') {
+      this.triggerPreview();
+    }
+    // En modo MANUAL: no hace nada; quedará el indicador de "cambios sin aplicar"
   }
 
 
@@ -400,16 +379,22 @@ export class DynQueryPageComponent implements OnInit {
       distinctUntilChanged((a,b) => JSON.stringify(a) === JSON.stringify(b)),
     );
 
-    form$.subscribe(() => { this.syncChipsWithTemplate(); this.fetchSampleRow(); });
+    form$.subscribe(() => {
+      this.syncChipsWithTemplate();
+      if (this.previewMode() === 'auto') this.triggerPreview();
+    });
 
 
     this.form.controls.plantillaTexto.valueChanges
       .pipe(debounceTime(200))
-      .subscribe(() => { this.syncChipsWithTemplate(); this.fetchSampleRow(); });
+      .subscribe(() => {
+        this.syncChipsWithTemplate();
+        if (this.previewMode() === 'auto') this.triggerPreview();
+      });
 
     // primera carga
     this.syncChipsWithTemplate();
-    this.fetchSampleRow();
+    if (this.previewMode() === 'auto') this.triggerPreview();
   }
 
   // Inserta {KEY} una sola vez
@@ -878,5 +863,72 @@ export class DynQueryPageComponent implements OnInit {
       }
     });
   }
+
+  private triggerPreview() {
+    const base = this.currentQueryForPreview();
+    const h = this.hash(base);
+    if (h === this.lastHash() && this.sampleRow()) return; // evita refetch
+
+    this.lastHash.set(h);
+    this.loadingPreview.set(true);
+
+    const required = this.requiredColumnsForPreview();
+    const preferred = this.preferredColumnsForPreview();
+
+    this.api.run(base).subscribe({
+      next: (rows) => {
+        const pick = this.pickBestRow(rows || [], required, preferred);
+        this.sampleRow.set(pick ?? null);
+        this.loadingPreview.set(false);
+      },
+      error: () => { this.sampleRow.set(null); this.loadingPreview.set(false); }
+    });
+  }
+
+  refreshPreview(){ this.triggerPreview(); }
+
+
+  // --- Modo de vista previa: auto / manual (sin backend)
+  previewMode = signal<'auto'|'manual'>('manual');  // ← arranca en manual
+  loadingPreview = signal(false);
+  private lastHash = signal<string>('');
+
+// Cambiar modo
+  setMode(m: 'auto'|'manual') {
+    this.previewMode.set(m);
+    if (m === 'auto') this.triggerPreview(); // al pasar a auto, refresca
+  }
+
+// Hash estable del “query” que afecta la fila de muestra
+  private hash(q: DynamicQueryRequest): string {
+    const key = {
+      tramo: q.tramo,
+      selects: [...(q.selects || [])].sort(),
+      condiciones: [...(q.condiciones || [])].sort(),
+      restricciones: q.restricciones,
+      importeExtra: q.importeExtra ?? null
+    };
+    return JSON.stringify(key);
+  }
+
+// Construye el body para la PREVIEW (incluye tokens/aliases como ya hacías)
+  private currentQueryForPreview(): DynamicQueryRequest {
+    const base = this.buildBody(true);
+
+    const tpl = this.form.controls.plantillaTexto.value ?? '';
+    const needed = Array.from(new Set(
+      (tpl.match(VAR_PATTERN) || []).map(m => this.mapVar(m.slice(1, -1)))
+    ));
+    base.selects = Array.from(new Set([...(base.selects || []), ...needed]));
+    base.selects = Array.from(new Set([...(base.selects || []), ...this.expandWithAliases(base.selects || [])]));
+    return base as DynamicQueryRequest;
+  }
+
+// Flag para avisar que, en manual, hay cambios no aplicados
+  pendingPreview = computed(() =>
+    this.previewMode() === 'manual' &&
+    this.hash(this.currentQueryForPreview()) !== this.lastHash()
+  );
+
 
 }
