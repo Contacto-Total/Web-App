@@ -85,4 +85,10 @@ export class DynQueryService {
   previewDownload(sessionId: string) {
     return this.http.post(this.previewDlUrl, { sessionId }, { responseType: 'blob' });
   }
+
+  previewDownloadBase(sessionId: string) {
+    return this.http.get(`${this.root}/preview/${sessionId}/download-base`, {
+      responseType: 'blob'
+    });
+  }
 }
