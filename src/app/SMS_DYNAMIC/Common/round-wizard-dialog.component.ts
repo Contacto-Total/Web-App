@@ -78,7 +78,7 @@ export type RoundWizardData = {
       <button mat-button type="button" (click)="skip()" [disabled]="loading()">Omitir</button>
       <span class="spacer"></span>
       <button mat-raised-button color="primary" type="button" (click)="download()" [disabled]="loading()">
-        Terminar y descargar
+        Generar
       </button>
     </footer>
   </div>
