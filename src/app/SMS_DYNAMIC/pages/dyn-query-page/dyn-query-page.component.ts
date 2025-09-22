@@ -19,6 +19,7 @@ import { debounceTime, map, distinctUntilChanged, startWith } from 'rxjs/operato
 import { computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SuccessDialogComponent } from '@/SMS_DYNAMIC/Common/success-dialog.component';
+import {RoundWizardDialogComponent} from "@/SMS_DYNAMIC/Common/round-wizard-dialog.component";
 
 
 const VAR_PATTERN_I = /\{([A-Z0-9_]+)\}/gi;
@@ -834,6 +835,48 @@ export class DynQueryPageComponent implements OnInit {
     if (!this.hasTopUpSelect()) this.form.controls.importeExtra.setValue(0);
   }
 
+  generarGuiado() {
+    const template = (this.form.controls.plantillaTexto.value ?? '').trim();
+    if (!template) { this.alert('Ingresa un texto de SMS antes de generar.', 'Falta texto'); return; }
 
+    // base de consulta (sin limit ni nulls molestos)
+    const raw = this.buildBody(false);
+    const query: any = this.compactQuery(raw);
+    // aseguramos selects que estén en el texto (por si el user sólo escribió {BAJA30})
+    const tokens = Array.from(this.extractTokens());
+    const textVars = tokens.filter(t => this.affectsMap.get(t));
+    query.selects = Array.from(new Set([...(query.selects || []), ...textVars]));
+
+    // candidatas por defecto (puedes parametrizarlo)
+    const candidatas = [
+      'BAJA30','SALDO_MORA','BAJA30_SALDOMORA',
+      'LTD','LTDE','LTD_LTDE',
+      'PKM','CAPITAL'
+    ];
+
+    const loadingDlg = this.matDialog.open(LoadingDialogComponent, {
+      disableClose: true,
+      data: { title: 'Preparando cohorte…', subtitle: 'Calculando variables candidatas' },
+      panelClass: 'loading-dialog-panel',
+      width: '320px',
+      autoFocus: false
+    });
+
+    this.api.previewInit(query, template, candidatas).subscribe({
+      next: (init) => {
+        loadingDlg.close();
+        this.matDialog.open(RoundWizardDialogComponent, {
+          width: '820px',
+          data: { sessionId: init.sessionId, init, template },
+          disableClose: false
+        });
+      },
+      error: (err) => {
+        loadingDlg.close();
+        const msg = err?.error?.message || err?.message || 'No se pudo iniciar el guiado.';
+        this.alert(msg, 'Error');
+      }
+    });
+  }
 
 }
