@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import { Component, inject, OnInit, signal, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -47,6 +47,44 @@ export class DynQueryPageComponent implements OnInit {
   private comboApi = inject(ComboService);
   private router = inject(Router);
   sampleRow = signal<Row|null>(null);
+
+  @ViewChild('tplArea') tplArea?: ElementRef<HTMLTextAreaElement>;
+
+  /** Inserta texto en la posición del cursor del textarea (o al final si no hay ref). */
+  private insertAtCursor(text: string) {
+    const ctrl = this.form.controls.plantillaTexto;
+    const el = this.tplArea?.nativeElement;
+
+    // Fallback: si no hay ref aún, agrega al final como antes
+    if (!el) {
+      const cur = ctrl.value ?? '';
+      const sep = cur && !cur.endsWith(' ') ? ' ' : '';
+      ctrl.setValue(cur + sep + text);
+      ctrl.markAsDirty();
+      return;
+    }
+
+    const val = ctrl.value ?? '';
+    const start = el.selectionStart ?? val.length;
+    const end   = el.selectionEnd ?? start;
+
+    const before = val.slice(0, start);
+    const after  = val.slice(end);
+
+    const needsSpaceBefore = before.length && !/\s$/.test(before);
+    const insert = (needsSpaceBefore ? ' ' : '') + text;
+
+    const next = before + insert + after;
+    ctrl.setValue(next);
+    ctrl.markAsDirty();
+
+    // Deja el cursor justo después del token
+    const caret = (before + insert).length;
+    setTimeout(() => {
+      el.focus();
+      el.selectionStart = el.selectionEnd = caret;
+    }, 0);
+  }
 
 
   private selects = new Set<string>();
@@ -401,11 +439,9 @@ export class DynQueryPageComponent implements OnInit {
   private insertPlaceholderOnce(key: string) {
     const ctrl = this.form.controls.plantillaTexto;
     const cur = ctrl.value ?? '';
-    const already = new RegExp(`\\{${key}\\}(?!\\w)`, 'i').test(cur); // <- 'i'
-    if (already) return;
-    const sep = cur && !cur.endsWith(' ') ? ' ' : '';
-    ctrl.setValue(cur + `${sep}{${key}}`);
-    ctrl.markAsDirty();
+    const re = new RegExp(`\\{${key}\\}(?!\\w)`, 'i'); // respeta tu lógica anterior
+    if (re.test(cur)) return;
+    this.insertAtCursor(`{${key}}`);
   }
 
   private hasTopUpSelect(): boolean {
@@ -594,11 +630,7 @@ export class DynQueryPageComponent implements OnInit {
 
   // inserta {KEY} al final del textarea
   insertPlaceholder(key: string) {
-    const ctrl = this.form.controls.plantillaTexto;
-    const cur = ctrl.value ?? '';
-    const sep = cur && !cur.endsWith(' ') ? ' ' : '';
-    ctrl.setValue(cur + `${sep}{${key}}`);
-    ctrl.markAsDirty();
+    this.insertAtCursor(`{${key}}`);
   }
 
   guardarCombo() {
