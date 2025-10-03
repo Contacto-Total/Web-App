@@ -8,5 +8,6 @@ export interface AgreementDataResponse {
   ltd: string,
   ltde: string,
   asesor: string,
-  observacion: string
+  observacion: string,
+  tramo: string
 }

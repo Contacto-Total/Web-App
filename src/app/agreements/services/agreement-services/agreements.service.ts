@@ -47,8 +47,8 @@ export class AgreementsService {
     }).pipe(retry(2), catchError(this.handleError))
   } 
 
-  getAgreementData(dni: string, tramo: string) {
-    return this.http.get<AgreementDataResponse>(this.baseUrl + `/datos-cliente/${dni}/${tramo}`, this.httpOptions);
+  getAgreementData(dni: string) {
+    return this.http.get<AgreementDataResponse>(this.baseUrl + `/datos-cliente/${dni}`, this.httpOptions);
   }
 
 }

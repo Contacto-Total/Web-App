@@ -25,6 +25,12 @@ export class PaymentAgreementCardPageComponent implements OnInit {
 
   isLoading = false;
 
+  tramoDetectado = '';
+
+  // Toast notifications
+  toasts: Array<{id: number, type: 'error' | 'warning', message: string, icon: string}> = [];
+  private toastIdCounter = 0;
+
   // Nueva propiedad para controlar si se usó el reset
   isDeudaTotalReset = false;
   isBlackoutMode = false; 
@@ -43,8 +49,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
     this.agreementForm = this.createForm();
 
     this.searchForm = this.fb.group({
-      dniBusqueda: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]],
-      tramo: ['Tramo 3', Validators.required]
+      dniBusqueda: ['', [Validators.required, Validators.pattern(/^\d{8}$/)]]
     });
   }
 
@@ -205,18 +210,19 @@ export class PaymentAgreementCardPageComponent implements OnInit {
     }
   }
 
-  buscarPorDniYTramo(): void {
+  buscarPorDni(): void {
     if (this.searchForm.invalid) {
       this.searchForm.markAllAsTouched();
       return;
     }
 
     const dni = this.searchForm.get('dniBusqueda')?.value;
-    const tramo = this.searchForm.get('tramo')?.value;
 
     this.isLoading = true;
+    this.tramoDetectado = '';
+    this.toasts = [];
 
-    this.agreementsService.getAgreementData(dni, tramo).subscribe({
+    this.agreementsService.getAgreementData(dni).subscribe({
       next: (response) => {
         this.agreementForm.patchValue({
           fechaActual: response.fechaActual,
@@ -227,6 +233,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
         });
 
         this.readonlyInputs = true;
+        this.tramoDetectado = response.tramo;
 
         this.observacionTexto = `Deuda total: ${response.deudaTotal}\nSaldo capital asignado: ${response.saldoCapitalAsig}\nLTD:${response.ltd}\nLTDE:${response.ltde}\nAsesor:${response.asesor}\nTipificación: ${response.observacion}`;
         this.mostrarObservacion = true;
@@ -234,8 +241,16 @@ export class PaymentAgreementCardPageComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error al buscar datos:', error);
-        alert('No se pudo obtener información con ese DNI y tramo.');
         this.isLoading = false;
+        this.readonlyInputs = false; // Desbloquear inputs en caso de error
+
+        if (error.status === 404) {
+          this.showToast('error', 'Cliente no encontrado en la base de datos. Verifique el DNI ingresado.');
+        } else if (error.status === 422) {
+          this.showToast('warning', 'El cliente existe pero no tiene promesa de pago u oportunidad de pago registrada.');
+        } else {
+          this.showToast('error', 'Error al obtener datos del cliente. Por favor, intente nuevamente.');
+        }
       }
     });
   }
@@ -349,6 +364,8 @@ export class PaymentAgreementCardPageComponent implements OnInit {
       this.observacionTexto = '';
       this.readonlyInputs = false;
       this.isBlackoutMode = false;
+      this.tramoDetectado = '';
+      this.toasts = [];
       
       // Restablecer fechas por defecto
       this.agreementForm.patchValue({
@@ -447,5 +464,21 @@ export class PaymentAgreementCardPageComponent implements OnInit {
   getOrdinalSuffix(n: number): string {
     const suffixes = ['ER', 'DO', 'ER', 'TO', 'TO', 'TO', 'MO', 'VO', 'NO', 'MO'];
     return n <= 10 ? suffixes[n - 1] : '';
+  }
+
+  // Métodos para Toast
+  showToast(type: 'error' | 'warning', message: string): void {
+    const icon = type === 'error' ? '❌' : '⚠️';
+    const id = this.toastIdCounter++;
+    this.toasts.push({ id, type, message, icon });
+
+    // Auto-remover después de 5 segundos
+    setTimeout(() => {
+      this.removeToast(id);
+    }, 5000);
+  }
+
+  removeToast(id: number): void {
+    this.toasts = this.toasts.filter(toast => toast.id !== id);
   }
 }
