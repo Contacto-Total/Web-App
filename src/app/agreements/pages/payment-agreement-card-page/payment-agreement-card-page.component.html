@@ -25,6 +25,7 @@
       Tramo: {{ tramoDetectado }}
     </div>
   </form>
+  <span *ngIf="isLoading" class="spinner"></span>
       <div class="document-actions">
         <button 
           type="button" 
@@ -37,7 +38,7 @@
           class="btn btn-primary" 
           (click)="onSubmit()" 
           [disabled]="agreementForm.invalid || isLoading">
-          <span *ngIf="isLoading" class="spinner"></span>
+          
           {{ isLoading ? 'Generando...' : 'Generar PDF' }}
         </button>
       </div>
@@ -87,47 +88,19 @@
           <tr>
             <td class="label-cell">NOMBRE DEL TITULAR</td>
             <td class="highlight input-cell">
-              <input 
-                type="text" 
-                formControlName="nombreTitular"
-                class="editable-input large-input"
-                placeholder="Ingrese el nombre completo"
-                [class.is-invalid]="isFieldInvalid('nombreTitular')"
-                [readonly]="readonlyInputs">
-              <div class="error-message" *ngIf="isFieldInvalid('nombreTitular')">
-                {{ getFieldError('nombreTitular') }}
-              </div>
+              {{ agreementForm.get('nombreTitular')?.value || 'Realice la búsqueda por DNI' }}
             </td>
           </tr>
           <tr>
             <td class="label-cell">NUMERO DNI</td>
             <td class="highlight input-cell">
-              <input 
-                type="text" 
-                formControlName="dni"
-                class="editable-input dni-input"
-                placeholder="12345678"
-                maxlength="8"
-                [class.is-invalid]="isFieldInvalid('dni')"
-                [readonly]="readonlyInputs">
-              <div class="error-message" *ngIf="isFieldInvalid('dni')">
-                {{ getFieldError('dni') }}
-              </div>
+              {{ agreementForm.get('dni')?.value || 'Realice la búsqueda por DNI' }}
             </td>
           </tr>
           <tr>
             <td class="label-cell">Nro. CUENTA TARJETA Oh!</td>
             <td class="highlight input-cell">
-              <input 
-                type="text" 
-                formControlName="cuentaTarjeta"
-                class="editable-input large-input"
-                placeholder="0000111122223333"
-                [class.is-invalid]="isFieldInvalid('cuentaTarjeta')"
-                [readonly]="readonlyInputs">
-              <div class="error-message" *ngIf="isFieldInvalid('cuentaTarjeta')">
-                {{ getFieldError('cuentaTarjeta') }}
-              </div>
+              {{ agreementForm.get('cuentaTarjeta')?.value || 'Realice la búsqueda por DNI' }}
             </td>
           </tr>
         </table>
