@@ -257,15 +257,17 @@ export class PaymentAgreementCardPageComponent implements OnInit {
 
   onSubmit(): void {
     if (this.agreementForm.valid) {
-      // Validar que la suma de pagos coincida con el monto aprobado
-      const sumaPagos = this.formasDePagoArray.controls
-        .reduce((acc, control) => acc + Number(control.get('montoPago')?.value || 0), 0);
-
       const montoAprobado = this.agreementForm.get('montoAprobado')?.value || 0;
 
-      if (sumaPagos !== montoAprobado) {
-        alert(`La suma de los montos de las formas de pago (${sumaPagos.toFixed(2)}) no coincide con el monto aprobado (${montoAprobado.toFixed(2)}). Por favor, ajuste los montos.`);
-        return;
+      // Solo validar suma de pagos si hay formas de pago agregadas
+      if (this.formasDePagoArray.length > 0) {
+        const sumaPagos = this.formasDePagoArray.controls
+          .reduce((acc, control) => acc + Number(control.get('montoPago')?.value || 0), 0);
+
+        if (sumaPagos !== montoAprobado) {
+          alert(`La suma de los montos de las formas de pago (${sumaPagos.toFixed(2)}) no coincide con el monto aprobado (${montoAprobado.toFixed(2)}). Por favor, ajuste los montos.`);
+          return;
+        }
       }
 
       this.isLoading = true;
