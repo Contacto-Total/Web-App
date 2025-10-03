@@ -37,7 +37,7 @@ export class BlacklistService {
   }
 
   handleErrorGet(error: HttpErrorResponse) {
-    if(error.error instanceof ErrorEvent) {
+    if(typeof ErrorEvent !== 'undefined' && error.error instanceof ErrorEvent) {
       console.log(
         `An error occurred ${error.status}, body was: ${error.error.message}`
       );
