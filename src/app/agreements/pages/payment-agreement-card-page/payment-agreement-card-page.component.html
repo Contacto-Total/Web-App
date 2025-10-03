@@ -5,7 +5,7 @@
     <div class="document-header">
       <h1 class="document-title">Generador de Acuerdo de Pago</h1>
       <form [formGroup]="searchForm" style="display: flex; gap: 10px; align-items: center; margin-right: 10px;">
-    <input 
+    <input
       formControlName="dniBusqueda"
       type="text"
       placeholder="DNI"
@@ -13,21 +13,17 @@
       maxlength="8"
       style="width: 120px;" />
 
-    <select 
-      formControlName="tramo"
-      class="editable-input"
-      style="width: 120px;">
-      <option value="Tramo 3">Tramo 3</option>
-      <option value="Tramo 5">Tramo 5</option>
-    </select>
-
-    <button 
+    <button
       type="button"
       class="btn btn-search"
-      (click)="buscarPorDniYTramo()"
+      (click)="buscarPorDni()"
       [disabled]="searchForm.invalid">
       Buscar
     </button>
+
+    <div *ngIf="tramoDetectado" style="margin-left: 10px; padding: 5px 10px; background-color: #e8f5e9; border: 1px solid #4caf50; border-radius: 4px; font-weight: bold; color: #2e7d32;">
+      Tramo: {{ tramoDetectado }}
+    </div>
   </form>
       <div class="document-actions">
         <button 
@@ -364,5 +360,16 @@
 
   </div>
 
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container">
+    <div *ngFor="let toast of toasts"
+         class="toast"
+         [ngClass]="toast.type">
+      <span class="toast-icon">{{ toast.icon }}</span>
+      <div class="toast-content">{{ toast.message }}</div>
+      <button class="toast-close" (click)="removeToast(toast.id)">×</button>
+    </div>
   </div>
 </body>
