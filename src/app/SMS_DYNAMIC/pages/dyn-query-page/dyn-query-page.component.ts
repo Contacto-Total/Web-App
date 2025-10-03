@@ -396,10 +396,6 @@ export class DynQueryPageComponent implements OnInit {
     return Array.from(out);
   }
 
-
-
-
-
   ngOnInit() {
     // ➊ stream con lo que afecta al sample
     const form$ = this.form.valueChanges.pipe(
