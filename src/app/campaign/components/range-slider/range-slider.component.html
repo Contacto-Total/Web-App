@@ -19,6 +19,7 @@
 
         <!-- Selector de Tipo de Filtro -->
         <p-dropdown
+        *ngIf="campaignName == 'Tramo 3'"
           [(ngModel)]="filterType"
           [options]="filterTypeOptions"
           optionLabel="label"
@@ -29,6 +30,7 @@
 
         <!-- MultiSelect para fechas de vencimiento -->
         <p-multiSelect
+        *ngIf="campaignName == 'Tramo 3'"
           [(ngModel)]="dueDatesSelected"
           [options]="dueDatesOptions"
           optionLabel="label"
@@ -48,6 +50,7 @@
         </p-multiSelect>
 
         <p-checkbox
+        *ngIf="campaignName == 'Tramo 3'"
           label="Contenidos"
           [(ngModel)]="contenido"
           (onChange)="onContenidoChange()"
@@ -55,12 +58,7 @@
           styleClass="contenido-checkbox">
         </p-checkbox>
 
-        <p-checkbox
-          label="Excluir pagadas hoy"
-          [(ngModel)]="excluirPagadasHoy"
-          [binary]="true"
-          styleClass="contenido-checkbox">
-        </p-checkbox>
+
        </div>
       
       <p-button 

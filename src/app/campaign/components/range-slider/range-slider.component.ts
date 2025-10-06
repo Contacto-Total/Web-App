@@ -41,9 +41,7 @@ export class RangeSliderComponent implements OnInit{
   filterType: string = 'saldoCapital';
   filterTypeOptions = [
     { label: 'Saldo Capital', value: 'saldoCapital' },
-    { label: 'Baja 30', value: 'baja30' },
-    { label: 'Baja 60', value: 'baja60' },
-    { label: 'Baja 90', value: 'baja90' }
+    { label: 'Baja 30', value: 'baja30' }
   ];
 
   dueDatesSelected: string[] = [];
@@ -52,8 +50,8 @@ export class RangeSliderComponent implements OnInit{
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
-  contenido: boolean = true;
-  excluirPagadasHoy: boolean = true;
+  contenido: boolean = false;
+  excluirPagadasHoy: boolean = false;
   totalRange = 10000;
   activeIndex: number = 3;
 
@@ -101,7 +99,7 @@ export class RangeSliderComponent implements OnInit{
     ];
 
     this.campaignName = 'Tramo 3';
-    this.contenido = true;
+    this.contenido = false;
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
     this.promesasRotasRanges = initialRangesPr.map(range => ({ ...range }));
@@ -378,9 +376,10 @@ export class RangeSliderComponent implements OnInit{
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
       this.dueDatesSelected = [];
-      this.contenido = false;
-    } else {
       this.contenido = true;
+      this.filterType = 'saldoCapital'
+    } else {
+      this.contenido = false;
     }
   }
 
