@@ -37,7 +37,15 @@ export class RangeSliderComponent implements OnInit{
     { label: 'Tramo 3', value: 'Tramo 3' },
     { label: 'Tramo 5', value: 'Tramo 5' }
   ];
-  
+
+  filterType: string = 'saldoCapital';
+  filterTypeOptions = [
+    { label: 'Saldo Capital', value: 'saldoCapital' },
+    { label: 'Baja 30', value: 'baja30' },
+    { label: 'Baja 60', value: 'baja60' },
+    { label: 'Baja 90', value: 'baja90' }
+  ];
+
   dueDatesSelected: string[] = [];
   dueDatesOptions: any[] = [];
   contactoDirectoRanges: Range[] = [];
@@ -45,6 +53,7 @@ export class RangeSliderComponent implements OnInit{
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
   contenido: boolean = true;
+  excluirPagadasHoy: boolean = true;
   totalRange = 10000;
   activeIndex: number = 3;
 
@@ -418,12 +427,14 @@ export class RangeSliderComponent implements OnInit{
 
     const campañaYReporteRequest: CampaignReportRequest = {
       campaignName: this.campaignName,
+      filterType: this.filterType,
       dueDates: this.dueDatesSelected,
       directContactRanges: contactoDirectoRangesToConsult,
       indirectContactRanges: contactoIndirectoRangesToConsult,
       brokenPromisesRanges: promesasRotasRangesToConsult,
       notContactedRanges: noContactadoRangesToConsult,
-      content: this.contenido
+      content: this.contenido,
+      excluirPagadasHoy: this.excluirPagadasHoy
     };
 
     console.log(campañaYReporteRequest);

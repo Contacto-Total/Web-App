@@ -7,18 +7,28 @@
     <div class="action-buttons">
       <!-- Selector de Tramo -->
        <div class="selectors">
-        <p-dropdown 
-          [(ngModel)]="campaignName" 
-          [options]="tramoOptions" 
-          optionLabel="label" 
+        <p-dropdown
+          [(ngModel)]="campaignName"
+          [options]="tramoOptions"
+          optionLabel="label"
           optionValue="value"
           placeholder="Seleccionar tramo"
           (onChange)="onTramoChange()"
           styleClass="tramo-selector">
         </p-dropdown>
-        
+
+        <!-- Selector de Tipo de Filtro -->
+        <p-dropdown
+          [(ngModel)]="filterType"
+          [options]="filterTypeOptions"
+          optionLabel="label"
+          optionValue="value"
+          placeholder="Tipo de filtro"
+          styleClass="tramo-selector">
+        </p-dropdown>
+
         <!-- MultiSelect para fechas de vencimiento -->
-        <p-multiSelect 
+        <p-multiSelect
           [(ngModel)]="dueDatesSelected"
           [options]="dueDatesOptions"
           optionLabel="label"
@@ -36,11 +46,18 @@
             </div>
           </ng-template>
         </p-multiSelect>
-        
-        <p-checkbox 
+
+        <p-checkbox
           label="Contenidos"
           [(ngModel)]="contenido"
           (onChange)="onContenidoChange()"
+          [binary]="true"
+          styleClass="contenido-checkbox">
+        </p-checkbox>
+
+        <p-checkbox
+          label="Excluir pagadas hoy"
+          [(ngModel)]="excluirPagadasHoy"
           [binary]="true"
           styleClass="contenido-checkbox">
         </p-checkbox>

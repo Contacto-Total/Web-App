@@ -166,21 +166,37 @@ body{margin-top:5rem;margin-bottom:2rem}
   background: #fdf2f2;
 }
 
+/* Clase específica para inputs readonly - fondo más oscuro */
+.readonly-input {
+  background: #e2e8f0 !important;
+  border: 1px solid #94a3b8 !important;
+  cursor: not-allowed !important;
+  color: #475569 !important;
+  font-weight: 500 !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+}
+
+.readonly-input::placeholder {
+  color: #94a3b8 !important;
+  opacity: 0.9 !important;
+  font-style: normal !important;
+}
+
 .editable-input:readonly {
-  background: repeating-linear-gradient(
-    45deg,
-    #e9ecef,
-    #e9ecef 10px,
-    #dee2e6 10px,
-    #dee2e6 20px
-  );
-  border: 2px solid #6c757d;
+  background: #d1d5db;
+  opacity: 0.85;
+  border: 1px solid #9ca3af;
   border-style: solid;
   cursor: not-allowed;
-  color: #495057;
-  font-weight: 600;
+  color: #4b5563;
+  font-weight: 500;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.editable-input:readonly::placeholder {
+  color: #9ca3af;
+  opacity: 1;
+  font-style: italic;
 }
 
 /* Contenedores específicos para inputs */
