@@ -88,19 +88,34 @@
           <tr>
             <td class="label-cell">NOMBRE DEL TITULAR</td>
             <td class="highlight input-cell">
-              {{ agreementForm.get('nombreTitular')?.value || 'Realice la búsqueda por DNI' }}
+              <input
+                type="text"
+                formControlName="nombreTitular"
+                class="editable-input large-input readonly-input"
+                readonly
+                placeholder="JUAN CARLOS PEREZ GARCIA">
             </td>
           </tr>
           <tr>
             <td class="label-cell">NUMERO DNI</td>
             <td class="highlight input-cell">
-              {{ agreementForm.get('dni')?.value || 'Realice la búsqueda por DNI' }}
+              <input
+                type="text"
+                formControlName="dni"
+                class="editable-input readonly-input"
+                readonly
+                placeholder="12345678">
             </td>
           </tr>
           <tr>
             <td class="label-cell">Nro. CUENTA TARJETA Oh!</td>
             <td class="highlight input-cell">
-              {{ agreementForm.get('cuentaTarjeta')?.value || 'Realice la búsqueda por DNI' }}
+              <input
+                type="text"
+                formControlName="cuentaTarjeta"
+                class="editable-input large-input readonly-input"
+                readonly
+                placeholder="1234567890123456">
             </td>
           </tr>
         </table>

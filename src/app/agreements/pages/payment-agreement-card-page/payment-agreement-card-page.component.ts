@@ -218,6 +218,9 @@ export class PaymentAgreementCardPageComponent implements OnInit {
 
     const dni = this.searchForm.get('dniBusqueda')?.value;
 
+    // Limpiar todos los campos antes de buscar
+    this.limpiarCampos();
+
     this.isLoading = true;
     this.tramoDetectado = '';
     this.toasts = [];
@@ -351,32 +354,37 @@ export class PaymentAgreementCardPageComponent implements OnInit {
     }, 100);
   }
 
+  limpiarCampos(): void {
+    // Limpiar el array de formas de pago
+    while (this.formasDePagoArray.length !== 0) {
+      this.formasDePagoArray.removeAt(0);
+    }
+
+    // Resetear flags y observación
+    this.isDeudaTotalReset = false;
+    this.mostrarObservacion = false;
+    this.observacionTexto = '';
+    this.readonlyInputs = false;
+    this.isBlackoutMode = false;
+    this.tramoDetectado = '';
+    this.toasts = [];
+
+    // Limpiar todos los campos del formulario
+    this.agreementForm.patchValue({
+      fechaActual: this.formatDate(new Date()),
+      nombreTitular: '',
+      dni: '',
+      cuentaTarjeta: '',
+      fechaCompromiso: this.formatDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
+      deudaTotal: 0,
+      descuento: 0,
+      montoAprobado: 0
+    });
+  }
+
   resetForm(): void {
     if (confirm('¿Está seguro que desea limpiar todos los campos?')) {
-      this.agreementForm.reset();
-      
-      // Limpiar el array de formas de pago
-      while (this.formasDePagoArray.length !== 0) {
-        this.formasDePagoArray.removeAt(0);
-      }
-      
-      // Resetear flags y observación
-      this.isDeudaTotalReset = false;
-      this.mostrarObservacion = false;
-      this.observacionTexto = '';
-      this.readonlyInputs = false;
-      this.isBlackoutMode = false;
-      this.tramoDetectado = '';
-      this.toasts = [];
-      
-      // Restablecer fechas por defecto
-      this.agreementForm.patchValue({
-        fechaActual: this.formatDate(new Date()),
-        fechaCompromiso: this.formatDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
-        deudaTotal: 0,
-        descuento: 0,
-        montoAprobado: 0
-      });
+      this.limpiarCampos();
     }
   }
 
