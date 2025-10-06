@@ -50,7 +50,7 @@ export class RangeSliderComponent implements OnInit{
   contactoIndirectoRanges: Range[] = [];
   promesasRotasRanges: Range[] = [];
   noContactadoRanges: Range[] = [];
-  contenido: boolean = false;
+  contenido: boolean = true;
   excluirPagadasHoy: boolean = false;
   totalRange = 10000;
   activeIndex: number = 3;
@@ -99,7 +99,7 @@ export class RangeSliderComponent implements OnInit{
     ];
 
     this.campaignName = 'Tramo 3';
-    this.contenido = false;
+    this.contenido = true;
     this.contactoDirectoRanges = initialRangesCd.map(range => ({ ...range }));
     this.contactoIndirectoRanges = initialRangesCi.map(range => ({ ...range }));
     this.promesasRotasRanges = initialRangesPr.map(range => ({ ...range }));
@@ -376,10 +376,10 @@ export class RangeSliderComponent implements OnInit{
   onTramoChange() {
     if (this.campaignName === 'Tramo 5') {
       this.dueDatesSelected = [];
-      this.contenido = true;
+      this.contenido = false;
       this.filterType = 'saldoCapital'
     } else {
-      this.contenido = false;
+      this.contenido = true;
     }
   }
 
@@ -432,7 +432,7 @@ export class RangeSliderComponent implements OnInit{
       indirectContactRanges: contactoIndirectoRangesToConsult,
       brokenPromisesRanges: promesasRotasRangesToConsult,
       notContactedRanges: noContactadoRangesToConsult,
-      content: this.contenido,
+      content: !this.contenido,
       excluirPagadasHoy: this.excluirPagadasHoy
     };
 
