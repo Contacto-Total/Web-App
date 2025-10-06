@@ -216,10 +216,14 @@ export class PaymentAgreementCardPageComponent implements OnInit {
       return;
     }
 
+    // Guardar el DNI antes de limpiar
     const dni = this.searchForm.get('dniBusqueda')?.value;
 
     // Limpiar todos los campos antes de buscar
     this.limpiarCampos();
+
+    // Limpiar también el campo de búsqueda
+    this.searchForm.reset();
 
     this.isLoading = true;
     this.tramoDetectado = '';
@@ -230,7 +234,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
         this.agreementForm.patchValue({
           fechaActual: response.fechaActual,
           nombreTitular: response.nombreDelTitular,
-          dni: this.searchForm.get('dniBusqueda')?.value,
+          dni: dni,
           cuentaTarjeta: response.cuentaTarjeta,
           fechaCompromiso: response.fechaCompromiso
         });
@@ -355,7 +359,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
   }
 
   limpiarCampos(): void {
-    // Limpiar el array de formas de pago
+    // Limpiar el array de formas de pago (cronograma)
     while (this.formasDePagoArray.length !== 0) {
       this.formasDePagoArray.removeAt(0);
     }
@@ -369,7 +373,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
     this.tramoDetectado = '';
     this.toasts = [];
 
-    // Limpiar todos los campos del formulario
+    // Limpiar todos los campos del formulario incluyendo montos
     this.agreementForm.patchValue({
       fechaActual: this.formatDate(new Date()),
       nombreTitular: '',
@@ -378,6 +382,7 @@ export class PaymentAgreementCardPageComponent implements OnInit {
       fechaCompromiso: this.formatDate(new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)),
       deudaTotal: 0,
       descuento: 0,
+      descuentoPorcentaje: 0,
       montoAprobado: 0
     });
   }
