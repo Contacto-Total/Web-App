@@ -63,7 +63,7 @@
 
 
         <div class="group-card group--selects">
-          <label>Selects</label>
+          <label>Selección</label>
 
           <div class="chip-groups">
             <!-- Cliente -->
@@ -134,6 +134,123 @@
                    formControlName="importeExtra" placeholder="0">
           </div>
         </div>
+
+        <!-- Rangos -->
+        <div class="group-card group--rangos">
+          <div class="group-title" style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span>Rangos</span>
+            <button type="button" class="btn btn-secondary" (click)="addRange()">
+              + Añadir rango
+            </button>
+          </div>
+
+          <div class="range-item" *ngFor="let rg of rangosFA.controls; let i = index" [formGroup]="$any(rg)">
+            <!-- Modo intervalo -->
+            <div *ngIf="$any(rg).get('useMin')?.value && $any(rg).get('useMax')?.value; else singleMode" class="interval-mode">
+
+              <div class="interval-header">
+                <select class="form-select slim interval-field" formControlName="field" title="Campo">
+                  <option *ngFor="let f of rangeFields" [value]="f.key">{{ f.label }}</option>
+                </select>
+
+                <button type="button" class="btn btn-danger btn-small" (click)="removeRange(i)">
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+
+              <div class="interval-expression">
+                <input type="number" class="form-input slim interval-input" formControlName="min" placeholder="mín">
+
+                <label class="interval-check">
+                  <input type="checkbox" formControlName="inclusiveMin">
+                  <span class="interval-symbol">{{ $any(rg).get('inclusiveMin')?.value ? '≤' : '<' }}</span>
+                </label>
+
+                <div class="interval-variable">
+                  {{ fieldLabel($any(rg).get('field')?.value) || 'Variable' }}
+                </div>
+
+                <label class="interval-check">
+                  <input type="checkbox" formControlName="inclusiveMax">
+                  <span class="interval-symbol">{{ $any(rg).get('inclusiveMax')?.value ? '≤' : '<' }}</span>
+                </label>
+
+                <input type="number" class="form-input slim interval-input" formControlName="max" placeholder="máx">
+              </div>
+
+              <div class="interval-footer">
+                <label class="tiny-check">
+                  <input type="checkbox"
+                         checked
+                         (change)="$any(rg).get('mode')?.value === 'gt' ? toggleUseMax(i, false) : toggleUseMin(i, false)">
+                  <span>Desactivar intervalo</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Modo simple -->
+            <ng-template #singleMode>
+              <div class="range-row">
+                <select class="form-select slim col-field" formControlName="field" title="Campo">
+                  <option *ngFor="let f of rangeFields" [value]="f.key">{{ f.label }}</option>
+                </select>
+
+                <select class="form-select slim col-op"
+                        [value]="$any(rg).get('mode')?.value"
+                        (change)="changeOperator(i, $any($event.target).value)"
+                        title="Operador">
+                  <option value="gt">&gt;</option>
+                  <option value="lt">&lt;</option>
+                </select>
+
+                <div class="value-box col-value">
+                  <ng-container [ngSwitch]="$any(rg).get('mode')?.value">
+                    <ng-container *ngSwitchCase="'gt'">
+                      <input type="number" class="form-input slim" formControlName="min" placeholder="valor mínimo">
+                      <label class="tiny-check">
+                        <input type="checkbox" formControlName="inclusiveMin">
+                        <span>{{ $any(rg).get('inclusiveMin')?.value ? '≥' : '>' }}</span>
+                      </label>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'lt'">
+                      <input type="number" class="form-input slim" formControlName="max" placeholder="valor máximo">
+                      <label class="tiny-check">
+                        <input type="checkbox" formControlName="inclusiveMax">
+                        <span>{{ $any(rg).get('inclusiveMax')?.value ? '≤' : '<' }}</span>
+                      </label>
+                    </ng-container>
+                  </ng-container>
+                </div>
+
+                <button type="button" class="btn btn-danger btn-small col-del" (click)="removeRange(i)">
+                  <span class="material-icons">delete</span>
+                </button>
+              </div>
+
+              <div class="hint" style="margin:8px 0 0 0;">
+                <label class="tiny-check">
+                  <ng-container *ngIf="$any(rg).get('mode')?.value === 'gt'">
+                    <input type="checkbox"
+                           [checked]="$any(rg).get('useMax')?.value"
+                           (change)="toggleUseMax(i, $any($event.target).checked)">
+                    <span>añadir límite</span>
+                  </ng-container>
+                  <ng-container *ngIf="$any(rg).get('mode')?.value === 'lt'">
+                    <input type="checkbox"
+                           [checked]="$any(rg).get('useMin')?.value"
+                           (change)="toggleUseMin(i, $any($event.target).checked)">
+                    <span>añadir límite inferior</span>
+                  </ng-container>
+                </label>
+              </div>
+            </ng-template>
+
+            <div *ngIf="$any(rg).errors?.['rangeOrder']" class="hint error-inline">
+              ⚠️ El mínimo no puede ser mayor que el máximo.
+            </div>
+          </div>
+        </div>
+
 
         <!-- … dentro de la grid de Opciones avanzadas, cerca de Restricciones … -->
         <div class="group-card group--cond">

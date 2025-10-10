@@ -55,6 +55,145 @@
           <input type="number" min="0" step="1" class="form-input" formControlName="importeExtra" placeholder="0">
         </div>
 
+        <!-- Rangos Section -->
+        <h2 class="section-title">
+          <span class="material-icons">filter_alt</span>
+          Rangos
+        </h2>
+
+        <div class="form-field">
+          <button type="button" class="btn btn-secondary" (click)="addRange()">
+            <span class="material-icons">add</span>
+            Añadir rango
+          </button>
+        </div>
+
+        <div class="range-item"
+             *ngFor="let rg of rangosFA.controls; let i = index"
+             [formGroup]="$any(rg)">
+
+          <!-- Modo intervalo: cuando ambos límites están activos -->
+          <div *ngIf="$any(rg).get('useMin')?.value && $any(rg).get('useMax')?.value; else singleMode"
+               class="interval-mode">
+
+            <div class="interval-header">
+              <select class="form-select slim interval-field" formControlName="field" title="Campo">
+                <option *ngFor="let f of rangeFields" [value]="f.key">{{ f.label }}</option>
+              </select>
+
+              <button type="button" class="btn btn-danger btn-small" (click)="removeRange(i)">
+                <span class="material-icons">delete</span>
+                Borrar
+              </button>
+            </div>
+
+            <div class="interval-expression">
+              <!-- MIN -->
+              <input type="number" class="form-input slim interval-input" formControlName="min" placeholder="mín">
+
+              <!-- Símbolo < o ≤ con checkbox -->
+              <label class="interval-check">
+                <input type="checkbox" formControlName="inclusiveMin">
+                <span class="interval-symbol">{{ $any(rg).get('inclusiveMin')?.value ? '≤' : '<' }}</span>
+              </label>
+
+              <!-- VARIABLE -->
+              <div class="interval-variable">
+                {{ fieldLabel($any(rg).get('field')?.value) || 'Variable' }}
+              </div>
+
+              <!-- Símbolo < o ≤ con checkbox -->
+              <label class="interval-check">
+                <input type="checkbox" formControlName="inclusiveMax">
+                <span class="interval-symbol">{{ $any(rg).get('inclusiveMax')?.value ? '≤' : '<' }}</span>
+              </label>
+
+              <!-- MAX -->
+              <input type="number" class="form-input slim interval-input" formControlName="max" placeholder="máx">
+            </div>
+
+            <!-- Checkbox para desactivar intervalo -->
+            <div class="interval-footer">
+              <label class="tiny-check">
+                <input type="checkbox"
+                       checked
+                       (change)="$any(rg).get('mode')?.value === 'gt' ? toggleUseMax(i, false) : toggleUseMin(i, false)">
+                <span>Desactivar intervalo</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Modo simple: un solo límite -->
+          <ng-template #singleMode>
+            <div class="range-row">
+              <!-- 1) Campo -->
+              <select class="form-select slim col-field" formControlName="field" title="Campo">
+                <option *ngFor="let f of rangeFields" [value]="f.key">{{ f.label }}</option>
+              </select>
+
+              <!-- 2) Operador -->
+              <select class="form-select slim col-op"
+                      [value]="$any(rg).get('mode')?.value"
+                      (change)="changeOperator(i, $any($event.target).value)"
+                      title="Operador">
+                <option value="gt">&gt;</option>
+                <option value="lt">&lt;</option>
+              </select>
+
+              <!-- 3) Valor único -->
+              <div class="value-box col-value">
+                <ng-container [ngSwitch]="$any(rg).get('mode')?.value">
+                  <ng-container *ngSwitchCase="'gt'">
+                    <input type="number" class="form-input slim" formControlName="min" placeholder="valor mínimo">
+                    <label class="tiny-check">
+                      <input type="checkbox" formControlName="inclusiveMin">
+                      <span>{{ $any(rg).get('inclusiveMin')?.value ? '≥' : '>' }}</span>
+                    </label>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'lt'">
+                    <input type="number" class="form-input slim" formControlName="max" placeholder="valor máximo">
+                    <label class="tiny-check">
+                      <input type="checkbox" formControlName="inclusiveMax">
+                      <span>{{ $any(rg).get('inclusiveMax')?.value ? '≤' : '<' }}</span>
+                    </label>
+                  </ng-container>
+                </ng-container>
+              </div>
+
+              <!-- 4) Borrar -->
+              <button type="button" class="btn btn-danger btn-small col-del" (click)="removeRange(i)">
+                <span class="material-icons">delete</span>
+                Borrar
+              </button>
+            </div>
+
+            <!-- Checkbox para activar el segundo límite -->
+            <div class="hint" style="margin:8px 0 0 0;">
+              <label class="tiny-check">
+                <ng-container *ngIf="$any(rg).get('mode')?.value === 'gt'">
+                  <input type="checkbox"
+                         [checked]="$any(rg).get('useMax')?.value"
+                         (change)="toggleUseMax(i, $any($event.target).checked)">
+                  <span>añadir límite superior</span>
+                </ng-container>
+                <ng-container *ngIf="$any(rg).get('mode')?.value === 'lt'">
+                  <input type="checkbox"
+                         [checked]="$any(rg).get('useMin')?.value"
+                         (change)="toggleUseMin(i, $any($event.target).checked)">
+                  <span>añadir límite inferior</span>
+                </ng-container>
+              </label>
+            </div>
+          </ng-template>
+
+          <!-- Error de orden -->
+          <div *ngIf="$any(rg).errors?.['rangeOrder']" class="hint error-inline">
+            ⚠️ El valor mínimo no puede ser mayor que el máximo.
+          </div>
+        </div>
+
+
+
         <!-- Condiciones Section -->
         <h2 class="section-title">
           <span class="material-icons">rule</span>

@@ -12,6 +12,7 @@ export interface DynamicQueryRequest {
   importeExtra?: number | null;
   selectAll?: boolean;
   plantillaTexto?: string;
+  rangos?: RangeFilter[];   // 👈 nuevo, opcional
 }
 
 export interface Row {
@@ -45,3 +46,10 @@ export interface SmsPrecheckResult {
   ejemplos?: SmsPrecheckItem[];
 }
 
+export interface RangeFilter {
+  field: 'DEUDA_TOTAL' | 'CAPITAL' | 'SALDO_MORA' | 'BAJA30' | 'LTD' | 'LTDE' | 'PKM' | 'DIASMORA';
+  min?: number;
+  max?: number;
+  inclusiveMin?: boolean; // por defecto true
+  inclusiveMax?: boolean; // por defecto true
+}

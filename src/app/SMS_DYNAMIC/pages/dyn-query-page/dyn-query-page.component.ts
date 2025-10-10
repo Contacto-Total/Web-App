@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import {FormBuilder, FormGroupName, ReactiveFormsModule} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -20,6 +20,8 @@ import { computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { SuccessDialogComponent } from '@/SMS_DYNAMIC/Common/success-dialog.component';
 import {RoundWizardDialogComponent} from "@/SMS_DYNAMIC/Common/round-wizard-dialog.component";
+import { FormArray, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+
 
 
 const VAR_PATTERN_I = /\{([A-Z0-9_]+)\}/gi;
@@ -43,6 +45,7 @@ type VarGroup = { key: 'cliente' | 'financiero' | 'fechas'; title: string; items
 })
 
 export class DynQueryPageComponent implements OnInit {
+  private fbRef = inject(FormBuilder);
   private api = inject(DynQueryService);
   private comboApi = inject(ComboService);
   private router = inject(Router);
@@ -50,7 +53,17 @@ export class DynQueryPageComponent implements OnInit {
 
   @ViewChild('tplArea') tplArea?: ElementRef<HTMLTextAreaElement>;
 
-  /** Inserta texto en la posición del cursor del textarea (o al final si no hay ref). */
+  rangeFields = [
+    { key: 'DEUDA_TOTAL', label: 'Deuda total' },
+    { key: 'CAPITAL',     label: 'Capital' },
+    { key: 'SALDO_MORA',  label: 'Saldo mora' },
+    { key: 'BAJA30',      label: 'Baja 30' },
+    { key: 'LTD',         label: 'LTD' },
+    { key: 'LTDE',        label: 'LTDE' },
+    { key: 'PKM',         label: 'PKM' },
+    { key: 'DIASMORA',    label: 'Días mora' },
+  ];
+
   private insertAtCursor(text: string) {
     const ctrl = this.form.controls.plantillaTexto;
     const el = this.tplArea?.nativeElement;
@@ -244,7 +257,6 @@ export class DynQueryPageComponent implements OnInit {
       return full[0] as Row;
     }
 
-    // B) si no hay ninguna “perfecta”, tomar la que más requeridas cumple
     let best: Row | null = null;
     let bestReq = -1;
     let bestPref = -1;
@@ -467,7 +479,104 @@ export class DynQueryPageComponent implements OnInit {
 
     // 👇 TIPAR COMO NÚMERO
     importeExtra: inject(FormBuilder).nonNullable.control<number>(0),
+
+    rangos: inject(FormBuilder).array<FormGroup<any>>([])
   });
+
+  get rangosFA(): FormArray {
+    return this.form.get('rangos') as FormArray;
+  }
+
+  private validateMinLTMax(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const fg = control as FormGroup;        // 👈 casteo
+      const min = fg.get('min')?.value;
+      const max = fg.get('max')?.value;
+
+      if (min != null && max != null && Number(min) > Number(max)) {
+        return { rangeOrder: true };
+      }
+      return null;
+    };
+  }
+
+  private makeRange(): FormGroup {
+    return this.fbRef.nonNullable.group(
+      {
+        field:        this.fbRef.nonNullable.control<string>('DEUDA_TOTAL', { validators: [Validators.required] }),
+        mode:         this.fbRef.nonNullable.control<'gt' | 'lt'>('gt'), // operador inicial
+        // límites
+        useMin:       this.fbRef.nonNullable.control<boolean>(true),  // al empezar con 'gt'
+        min:          this.fbRef.control<number | null>(null),
+        inclusiveMin: this.fbRef.nonNullable.control<boolean>(false),
+
+        useMax:       this.fbRef.nonNullable.control<boolean>(false),
+        max:          this.fbRef.control<number | null>(null),
+        inclusiveMax: this.fbRef.nonNullable.control<boolean>(true),
+      },
+      { validators: [this.validateRange()] }
+    );
+  }
+
+  // cambia operador inicial y enciende el límite correspondiente
+  changeOperator(i: number, mode: 'gt'|'lt') {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('mode')?.setValue(mode);
+    if (mode === 'gt') {
+      g.get('useMin')?.setValue(true);
+      g.get('useMax')?.setValue(false);
+      // opcional: limpiar max
+      g.get('max')?.setValue(null);
+    } else {
+      g.get('useMin')?.setValue(false);
+      g.get('useMax')?.setValue(true);
+      // opcional: limpiar min
+      g.get('min')?.setValue(null);
+    }
+  }
+
+  toggleUseMin(i: number, checked: boolean) {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('useMin')?.setValue(checked);
+    if (!checked) g.get('min')?.setValue(null);
+    // si ambos quedan false, deja el operador decidir (validator lo marcará)
+  }
+
+  toggleUseMax(i: number, checked: boolean) {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('useMax')?.setValue(checked);
+    if (!checked) g.get('max')?.setValue(null);
+  }
+
+
+  private validateRange(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const fg = control as FormGroup;
+      const useMin = !!fg.get('useMin')?.value;
+      const useMax = !!fg.get('useMax')?.value;
+      const min = fg.get('min')?.value;
+      const max = fg.get('max')?.value;
+
+      // Debe haber al menos un límite activo
+      if (!useMin && !useMax) return { noBoundSelected: true };
+
+      // Si se marcó useMin pero no hay valor
+      if (useMin && (min == null || min === '')) return { minRequired: true };
+      // Si se marcó useMax pero no hay valor
+      if (useMax && (max == null || max === '')) return { maxRequired: true };
+
+      // Si es “entre”, valida el orden
+      if (useMin && useMax && Number(min) > Number(max)) return { rangeOrder: true };
+
+      return null;
+    };
+  }
+
+
+
+
+  addRange() { this.rangosFA.push(this.makeRange()); }
+  removeRange(i: number) { this.rangosFA.removeAt(i); }
 
   tplSig = toSignal(
     this.form.controls.plantillaTexto.valueChanges.pipe(
@@ -519,6 +628,25 @@ export class DynQueryPageComponent implements OnInit {
         ? Math.trunc(Number(v.importeExtra))
         : null;
 
+    const rangos = this.rangosFA.controls
+      .map(g => {
+        const field = String(g.get('field')?.value || '').toUpperCase();
+        const useMin = !!g.get('useMin')?.value;
+        const useMax = !!g.get('useMax')?.value;
+        const min = g.get('min')?.value;
+        const max = g.get('max')?.value;
+
+        return {
+          field,
+          min:  useMin ? Number(min) : undefined,
+          max:  useMax ? Number(max) : undefined,
+          inclusiveMin: !!g.get('inclusiveMin')?.value,
+          inclusiveMax: !!g.get('inclusiveMax')?.value,
+        };
+      })
+      // manda el rango solo si hay al menos un límite
+      .filter(r => r.min != null || r.max != null);
+
     return {
       selects,
       tramo: v.tramo,
@@ -531,6 +659,7 @@ export class DynQueryPageComponent implements OnInit {
       },
       limit: limitForPreview ? Number(v.limit || 1000) : undefined,
       importeExtra: importeExtraAplica,
+      rangos: rangos.length ? rangos : undefined,   // 👈 solo si hay
     } as any;
   }
 
@@ -633,12 +762,34 @@ export class DynQueryPageComponent implements OnInit {
     this.insertAtCursor(`{${key}}`);
   }
 
+
+  private mapRangosForPayload() {
+    return this.rangosFA.controls
+      .map(g => {
+        const field = String(g.get('field')?.value || '').toUpperCase();
+        const useMin = !!g.get('useMin')?.value;
+        const useMax = !!g.get('useMax')?.value;
+        const min = g.get('min')?.value;
+        const max = g.get('max')?.value;
+        return {
+          field,
+          min:  useMin ? Number(min) : undefined,
+          max:  useMax ? Number(max) : undefined,
+          inclusiveMin: !!g.get('inclusiveMin')?.value,
+          inclusiveMax: !!g.get('inclusiveMax')?.value,
+        };
+      })
+      .filter(r => r.min != null || r.max != null);
+  }
+
   guardarCombo() {
     const v = this.form.getRawValue();
     const importeExtraAplica =
       this.hasTopUpSelect() && Number(v.importeExtra) > 0
         ? Math.trunc(Number(v.importeExtra))
         : null;
+    const rangos = this.mapRangosForPayload(); // ⬅️ NUEVO
+
 
     const payload: ComboCreateRequest = {
       name: v.nombre,
@@ -656,6 +807,8 @@ export class DynQueryPageComponent implements OnInit {
       // crea también la plantilla si viene el texto
       plantillaTexto: v.plantillaTexto,
       importeExtra: importeExtraAplica,
+      rangos: rangos.length ? rangos : undefined,
+
     };
 
     this.comboApi.createCombo(payload).subscribe({
@@ -678,7 +831,7 @@ export class DynQueryPageComponent implements OnInit {
 
         // ✅ dialog bonito + navegar
         this.showSuccess('Guardado', 'El combo se guardó correctamente.')
-          .subscribe(() => this.router.navigate(['/List-sms']));
+          .subscribe(() => this.router.navigate(['/SMS']));
       },
       error: (err) => {
         const msg = err?.error?.message || err?.message || 'No se pudo guardar el combo.';
@@ -696,7 +849,6 @@ export class DynQueryPageComponent implements OnInit {
   protected readonly Math = Math;
 
 
-  // Borra {KEY} del textarea (todas las apariciones) y limpia espacios
   private removePlaceholder(key: string) {
     const ctrl = this.form.controls.plantillaTexto;
     const cur = ctrl.value ?? '';
@@ -712,6 +864,12 @@ export class DynQueryPageComponent implements OnInit {
       ctrl.setValue(next);
       ctrl.markAsDirty();
     }
+  }
+
+  fieldLabel(key: string | null | undefined): string {
+    const k = String(key || '').toUpperCase();
+    const f = this.rangeFields.find(x => x.key === k);
+    return f?.label ?? k;
   }
 
   private showSuccess(title: string, message?: string, ms = 1800) {
@@ -859,7 +1017,6 @@ export class DynQueryPageComponent implements OnInit {
     // base de consulta (sin limit ni nulls molestos)
     const raw = this.buildBody(false);
     const query: any = this.compactQuery(raw);
-    // aseguramos selects que estén en el texto (por si el user sólo escribió {BAJA30})
     const tokens = Array.from(this.extractTokens());
     const textVars = tokens.filter(t => this.affectsMap.get(t));
     query.selects = Array.from(new Set([...(query.selects || []), ...textVars]));

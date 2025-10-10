@@ -4,7 +4,7 @@ import {map, Observable} from 'rxjs';
 import { environment } from '../../../environments/environment.development';
 import {Row, SmsPrecheckResult} from '../models/dyn-query';
 import { ComboCreateRequest } from '../models/combo';
-import { ComboResponse } from '../models/combo-response';
+import { ComboResponse,RangeDto  } from '../models/combo-response';
 
 @Injectable({ providedIn: 'root' })
 export class ComboService {
@@ -27,11 +27,18 @@ export class ComboService {
     return this.http.post<number>(this.baseUrl, body);
   }
 
-  /** Actualizar combo */
-  update(id: number, body: Partial<ComboCreateRequest> & { isActive?: boolean }) {
-    // el backend espera el id adentro del body y SIN /{id}
+  // ComboService
+  update(
+    id: number,
+    body: Partial<ComboCreateRequest> & {
+      isActive?: boolean;
+      plantillaSmsId?: number | null;
+      rangos?: RangeDto[];            // ⬅️ añade esto
+    }
+  ) {
     return this.http.put<void>(`${this.baseUrl}`, { id, ...body });
   }
+
 
   /** Eliminar combo */
   delete(id: number): Observable<void> {

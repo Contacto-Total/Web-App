@@ -14,6 +14,7 @@ import { debounceTime, startWith } from 'rxjs/operators';
 import { Row } from '../../models/dyn-query';
 import {Router} from "@angular/router";
 import {SuccessDialogComponent} from "@/SMS_DYNAMIC/Common/success-dialog.component";
+import { FormArray, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 
 type ChipKey =
   | 'NOMBRE' | 'LTD' | 'LTDE' | 'LTD_LTDE'
@@ -62,6 +63,18 @@ export class EditComboDialogComponent implements OnInit {
     { key: 'MANANA' as ChipKey, label: 'Mañana', affectsSelects: false },
   ];
 
+  rangeFields = [
+    { key: 'DEUDA_TOTAL', label: 'Deuda total' },
+    { key: 'CAPITAL',     label: 'Capital' },
+    { key: 'SALDO_MORA',  label: 'Saldo mora' },
+    { key: 'BAJA30',      label: 'Baja 30' },
+    { key: 'LTD',         label: 'LTD' },
+    { key: 'LTDE',        label: 'LTDE' },
+    { key: 'PKM',         label: 'PKM' },
+    { key: 'DIASMORA',    label: 'Días mora' },
+  ];
+
+
 
   selected = new Set<ChipKey>((this.data?.selects as ChipKey[]) ?? []);
 
@@ -84,11 +97,87 @@ export class EditComboDialogComponent implements OnInit {
     cond_PROMESAS_ROTAS:    (this.data.condiciones ?? []).includes('PROMESAS_ROTAS'),
 
     importeExtra: this.fb.nonNullable.control<number>((this.data as any)?.importeExtra ?? 0),
+    rangos: this.fb.array<FormGroup<any>>([]),
   });
 
   hasTopUpSelect(): boolean {
     return this.selected.has('LTD') || this.selected.has('LTDE') || this.selected.has('LTD_LTDE');
   }
+
+  get rangosFA(): FormArray {
+    return this.form.get('rangos') as FormArray;
+  }
+
+  private validateRange(): ValidatorFn {
+    return (fg) => {
+      const g = fg as FormGroup;
+      const useMin = !!g.get('useMin')?.value;
+      const useMax = !!g.get('useMax')?.value;
+      const min = g.get('min')?.value;
+      const max = g.get('max')?.value;
+
+      // Si el usuario AÚN no activó límites, el rango no invalida
+      if (!useMin && !useMax) return null;
+
+      if (useMin && (min == null || min === '')) return { minRequired: true };
+      if (useMax && (max == null || max === '')) return { maxRequired: true };
+      if (useMin && useMax && Number(min) > Number(max)) return { rangeOrder: true };
+      return null;
+    };
+  }
+
+
+  private makeRange(): FormGroup {
+    return this.fb.nonNullable.group(
+      {
+        field:        this.fb.nonNullable.control<string>('DEUDA_TOTAL', { validators: [Validators.required] }),
+        mode:         this.fb.nonNullable.control<'gt' | 'lt'>('gt'),
+        useMin:       this.fb.nonNullable.control<boolean>(false), // ⬅️ antes true
+        min:          this.fb.control<number | null>(null),
+        inclusiveMin: this.fb.nonNullable.control<boolean>(false),
+
+        useMax:       this.fb.nonNullable.control<boolean>(false), // ⬅️ antes false (ok), lo dejamos igual
+        max:          this.fb.control<number | null>(null),
+        inclusiveMax: this.fb.nonNullable.control<boolean>(true),
+      },
+      { validators: [this.validateRange()] }
+    );
+  }
+
+  addRange() { this.rangosFA.push(this.makeRange()); }
+  removeRange(i: number) { this.rangosFA.removeAt(i); }
+
+  changeOperator(i: number, mode: 'gt'|'lt') {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('mode')?.setValue(mode);
+    if (mode === 'gt') {
+      g.get('useMin')?.setValue(true);
+      g.get('useMax')?.setValue(false);
+      g.get('max')?.setValue(null);
+    } else {
+      g.get('useMin')?.setValue(false);
+      g.get('useMax')?.setValue(true);
+      g.get('min')?.setValue(null);
+    }
+  }
+
+  toggleUseMin(i: number, checked: boolean) {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('useMin')?.setValue(checked);
+    if (!checked) g.get('min')?.setValue(null);
+  }
+  toggleUseMax(i: number, checked: boolean) {
+    const g = this.rangosFA.at(i) as FormGroup;
+    g.get('useMax')?.setValue(checked);
+    if (!checked) g.get('max')?.setValue(null);
+  }
+
+  fieldLabel(key: string | null | undefined): string {
+    const k = String(key || '').toUpperCase();
+    const f = this.rangeFields.find(x => x.key === k);
+    return f?.label ?? k;
+  }
+
 
   private aliasKeys(raw: string): string[] {
     const k = raw.toUpperCase();
@@ -131,36 +220,88 @@ export class EditComboDialogComponent implements OnInit {
     if (embebido && typeof embebido === 'string') {
       this.smsCtrl.setValue(embebido);
       this.smsCtrl.markAsPristine();
-      this.syncNombreChipWithText();                 // 👈 aquí
+      this.syncNombreChipWithText();
       this.fetchSampleRow();
-      this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => {
-        this.syncNombreChipWithText();               // 👈 y aquí
-        this.fetchSampleRow();
-      });
-      return;
-    }
-
-    if (this.data.plantillaSmsId) {
+    } else if (this.data.plantillaSmsId) {
+      // ⬇️ solo si NO vino embebido
       this.api.getPlantillaTexto(this.data.plantillaSmsId).subscribe({
         next: (txt: any) => {
           const real = typeof txt === 'string' ? txt : (txt?.template ?? '');
           this.smsCtrl.setValue(real || '');
           this.smsCtrl.markAsPristine();
-          this.syncNombreChipWithText();             // 👈 después de setValue asíncrono
+          this.syncNombreChipWithText();
+          this.fetchSampleRow();
         },
         error: _ => {
           this.smsCtrl.setValue('');
           this.smsCtrl.markAsPristine();
-          this.syncNombreChipWithText();             // 👈 por consistencia
+          this.syncNombreChipWithText();
+          this.fetchSampleRow();
         }
       });
     }
+
 
     this.fetchSampleRow();
     this.smsCtrl.valueChanges.pipe(debounceTime(200)).subscribe(() => {
       this.syncNombreChipWithText();                 // 👈 también aquí
       this.fetchSampleRow();
     });
+
+    const incoming = (this.data as any)?.rangos as Array<any> | undefined;
+    if (Array.isArray(incoming) && incoming.length) {
+      this.hydrateRanges(incoming);
+    } else {
+      this.api.get(this.data.id).subscribe({
+        next: full => {
+          const fromApi = (full as any)?.rangos as Array<any> | undefined;
+          if (Array.isArray(fromApi) && fromApi.length) {
+            this.rangosFA.clear();
+            this.hydrateRanges(fromApi);
+          }
+        }
+      });
+    }
+
+
+  }
+  private hydrateRanges(rangos: Array<any>) {
+    for (const r of rangos) {
+      const g = this.makeRange();
+      g.get('field')?.setValue(String(r.field || 'DEUDA_TOTAL').toUpperCase());
+      g.get('inclusiveMin')?.setValue(
+        r.inclusiveMin ?? r.inclusive_min ?? false
+      );
+      g.get('inclusiveMax')?.setValue(
+        r.inclusiveMax ?? r.inclusive_max ?? true
+      );
+
+      const hasMin = r.min != null;
+      const hasMax = r.max != null;
+
+      if (hasMin && hasMax) {
+        g.get('mode')?.setValue('gt'); // visualmente es intervalo
+        g.get('useMin')?.setValue(true);
+        g.get('useMax')?.setValue(true);
+      } else if (hasMin) {
+        g.get('mode')?.setValue('gt');
+        g.get('useMin')?.setValue(true);
+        g.get('useMax')?.setValue(false);
+      } else if (hasMax) {
+        g.get('mode')?.setValue('lt');
+        g.get('useMin')?.setValue(false);
+        g.get('useMax')?.setValue(true);
+      } else {
+        continue; // evita empujar un rango vacío
+      }
+
+      g.get('min')?.setValue(hasMin ? Number(r.min) : null);
+      g.get('max')?.setValue(hasMax ? Number(r.max) : null);
+      g.get('inclusiveMin')?.setValue(!!r.inclusiveMin);
+      g.get('inclusiveMax')?.setValue(!!r.inclusiveMax);
+
+      this.rangosFA.push(g);
+    }
   }
 
 
@@ -296,6 +437,29 @@ export class EditComboDialogComponent implements OnInit {
     if (/\{NOMBRE\}/i.test(v.plantillaTexto || '')) {
       selectsSet.add('NOMBRE' as any);
     }
+
+    const rangos = this.rangosFA.controls
+      .map(g => {
+        const field = String(g.get('field')?.value || '').toUpperCase();
+        const useMin = !!g.get('useMin')?.value;
+        const useMax = !!g.get('useMax')?.value;
+
+        const rawMin = g.get('min')?.value;
+        const rawMax = g.get('max')?.value;
+
+        const minNum = Number(rawMin);
+        const maxNum = Number(rawMax);
+
+        return {
+          field,
+          min:  useMin && Number.isFinite(minNum) ? minNum : undefined, // 👈 evita NaN
+          max:  useMax && Number.isFinite(maxNum) ? maxNum : undefined, // 👈 evita NaN
+          inclusiveMin: !!g.get('inclusiveMin')?.value,
+          inclusiveMax: !!g.get('inclusiveMax')?.value,
+        };
+      })
+      .filter(r => r.min != null || r.max != null);
+
     const payload = {
       id: this.data.id,                // si decides dejar el PUT sin /{id}, igual lo mandas
       name: v.nombre,
@@ -313,6 +477,7 @@ export class EditComboDialogComponent implements OnInit {
       plantillaName: v.nombre,
       condiciones,
       importeExtra: importeExtraAplica,
+      rangos: rangos.length ? rangos : []
     };
 
     this.saving = true;
@@ -322,7 +487,7 @@ export class EditComboDialogComponent implements OnInit {
         this.showSuccess('Cambios guardados', 'Se actualizaron los datos del combo.')
           .subscribe(() => {
             this.dialogRef.close(true);
-            this.router.navigate(['/List-sms']);  // ir a la principal
+            this.router.navigate(['/SMS']);  // ir a la principal
           });
       },
       error: () => { this.saving = false; this.dialogRef.close(false); }

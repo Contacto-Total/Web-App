@@ -303,3 +303,356 @@ textarea{ resize: vertical; }
 @media (max-width: 980px){
   .group--tramo, .group--selects, .group--cond, .group--restr { grid-column: 1 / -1; }
 }
+
+/* layout de la sección avanzada */
+.adv .grid{
+  padding:14px 16px;
+  gap:16px;
+  display:grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+/* Desktop */
+@media (min-width: 980px){
+  .group--tramo   { grid-column: span 4; }
+  .group--selects { grid-column: 1 / -1; }   /* full width */
+  .group--rangos  { grid-column: 1 / -1; }   /* ⬅️ full width, primera fila */
+  .group--cond    { grid-column: 1 / span 6; }   /* segunda fila, izquierda */
+  .group--restr   { grid-column: 7 / span 6; }   /* segunda fila, derecha */
+}
+
+/* Mobile: todo apilado */
+@media (max-width: 980px){
+  .group--tramo,
+  .group--selects,
+  .group--rangos,
+  .group--cond,
+  .group--restr { grid-column: 1 / -1; }
+}
+
+
+
+/* ===== Forzar RANGOS full-width y crecimiento vertical ===== */
+
+/* Desktop: 12 columnas dentro de Opciones avanzadas */
+@media (min-width: 980px){
+  .adv .grid{
+    display: grid !important;
+    grid-template-columns: repeat(12, 1fr) !important;
+    gap: 16px !important;
+  }
+
+  /* RANGOS ocupa toda la fila (como Fechas) */
+  .adv .grid > .group--rangos{
+    grid-column: 1 / -1 !important;
+  }
+
+  /* Debajo: Condiciones (6 cols) y Restricciones (6 cols) */
+  .adv .grid > .group--cond{  grid-column: 1 / span 6 !important; }
+  .adv .grid > .group--restr{ grid-column: 7 / span 6 !important; }
+}
+
+/* Móvil: todo apilado */
+@media (max-width: 980px){
+  .adv .grid > .group--rangos,
+  .adv .grid > .group--cond,
+  .adv .grid > .group--restr{
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* Dentro de “Rangos”: que sus ítems se apilen y ocupen ancho completo */
+.group--rangos{
+  display: block;              /* evita que se comporte como celda de grid interna */
+}
+.group--rangos .range-item{
+  display: block;              /* cada rango en su propia línea */
+  width: 100%;                 /* ocupa todo el ancho del card */
+  box-sizing: border-box;
+  margin-bottom: 12px;         /* separación entre rangos */
+}
+
+/* (opcional) si hay contenedor interno que usa grid/flex, permitir crecer */
+.group--rangos .range-list,
+.group--rangos .range-container{
+  display: block;
+}
+
+/* ========================================================
+   RANGOS: kit mínimo para el diálogo (no rompe posiciones)
+   Añádelo al FINAL del edit-combo-dialog.component.css
+   ======================================================== */
+
+/* Botones locales usados solo en Rangos */
+.btn{
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-small{ padding: 8px 12px; font-size: 12px; border-radius: 10px; line-height: 1; }
+.btn-danger{
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+}
+.btn-danger:hover{ transform: translateY(-1px); box-shadow: 0 8px 24px rgba(239,68,68,0.4); }
+.btn-secondary{
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(139,92,246,0.3);
+}
+.btn-secondary:hover{ transform: translateY(-1px); box-shadow: 0 8px 24px rgba(139,92,246,0.4); }
+
+/* ===== Contenedores de Rangos ===== */
+.group--rangos{ display:block; }
+.group--rangos .range-item{
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02) inset;
+}
+
+/* ===== MODO INTERVALO (min < var < max) ===== */
+.interval-mode{
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.interval-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:16px; gap:12px;
+}
+.interval-header .interval-field{ flex:1; max-width:300px; }
+
+/* Expresión matemática central */
+.interval-expression{
+  display:flex; align-items:center; justify-content:center;
+  gap:16px; padding:20px 16px;
+  background:#fff; border-radius:10px; border:2px solid #e2e8f0;
+  flex-wrap:wrap;
+}
+
+/* Inputs y selects compactos */
+.form-select.slim,
+.form-input.slim{
+  height: 36px;
+  padding: 6px 10px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  transition: all .2s ease;
+}
+
+.interval-input{
+  width:130px !important; height:42px !important;
+  text-align:center; font-weight:600; font-size:16px;
+  border:2px solid #cbd5e1 !important;
+}
+.interval-input:focus{ border-color:#667eea !important; }
+
+.interval-check{
+  display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
+}
+.interval-check input[type="checkbox"]{ width:16px; height:16px; cursor:pointer; }
+
+.interval-symbol{
+  font-size:28px; font-weight:700; color:#475569; line-height:1; user-select:none;
+}
+
+/* Variable destacada */
+.interval-variable{
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color:#fff; padding:12px 24px; border-radius:24px;
+  font-weight:700; font-size:16px; min-width:140px; text-align:center;
+  box-shadow: 0 4px 14px rgba(102,126,234,0.35);
+  white-space:nowrap;
+}
+
+/* Footer de intervalo */
+.interval-footer{
+  margin-top:12px; padding-top:12px; border-top:1px solid #e2e8f0; text-align:center;
+}
+.interval-footer .tiny-check{ font-size:13px; color:#64748b; }
+
+/* ===== MODO SIMPLE (> ó <) ===== */
+.range-row{
+  display:grid;
+  grid-template-columns: 240px 80px 1fr max-content;
+  gap:12px; align-items:center;
+}
+.col-field{ grid-column:1; }
+.col-op{ grid-column:2; }
+.col-value{ grid-column:3; }
+.col-del{ grid-column:4; justify-self:end; }
+
+.range-row .value-box{ display:inline-flex; align-items:center; gap:10px; }
+.range-row .form-input.slim{ width:180px; }
+
+/* Check pequeño junto al valor */
+.tiny-check{ display:inline-flex; align-items:center; gap:6px; font-size:12px; color:#6b7280; cursor:pointer; }
+.tiny-check input{ transform: translateY(1px); }
+
+/* Validación */
+.hint.error-inline{ color:#ef4444; font-weight:500; margin-top:8px; }
+
+/* ===== Responsivo para Rangos ===== */
+@media (max-width: 900px){
+  .interval-expression{ gap:12px; padding:16px 12px; }
+  .interval-input{ width:110px !important; }
+  .interval-variable{ min-width:120px; font-size:15px; padding:10px 20px; }
+  .interval-symbol{ font-size:24px; }
+}
+@media (max-width: 700px){
+  .interval-expression{ flex-direction:column; gap:10px; padding:16px; }
+  .interval-input{ width:100% !important; max-width:200px; }
+  .interval-variable{ width:100%; max-width:200px; }
+  .range-row{ grid-template-columns: 1fr; gap:12px; }
+  .range-row .btn-small{ justify-self:stretch; }
+}
+
+
+/* ================================
+   RANGOS COMPACT (solo en el diálogo)
+   Pegar al FINAL del CSS
+   ================================ */
+
+/* Tarjeta e item */
+.group--rangos .group-title{ font-size:13px; }
+.group--rangos .range-item{
+  padding:10px;
+  border-radius:10px;
+}
+
+/* Botones en Rangos */
+.group--rangos .btn{
+  padding:8px 14px;
+  font-size:12px;
+  border-radius:10px;
+  gap:6px;
+}
+.group--rangos .btn-small{
+  padding:6px 10px;
+  font-size:11px;
+  border-radius:8px;
+  line-height:1;
+}
+
+/* CONTENEDOR INTERVALO */
+.group--rangos .interval-mode{
+  padding:12px;
+  border-radius:10px;
+  border-width:1.5px;
+}
+.group--rangos .interval-header{
+  margin-bottom:10px;
+  gap:8px;
+}
+.group--rangos .interval-header .interval-field{
+  max-width:100px;
+}
+
+/* Expresión matemática (línea central) */
+.group--rangos .interval-expression{
+  gap:12px;
+  padding:12px;
+  border-radius:8px;
+  border-width:1.5px;
+}
+
+/* Controles compactos */
+.group--rangos .form-select.slim,
+.group--rangos .form-input.slim{
+  height:30px;
+  padding:4px 8px;
+  font-size:12px;
+  border-radius:8px;
+  border-width:1.5px;
+}
+
+/* Inputs min/max */
+.group--rangos .interval-input{
+  width:100px !important;
+  height:36px !important;
+  font-size:14px;
+  font-weight:600;
+}
+
+/* Checks del intervalo */
+.group--rangos .interval-check{ gap:4px; }
+.group--rangos .interval-check input[type="checkbox"]{
+  width:14px; height:14px;
+}
+
+/* Símbolos <, ≤ */
+.group--rangos .interval-symbol{
+  font-size:22px;
+}
+
+/* “Variable” púrpura */
+.group--rangos .interval-variable{
+  padding:8px 16px;
+  border-radius:18px;
+  font-size:14px;
+  min-width:110px;
+  box-shadow:0 3px 10px rgba(102,126,234,.28);
+}
+
+/* Footer del intervalo */
+.group--rangos .interval-footer{ margin-top:8px; padding-top:8px; }
+.group--rangos .interval-footer .tiny-check{ font-size:12px; }
+
+/* MODO SIMPLE (>, <) */
+.group--rangos .range-row{
+  grid-template-columns: 200px 64px 1fr max-content;
+  gap:8px;
+}
+.group--rangos .range-row .form-input.slim{ width:140px; }
+
+/* Check pequeño al lado del valor */
+.group--rangos .tiny-check{
+  font-size:11px;
+  gap:4px;
+}
+.group--rangos .tiny-check input{
+  transform: translateY(1px);
+}
+
+/* Botón borrar aún más chico en modo simple */
+.group--rangos .btn-danger.btn-small{
+  padding:6px 10px;
+  font-size:11px;
+}
+
+/* RESPONSIVE dentro de Rangos (un poco más compacto aún) */
+@media (max-width: 700px){
+  .group--rangos .interval-input{ width:92px !important; }
+  .group--rangos .interval-variable{ min-width:100px; font-size:13px; padding:7px 14px; }
+  .group--rangos .interval-symbol{ font-size:20px; }
+}
+
+/* Evitar salto de línea en "añadir límite ..." SOLO en Rangos */
+.group--rangos .hint .tiny-check,
+.group--rangos .hint .tiny-check span{
+  white-space: nowrap;   /* ⬅️ fuerza todo en una sola línea */
+}
+
+/* (opcional) compactar un poco el conjunto */
+.group--rangos .hint .tiny-check{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;             /* menos espacio entre check y texto */
+  font-size: 12px;
+  line-height: 1.1;
+}

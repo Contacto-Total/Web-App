@@ -1,3 +1,12 @@
+export interface RangeDto {
+  field: string;
+  min?: number;
+  max?: number;
+  inclusiveMin?: boolean;
+  inclusiveMax?: boolean;
+}
+
+
 export interface ComboResponse {
   id: number;
   name: string;
@@ -18,4 +27,6 @@ export interface ComboResponse {
   createdAt: string; // ISO
   updatedAt: string; // ISO
   importeExtra?: number | null;
+  rangos?: RangeDto[];
 }
+

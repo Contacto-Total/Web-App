@@ -648,3 +648,234 @@ input:checked+.slider:before {
   transform: none;
   filter: grayscale(0.2) saturate(0.6);
 }
+
+
+/* ========================================================
+   ESTILOS PARA LA SECCIÓN DE RANGOS
+   Añade o reemplaza estos estilos en tu archivo CSS
+   ======================================================== */
+
+/* Contenedor de cada rango */
+.range-item {
+  background: #fafafa;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02) inset;
+}
+
+/* ===== MODO INTERVALO (min < variable < max) ===== */
+.interval-mode {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.interval-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.interval-header .interval-field {
+  flex: 1;
+  max-width: 300px;
+}
+
+/* Expresión matemática horizontal */
+.interval-expression {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 16px;
+  background: white;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+
+/* Inputs de valores numéricos */
+.interval-input {
+  width: 130px !important;
+  height: 42px !important;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  border: 2px solid #cbd5e1 !important;
+}
+
+.interval-input:focus {
+  border-color: #667eea !important;
+}
+
+/* Checkbox + símbolo matemático */
+.interval-check {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.interval-check input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.interval-symbol {
+  font-size: 28px;
+  font-weight: 700;
+  color: #475569;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Variable destacada en el centro */
+.interval-variable {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 16px;
+  min-width: 140px;
+  text-align: center;
+  box-shadow: 0 4px 14px rgba(102, 126, 234, 0.35);
+  white-space: nowrap;
+}
+
+/* Footer con checkbox para desactivar */
+.interval-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.interval-footer .tiny-check {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ===== MODO SIMPLE (un solo límite) ===== */
+.range-row {
+  display: grid;
+  grid-template-columns: 240px 80px 1fr max-content;
+  gap: 12px;
+  align-items: center;
+}
+
+.col-field {
+  grid-column: 1;
+}
+
+.col-op {
+  grid-column: 2;
+}
+
+.col-value {
+  grid-column: 3;
+}
+
+.col-del {
+  grid-column: 4;
+  justify-self: end;
+}
+
+.range-row .value-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.range-row .form-input.slim {
+  width: 180px;
+}
+
+/* Inputs compactos */
+.form-select.slim,
+.form-input.slim {
+  height: 36px;
+  padding: 6px 10px;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* Check pequeños junto a valores */
+.tiny-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.tiny-check input {
+  transform: translateY(1px);
+}
+
+/* Mensaje de error */
+.error-inline {
+  color: #ef4444;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+/* ===== RESPONSIVO ===== */
+@media (max-width: 900px) {
+  .interval-expression {
+    gap: 12px;
+    padding: 16px 12px;
+  }
+
+  .interval-input {
+    width: 110px !important;
+  }
+
+  .interval-variable {
+    min-width: 120px;
+    font-size: 15px;
+    padding: 10px 20px;
+  }
+
+  .interval-symbol {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .interval-expression {
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+  }
+
+  .interval-input {
+    width: 100% !important;
+    max-width: 200px;
+  }
+
+  .interval-variable {
+    width: 100%;
+    max-width: 200px;
+  }
+
+  .range-row {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .range-row .btn-small {
+    justify-self: stretch;
+  }
+}
