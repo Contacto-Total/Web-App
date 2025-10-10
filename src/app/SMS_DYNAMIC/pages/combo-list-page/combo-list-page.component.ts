@@ -234,6 +234,23 @@ export class ComboListPageComponent {
   }
   clearChips() { this.selected.set(new Set()); }
 
+
+  private buildDownloadName(c: ComboResponse): string {
+    const date = new Date().toISOString().slice(0, 10);
+
+    // base = nombre del combo (o fallback por si viniera vacío)
+    const base = (c.name ?? `combo_${c.id}`).trim();
+
+    // saneamos caracteres que rompen nombres en Windows/macOS
+    const safe = base
+      .replace(/[<>:"/\\|?*]+/g, '') // quita caracteres prohibidos
+      .replace(/\s+/g, ' ')          // colapsa espacios
+      .slice(0, 150);                // límite defensivo
+
+    return `${safe} - ${date}.xlsx`;
+  }
+
+
   /** Pop-up reutilizable */
   private alert(message: string, title = 'Aviso') {
     this.matDialog.open(AlertDialogComponent, {
@@ -282,7 +299,7 @@ export class ComboListPageComponent {
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `combo_${id}_${new Date().toISOString().slice(0,10)}.xlsx`;
+            a.download = this.buildDownloadName(c);
             document.body.appendChild(a); a.click(); a.remove();
             URL.revokeObjectURL(url);
           },
