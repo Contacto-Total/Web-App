@@ -10,7 +10,7 @@ export interface RangeDto {
 export interface ComboCreateRequest {
   name: string;
   descripcion: string;
-  tramo: '3' | '5';
+  tramo: '3' | '5' | 'CONTACTO_TOTAL';
   selects: string[];
   condiciones: string[];
   restricciones: {
