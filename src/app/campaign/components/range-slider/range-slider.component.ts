@@ -35,7 +35,8 @@ export class RangeSliderComponent implements OnInit{
   campaignName: string = '';
   tramoOptions = [
     { label: 'Tramo 3', value: 'Tramo 3' },
-    { label: 'Tramo 5', value: 'Tramo 5' }
+    { label: 'Tramo 5', value: 'Tramo 5' },
+    { label: 'Contacto Total', value: 'CONTACTO_TOTAL' }
   ];
 
   filterType: string = 'saldoCapital';
@@ -374,7 +375,7 @@ export class RangeSliderComponent implements OnInit{
   }
 
   onTramoChange() {
-    if (this.campaignName === 'Tramo 5') {
+    if (this.campaignName === 'Tramo 5' || this.campaignName === 'CONTACTO_TOTAL') {
       this.dueDatesSelected = [];
       this.contenido = false;
       this.filterType = 'saldoCapital'
@@ -388,7 +389,7 @@ export class RangeSliderComponent implements OnInit{
   }
 
   isDatesDisabled(): boolean {
-    return this.campaignName === 'Tramo 5';
+    return this.campaignName === 'Tramo 5' || this.campaignName === 'CONTACTO_TOTAL';
   }
 
   getSelectedDatesLabel(): string {
