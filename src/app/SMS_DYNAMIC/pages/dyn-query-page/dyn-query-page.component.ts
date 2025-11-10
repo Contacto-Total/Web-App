@@ -465,7 +465,7 @@ export class DynQueryPageComponent implements OnInit {
   }
 
   form = inject(FormBuilder).nonNullable.group({
-    tramo: '3' as '3' | '5',
+    tramo: '3' as '3' | '5' | 'CONTACTO_TOTAL',
     noContenido: false,
     excluirPromesasPeriodoActual: true,
     excluirCompromisos: true,

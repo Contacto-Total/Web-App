@@ -82,7 +82,7 @@ export class EditComboDialogComponent implements OnInit {
     nombre: this.data.name ?? '',
     plantillaTexto: ['', [Validators.required, Validators.maxLength(612)]],
     descripcion: this.data.descripcion ?? '',
-    tramo: (this.data.tramo as '3'|'5') ?? '3',
+    tramo: (this.data.tramo as '3'|'5'|'CONTACTO_TOTAL') ?? '3',
 
     // RESTRICCIONES
     noContenido: this.data.restricciones?.noContenido ?? true,
