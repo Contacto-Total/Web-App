@@ -60,7 +60,7 @@ export class RecordingsTrackerComponent implements OnInit {
   selectedTipoBusqueda: any;
 
 
-  selectedTramo: string = 'TODOS'; 
+  selectedTramo: string = 'TODOS';
 
 
   isLoading: boolean = false;
@@ -77,7 +77,8 @@ export class RecordingsTrackerComponent implements OnInit {
     this.tramos = [
       { label: 'Todos', value: 'todos' },
       { label: 'Tramo 3', value: 'FO_TRAMO 3' },
-      { label: 'Tramo 5', value: 'FO_TRAMO 5' }
+      { label: 'Tramo 5', value: 'FO_TRAMO 5' },
+      { label: 'Cartera Propia', value: 'TRAMO' }
     ];
 
     this.resultados = [
@@ -236,7 +237,7 @@ export class RecordingsTrackerComponent implements OnInit {
   sortTableData(event: SortEvent) {
     if (event.data && event.field) {
       const order = event.order !== undefined ? event.order : 1;
-        
+
       event.data.sort((data1, data2) => {
         let value1 = data1[event.field as string];
         let value2 = data2[event.field as string];
@@ -271,7 +272,7 @@ export class RecordingsTrackerComponent implements OnInit {
         nombre: nombre_chain[i],
         fecha: newFechaGestion,
         resultado: gestion.resultado,
-        telefono: gestion.telefono, 
+        telefono: gestion.telefono,
         documento: gestion.documento,
         cliente: gestion.cliente,
         asesor: gestion.usuarioregistra
@@ -369,7 +370,7 @@ export class RecordingsTrackerComponent implements OnInit {
           nombre: nombre_chain[i],
           fecha: newFechaGestion,
           resultado: gestion.resultado,
-          telefono: gestion.telefono, 
+          telefono: gestion.telefono,
           documento: gestion.documento,
           cliente: gestion.cliente,
           asesor: gestion.usuarioregistra
@@ -410,7 +411,7 @@ export class RecordingsTrackerComponent implements OnInit {
 
   massiveDownloadReports() {
     var reportsToDownload = this.dt.filteredValue;
-    
+
     if(reportsToDownload == null || reportsToDownload.length == 0) {
       reportsToDownload = this.gestiones;
       if(reportsToDownload == null || reportsToDownload.length == 0) {
