@@ -85,6 +85,10 @@ export class ToolbarComponent implements OnInit {
     this.router.navigate(['/powerbi/report']);
   }
 
+  goToCarteraPropiaReport() {
+    this.router.navigate(['/cartera-propia/report']);
+  }
+
   goToBlacklist(): void {
     this.router.navigate(['/blacklist']).then();
   }

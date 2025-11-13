@@ -7,6 +7,7 @@ import { MonitoringReportPageComponent } from './reports/pages/monitoring-report
 import { RankingReportPageComponent } from './reports/pages/ranking-report-page/ranking-report-page.component';
 import { SpeechReportPageComponent } from './reports/pages/speech-report-page/speech-report-page.component';
 import { PowerBiReportPageComponent } from './reports/pages/power-bi-report-page/power-bi-report-page.component';
+import { CarteraPropiaReportPageComponent } from './reports/pages/cartera-propia-report-page/cartera-propia-report-page.component';
 import { BlacklistPageComponent } from './blacklist/pages/blacklist-page/blacklist-page.component';
 import { PaymentAgreementCardPageComponent } from './agreements/pages/payment-agreement-card-page/payment-agreement-card-page.component';
 import {ComboListPageComponent} from "@/SMS_DYNAMIC/pages/combo-list-page/combo-list-page.component";
@@ -23,6 +24,7 @@ export const routes: Routes = [
     {'path': 'ranking/report', component: RankingReportPageComponent},
     {'path': 'speech/report', component: SpeechReportPageComponent},
     {'path': 'powerbi/report', component: PowerBiReportPageComponent},
+    {'path': 'cartera-propia/report', component: CarteraPropiaReportPageComponent},
     {'path': 'blacklist', component: BlacklistPageComponent},
     {'path': 'acuerdo-de-pago', component: PaymentAgreementCardPageComponent}
 ];
