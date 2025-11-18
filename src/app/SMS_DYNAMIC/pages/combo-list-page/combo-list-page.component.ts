@@ -167,7 +167,7 @@ export class ComboListPageComponent {
 
   form = this.fb.nonNullable.group({
     q: '',
-    tramo: 'ALL' as 'ALL' | '3' | '5',
+    tramo: 'ALL' as 'ALL' | '3' | '5' | 'CONTACTO_TOTAL',
     soloActivos: true
   });
 
